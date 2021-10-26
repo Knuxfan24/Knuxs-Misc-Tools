@@ -1,23 +1,25 @@
-﻿// http://info.sonicretro.org/Shadow_the_Hedgehog_(game)/Technical_information/Object_layout_format
+﻿// Data structure taken from: http://info.sonicretro.org/Shadow_the_Hedgehog_(game)/Technical_information/Object_layout_format
 
 using Marathon.IO;
 using Marathon.Formats.Placement;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Knux_s_Misc_Tools
 {
     public class ShadowSET
     {
+        /// <summary>
+        /// Data structure of a Shadow The Hedgehog object.
+        /// </summary>
         public class SETObject
         {
+            // X, Y, Z Position of this object.
             public Vector3 Position { get; set; }
             
+            // X, Y, Z Rotation of this object, in euler angles.
             public Vector3 Rotation { get; set; }
 
             public byte UnknownByte1 { get; set; }
@@ -30,66 +32,92 @@ namespace Knux_s_Misc_Tools
 
             public byte[] UnknownByteArray { get; set; }
 
+            // Object Type in setid.bin.
             public byte ObjectType { get; set; }
 
+            // Object List this object is in in setid.bin.
             public byte ObjectList { get; set; }
 
             public byte LinkID { get; set; }
 
             public byte RenderDistance { get; set; }
 
+            // Parameters
             public List<int> MiscData = new();
 
         }
 
+        // List of Objects.
         public List<SETObject> Objects = new();
 
+        /// <summary>
+        /// Loads a Shadow The Hedgehog SET file.
+        /// </summary>
+        /// <param name="filepath">File to load.</param>
         public void Load(string filepath)
         {
+            // Set up the Extended Binary Reader.
             BinaryReaderEx reader = new(File.OpenRead(filepath));
+
+            // Read this SETs header.
             reader.ReadSignature(4, "sky2");
-            int objectCount = reader.ReadInt32();
-            int miscLength = reader.ReadInt32();
+            int objectCount   = reader.ReadInt32();
+            int miscLength    = reader.ReadInt32();
             long miscPosition = 0xC + (objectCount * 0x2C);
 
+            // Loop through based on the amount of objects in this file.
             for (int i = 0; i < objectCount; i++)
             {
+                // Read this object.
                 SETObject obj = new()
                 {
-                    Position = reader.ReadVector3(),
-                    Rotation = reader.ReadVector3(),
-                    UnknownByte1 = reader.ReadByte(),
-                    UnknownByte2 = reader.ReadByte(),
-                    UnknownByte3 = reader.ReadByte(),
-                    UnknownByte4 = reader.ReadByte(),
+                    Position         = reader.ReadVector3(),
+                    Rotation         = reader.ReadVector3(),
+                    UnknownByte1     = reader.ReadByte(),
+                    UnknownByte2     = reader.ReadByte(),
+                    UnknownByte3     = reader.ReadByte(),
+                    UnknownByte4     = reader.ReadByte(),
                     UnknownByteArray = reader.ReadBytes(0x4),
-                    ObjectType = reader.ReadByte(),
-                    ObjectList = reader.ReadByte(),
-                    LinkID = reader.ReadByte(),
-                    RenderDistance = reader.ReadByte()
+                    ObjectType       = reader.ReadByte(),
+                    ObjectList       = reader.ReadByte(),
+                    LinkID           = reader.ReadByte(),
+                    RenderDistance   = reader.ReadByte()
                 };
                 int objMiscLength = reader.ReadInt32();
                 reader.JumpAhead(0x4);
 
+                // Save position for the next object.
                 long pos = reader.BaseStream.Position;
 
+                // Jump to the value in miscPosition
                 reader.JumpTo(miscPosition);
 
+                // Read the amount of parameters specified in this object.
                 for (int m = 0; m < objMiscLength / 4; m++)
                     obj.MiscData.Add(reader.ReadInt32());
 
+                // Save the position as the new miscPosition value.
                 miscPosition = reader.BaseStream.Position;
+
+                // Jump back to the save position.
                 reader.JumpTo(pos);
 
+                // Save this object.
                 Objects.Add(obj);
             }
         }
 
+        /// <summary>
+        /// Exports data in the Objects List to a Sonic '06 SET.
+        /// </summary>
+        /// <param name="filepath">The path to save the SET to.</param>
         public void Export06(string filepath)
         {
+            // Create the new Sonic '06 SET.
             ObjectPlacement set = new();
             set.Data.Name = "test";
 
+            // Loop through the objects.
             for (int i = 0; i < Objects.Count; i++)
             {
                 #region Generic Shit
@@ -619,21 +647,59 @@ namespace Knux_s_Misc_Tools
                 #endregion
             }
 
+            // Save the SET to the specified path.
             set.Save(filepath);
         }
     
+        /// <summary>
+        /// Hardcoded thing to allow me to create MaxScripts for easy importing of props into a Max Scene.
+        /// </summary>
+        /// <param name="filepath">The path to save the MaxScript to.</param>
+        /// <param name="ObjectType">The object type to check against.</param>
+        /// <param name="ObjectList">The object list to check against.</param>
         public void ExportMAXScript(string filepath, int ObjectType, int ObjectList)
         {
+            // Delete the MaxScript if it exists, as I append to it.
             File.Delete(filepath);
+
+            // Setup a value so I can number the objects linearlly.
             int objectNumber = 0;
+
+            // Loop through the objects.
             foreach (var obj in Objects)
             {
                 if (obj.ObjectType == ObjectType && obj.ObjectList == ObjectList)
                 {
                     if (obj.MiscData[0] == 4)
                     {
+                        // Setup a StreamWriter.
                         using (StreamWriter log = new(filepath, append: true))
                         {
+                            /* Info on how this setup works.
+                            
+                            The Max file that the script will merge, set to use merged material duplicates.
+                            log.WriteLine($"mergeMAXFile \"[.MAX FILE NAME GOES HERE]\" #useMergedMtlDups");
+
+                            The mesh in the file to select for renaming and positioning. Every line from here on needs to be duped.
+                            log.WriteLine("a = $[MESHNAME GOES HERE]");
+
+                            The name I change the selected mesh to. Often, I append _{objectNumber} to count them.
+                            log.WriteLine($"a.Name = \"[NEW MESHNAME GOES HERE]\"");
+
+                            The rotation of the mesh, X gets reduced by 90 as I tend to have weird rotation values.
+                            log.WriteLine("a.rotation = eulerAngles " + (obj.Rotation.X - 90) + " " + -obj.Rotation.Y + " " + obj.Rotation.Z);
+
+                            The X Position of the mesh, I mutiply them by 10 due to differences in scale between '06 and ShTH.
+                            log.WriteLine("a.pos.x = " + obj.Position.X * 10);
+                            
+                            The Y Position of the mesh, this uses the Z position inverted due to Y-Up VS Z-Up differences.
+                            log.WriteLine("a.pos.y = " + -(obj.Position.Z * 10));
+                            
+                            The Z Position of the mesh, this uses the Y position due to Y-Up VS Z-Up differences.
+                            log.WriteLine("a.pos.z = " + obj.Position.Y * 10);
+
+                            */
+
                             log.WriteLine($"mergeMAXFile \"C:\\Users\\Knuxf\\Documents\\3dsMax\\scenes\\Prison Island Props\\JG0000FOOTRIVERGNFH_coli.max\" #useMergedMtlDups");
 
                             // Mesh
@@ -658,6 +724,8 @@ namespace Knux_s_Misc_Tools
                             log.WriteLine("a.pos.y = " + -(obj.Position.Z * 10));
                             log.WriteLine("a.pos.z = " + obj.Position.Y * 10);
                         }
+
+                        // Increment the objectNumber count.
                         objectNumber++;
                     }
                 }

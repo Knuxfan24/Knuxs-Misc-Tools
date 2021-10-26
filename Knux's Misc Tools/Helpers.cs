@@ -1,16 +1,18 @@
 ﻿using Marathon.Formats.Placement;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Numerics;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Knux_s_Misc_Tools
 {
     internal class Helpers
     {
-        // Where the hell did I get this from anyway?
+        /// <summary>
+        /// Converts Euler Angles to a Quaternion.
+        /// Where the hell did I get this from anyway?
+        /// </summary>
+        /// <param name="angle">The original Y angle to convert.</param>
+        /// <param name="rotation">A value to add to the original rotation, as some objects face different directions between games.</param>
+        /// <returns>The new Quaternion.</returns>
         public static Quaternion ConvertToQuat(float angle, int rotation = 0)
         {
             Quaternion quat = new Quaternion();
@@ -30,7 +32,13 @@ namespace Knux_s_Misc_Tools
             return quat;
         }
 
-        // So I'm not constantly duplicating the same five lines over and over.
+        /// <summary>
+        /// Creates a Sonic '06 SET Object Parameter.
+        /// So I'm not constantly duplicating the same five lines over and over.
+        /// </summary>
+        /// <param name="data">The value for this parameter.</param>
+        /// <param name="type">The data type for this parameter.</param>
+        /// <returns>The SET Object Parameter.</returns>
         public static SetParameter Add06Parameter(object data, Type type)
         {
             SetParameter s06param = new()
