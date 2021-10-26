@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Knux's Misc Tools", "Knux's Misc Tools\Knux's Misc Tools.csproj", "{BEA70DF9-1552-46D2-9FA9-8C9E2166F91F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BEA70DF9-1552-46D2-9FA9-8C9E2166F91F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BEA70DF9-1552-46D2-9FA9-8C9E2166F91F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BEA70DF9-1552-46D2-9FA9-8C9E2166F91F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BEA70DF9-1552-46D2-9FA9-8C9E2166F91F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FE8889DB-5CE6-4655-907C-2427752FE92A}
+	EndGlobalSection
+EndGlobal
