@@ -33,6 +33,25 @@ namespace Knux_s_Misc_Tools
         }
 
         /// <summary>
+        /// Shifts all objects in an '06 SET File.
+        /// </summary>
+        /// <param name="filepath">The file to edit.</param>
+        /// <param name="xAdjustment">How much to move each object on the X axis.</param>
+        /// <param name="yAdjustment">How much to move each object on the Y axis.</param>
+        /// <param name="zAdjustment">How much to move each object on the Z axis.</param>
+        public static void Shift06(string filepath, float xAdjustment, float yAdjustment, float zAdjustment)
+        {
+            ObjectPlacement set = new(filepath);
+
+            foreach (SetObject obj in set.Data.Objects)
+            {
+                obj.Position = new(obj.Position.X + xAdjustment, obj.Position.Y + yAdjustment, obj.Position.Z + zAdjustment);
+            }
+
+            set.Save();
+        }
+
+        /// <summary>
         /// Creates a Sonic '06 SET Object Parameter.
         /// So I'm not constantly duplicating the same five lines over and over.
         /// </summary>
