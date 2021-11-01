@@ -58,12 +58,12 @@ namespace Knux_s_Misc_Tools
         /// <param name="data">The value for this parameter.</param>
         /// <param name="type">The data type for this parameter.</param>
         /// <returns>The SET Object Parameter.</returns>
-        public static SetParameter Add06Parameter(object data, Type type)
+        public static SetParameter Add06Parameter(object data, ObjectDataType type)
         {
             SetParameter s06param = new()
             {
                 Data = data,
-                DataType = type
+                Type = type
             };
             return s06param;
         }

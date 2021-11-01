@@ -132,9 +132,9 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, typeof(uint)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -150,8 +150,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -167,10 +167,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(20f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, typeof(uint)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(20f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -200,10 +200,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(10f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(10f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -221,7 +221,7 @@ namespace Knux_s_Misc_Tools
 
                 //    // Can be scaled in ShTH, but I don't know if I want to do that.
                 //    // Also could be scaled on each axis rather than just one like in '06.
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1f, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1f, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -239,13 +239,13 @@ namespace Knux_s_Misc_Tools
 
                 //    byte[] floatVals = BitConverter.GetBytes(Objects[i].MiscData[0]);
                 //    float f = BitConverter.ToSingle(floatVals, 0);
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
 
                 //    floatVals = BitConverter.GetBytes(Objects[i].MiscData[1]);
                 //    f = BitConverter.ToSingle(floatVals, 0);
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1.5f, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1.5f, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -261,8 +261,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("WoodBox", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("WoodBox", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -278,8 +278,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("IronBox", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("IronBox", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -295,8 +295,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -312,8 +312,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("BombBox", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("BombBox", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -329,9 +329,9 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(true, typeof(bool)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, typeof(float)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", typeof(string)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(true, ObjectDataType.Boolean));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -346,18 +346,18 @@ namespace Knux_s_Misc_Tools
                 //        Position = Objects[i].Position * 10,
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
-
+                
                 //    switch (Objects[i].MiscData[0])
                 //    {
-                //        case 0: s06obj.Parameters.Add(Helpers.Add06Parameter(1, typeof(int))); break;
-                //        case 1: s06obj.Parameters.Add(Helpers.Add06Parameter(2, typeof(int))); break;
-                //        case 2: s06obj.Parameters.Add(Helpers.Add06Parameter(3, typeof(int))); break;
-                //        case 3: s06obj.Parameters.Add(Helpers.Add06Parameter(8, typeof(int))); break;
-                //        case 4: s06obj.Parameters.Add(Helpers.Add06Parameter(8, typeof(int))); break;
-                //        case 5: s06obj.Parameters.Add(Helpers.Add06Parameter(8, typeof(int))); break;
-                //        case 6: s06obj.Parameters.Add(Helpers.Add06Parameter(7, typeof(int))); break;
-                //        case 8: s06obj.Parameters.Add(Helpers.Add06Parameter(4, typeof(int))); break;
-                //        default: s06obj.Parameters.Add(Helpers.Add06Parameter(6, typeof(int))); break;
+                //        case 0: s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32)); break;
+                //        case 1: s06obj.Parameters.Add(Helpers.Add06Parameter(2, ObjectDataType.Int32)); break;
+                //        case 2: s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32)); break;
+                //        case 3: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                //        case 4: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                //        case 5: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                //        case 6: s06obj.Parameters.Add(Helpers.Add06Parameter(7, ObjectDataType.Int32)); break;
+                //        case 8: s06obj.Parameters.Add(Helpers.Add06Parameter(4, ObjectDataType.Int32)); break;
+                //        default: s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32)); break;
                 //    }
 
                 //    set.Data.Objects.Add(s06obj);
@@ -374,8 +374,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y + 90)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("twn_barricade", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("twn_barricade", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -405,10 +405,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1, typeof(int)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer_Fix", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer_Fix", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -424,7 +424,7 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(6, typeof(int)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -440,8 +440,8 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -458,11 +458,11 @@ namespace Knux_s_Misc_Tools
                 //    };
 
                 //    // TODO: Replace the first parameter with a switch for other vehicle types.
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3, typeof(int)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", typeof(string)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -478,10 +478,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(int)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer_Fix", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer_Fix", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -497,10 +497,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(int)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner_Fix", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner_Fix", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -516,13 +516,13 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(int)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
                 //    if (Objects[i].MiscData[9] == 0)
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Fix", typeof(string)));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Fix", ObjectDataType.String));
                 //    else
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Normal", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(float)));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Normal", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -538,10 +538,10 @@ namespace Knux_s_Misc_Tools
                 //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //    };
 
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(int)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler_Normal", typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, typeof(float)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler_Normal", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -617,28 +617,28 @@ namespace Knux_s_Misc_Tools
                 //    s06param = new()
                 //    {
                 //        Data = type,
-                //        DataType = typeof(string)
+                //        DataType = ObjectDataType.String
                 //    };
                 //    s06obj.Parameters.Add(s06param);
 
                 //    s06param = new()
                 //    {
                 //        Data = "",
-                //        DataType = typeof(string)
+                //        DataType = ObjectDataType.String
                 //    };
                 //    s06obj.Parameters.Add(s06param);
 
                 //    s06param = new()
                 //    {
                 //        Data = 0f,
-                //        DataType = typeof(float)
+                //        DataType = ObjectDataType.Single
                 //    };
                 //    s06obj.Parameters.Add(s06param);
 
                 //    s06param = new()
                 //    {
                 //        Data = 0f,
-                //        DataType = typeof(float)
+                //        DataType = ObjectDataType.Single
                 //    };
                 //    s06obj.Parameters.Add(s06param);
 
@@ -666,8 +666,8 @@ namespace Knux_s_Misc_Tools
                 //        default:
                 //            continue;
                 //    }
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(type, typeof(string)));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(type, ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -684,12 +684,12 @@ namespace Knux_s_Misc_Tools
                 //            Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 //        };
 
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("map_csc", typeof(string)));
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("smoke2", typeof(string)));
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter(0f, typeof(float)));
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter(0f, typeof(float)));
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("", typeof(string)));
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("", typeof(string)));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("map_csc", ObjectDataType.String));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("smoke2", ObjectDataType.String));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+                //        s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
 
                 //        set.Data.Objects.Add(s06obj);
                 //    }
@@ -705,16 +705,16 @@ namespace Knux_s_Misc_Tools
                         Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                     };
 
-                    s06obj.Parameters.Add(Helpers.Add06Parameter("stage_tpj", typeof(string)));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("stage_tpj", ObjectDataType.String));
 
                     switch (Objects[i].MiscData[0])
                     {
                         case 30026:
-                            s06obj.Parameters.Add(Helpers.Add06Parameter("water1", typeof(string)));
+                            s06obj.Parameters.Add(Helpers.Add06Parameter("water1", ObjectDataType.String));
                             break;
 
                         case 30017:
-                            s06obj.Parameters.Add(Helpers.Add06Parameter("water2", typeof(string)));
+                            s06obj.Parameters.Add(Helpers.Add06Parameter("water2", ObjectDataType.String));
                             break;
 
                         default:
@@ -753,8 +753,8 @@ namespace Knux_s_Misc_Tools
                     Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
                 };
 
-                s06obj.Parameters.Add(Helpers.Add06Parameter($"Object Type '{Objects[i].ObjectType}' | Object List '{Objects[i].ObjectList}'", typeof(string)));
-                s06obj.Parameters.Add(Helpers.Add06Parameter(false, typeof(bool)));
+                s06obj.Parameters.Add(Helpers.Add06Parameter($"Object Type '{Objects[i].ObjectType}' | Object List '{Objects[i].ObjectList}'", ObjectDataType.String));
+                s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
 
                 set.Data.Objects.Add(s06obj);
             }
