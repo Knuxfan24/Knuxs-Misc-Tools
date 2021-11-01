@@ -120,432 +120,432 @@ namespace Knux_s_Misc_Tools
             // Loop through the objects.
             for (int i = 0; i < Objects.Count; i++)
             {
-                //#region Generic Shit
-                //// Spring
-                //if (Objects[i].ObjectType == 0x01 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"spring{i}",
-                //        Type = "spring",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Wide Spring
-                //if (Objects[i].ObjectType == 0x02 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"widespring{i}",
-                //        Type = "widespring",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Dash Ramp
-                //if (Objects[i].ObjectType == 0x04 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"jumppanel{i}",
-                //        Type = "jumppanel",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(20f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Checkpoint
-                //if (Objects[i].ObjectType == 0x05 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"savepoint{i}",
-                //        Type = "savepoint",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
-                //    };
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Dash Ring
-                //if (Objects[i].ObjectType == 0x06 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"common_dashring{i}",
-                //        Type = "common_dashring",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(10f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Locked Case
-                //if (Objects[i].ObjectType == 0x07 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"common_cage{i}",
-                //        Type = "common_cage",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    // Can be scaled in ShTH, but I don't know if I want to do that.
-                //    // Also could be scaled on each axis rather than just one like in '06.
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1f, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Pulley
-                //if (Objects[i].ObjectType == 0x08 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"updownreel{i}",
-                //        Type = "updownreel",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    byte[] floatVals = BitConverter.GetBytes(Objects[i].MiscData[0]);
-                //    float f = BitConverter.ToSingle(floatVals, 0);
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
-
-                //    floatVals = BitConverter.GetBytes(Objects[i].MiscData[1]);
-                //    f = BitConverter.ToSingle(floatVals, 0);
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1.5f, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Wood Box
-                //if (Objects[i].ObjectType == 0x09 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("WoodBox", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Metal Box
-                //if (Objects[i].ObjectType == 0x0A && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("IronBox", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Weapon Box
-                //if (Objects[i].ObjectType == 0x0C && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// GUN Bomb
-                //if (Objects[i].ObjectType == 0x0D && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("BombBox", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Rings
-                //if (Objects[i].ObjectType == 0x10 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"ring{i}",
-                //        Type = "ring",
-                //        Position = new(Objects[i].Position.X * 10, (Objects[i].Position.Y * 10) - 40, Objects[i].Position.Z * 10),
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(true, ObjectDataType.Boolean));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Item Capsule
-                //if (Objects[i].ObjectType == 0x12 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"itemboxa{i}",
-                //        Type = "itemboxa",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-                
-                //    switch (Objects[i].MiscData[0])
-                //    {
-                //        case 0: s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32)); break;
-                //        case 1: s06obj.Parameters.Add(Helpers.Add06Parameter(2, ObjectDataType.Int32)); break;
-                //        case 2: s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32)); break;
-                //        case 3: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
-                //        case 4: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
-                //        case 5: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
-                //        case 6: s06obj.Parameters.Add(Helpers.Add06Parameter(7, ObjectDataType.Int32)); break;
-                //        case 8: s06obj.Parameters.Add(Helpers.Add06Parameter(4, ObjectDataType.Int32)); break;
-                //        default: s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32)); break;
-                //    }
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Roadblock
-                //if (Objects[i].ObjectType == 0x1B && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y + 90)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("twn_barricade", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Secret Key
-                //if (Objects[i].ObjectType == 0x1D && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"medal_of_royal_bronze{i}",
-                //        Type = "medal_of_royal_bronze",
-                //        Position = new(Objects[i].Position.X * 10, (Objects[i].Position.Y * 10) + 40, Objects[i].Position.Z * 10),
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Killer Plant
-                //if (Objects[i].ObjectType == 0x31 && Objects[i].ObjectList == 0x11)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"enemy{i}",
-                //        Type = "enemy",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer_Fix", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Energy Core
-                //if (Objects[i].ObjectType == 0x33 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"itemboxa{i}",
-                //        Type = "itemboxa",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Weapon Box
-                //if (Objects[i].ObjectType == 0x3A && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"objectphysics{i}",
-                //        Type = "objectphysics",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Vehicle
-                //if (Objects[i].ObjectType == 0x4F && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"vehicle{i}",
-                //        Type = "vehicle",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    // TODO: Replace the first parameter with a switch for other vehicle types.
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// GUN Beetle
-                //if (Objects[i].ObjectType == 0x65 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"enemy{i}",
-                //        Type = "enemy",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer_Fix", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// GUN Robot
-                //if (Objects[i].ObjectType == 0x68 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"enemy{i}",
-                //        Type = "enemy",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner_Fix", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Black Arms Warrior
-                //if (Objects[i].ObjectType == 0x8D && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"enemy{i}",
-                //        Type = "enemy",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
-                //    if (Objects[i].MiscData[9] == 0)
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Fix", ObjectDataType.String));
-                //    else
-                //        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Normal", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-
-                //// Black Arms Worm
-                //if (Objects[i].ObjectType == 0x90 && Objects[i].ObjectList == 0x00)
-                //{
-                //    SetObject s06obj = new()
-                //    {
-                //        Name = $"enemy{i}",
-                //        Type = "enemy",
-                //        Position = Objects[i].Position * 10,
-                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                //    };
-
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler_Normal", ObjectDataType.String));
-                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
-
-                //    set.Data.Objects.Add(s06obj);
-                //}
-                //#endregion
+                #region Generic Shit
+                // Spring
+                if (Objects[i].ObjectType == 0x01 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"spring{i}",
+                        Type = "spring",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Wide Spring
+                if (Objects[i].ObjectType == 0x02 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"widespring{i}",
+                        Type = "widespring",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Dash Ramp
+                if (Objects[i].ObjectType == 0x04 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"jumppanel{i}",
+                        Type = "jumppanel",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(20f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(4294967295, ObjectDataType.UInt32));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Checkpoint
+                if (Objects[i].ObjectType == 0x05 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"savepoint{i}",
+                        Type = "savepoint",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
+                    };
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Dash Ring
+                if (Objects[i].ObjectType == 0x06 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"common_dashring{i}",
+                        Type = "common_dashring",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y, 180)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(10f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(3000f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0.5f, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Locked Case
+                if (Objects[i].ObjectType == 0x07 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"common_cage{i}",
+                        Type = "common_cage",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    // Can be scaled in ShTH, but I don't know if I want to do that.
+                    // Also could be scaled on each axis rather than just one like in '06.
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(1f, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Pulley
+                if (Objects[i].ObjectType == 0x08 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"updownreel{i}",
+                        Type = "updownreel",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    byte[] floatVals = BitConverter.GetBytes(Objects[i].MiscData[0]);
+                    float f = BitConverter.ToSingle(floatVals, 0);
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
+
+                    floatVals = BitConverter.GetBytes(Objects[i].MiscData[1]);
+                    f = BitConverter.ToSingle(floatVals, 0);
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(-(f * 100), ObjectDataType.Single));
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(1.5f, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Wood Box
+                if (Objects[i].ObjectType == 0x09 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("WoodBox", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Metal Box
+                if (Objects[i].ObjectType == 0x0A && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("IronBox", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Weapon Box
+                if (Objects[i].ObjectType == 0x0C && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // GUN Bomb
+                if (Objects[i].ObjectType == 0x0D && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("BombBox", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Rings
+                if (Objects[i].ObjectType == 0x10 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"ring{i}",
+                        Type = "ring",
+                        Position = new(Objects[i].Position.X * 10, (Objects[i].Position.Y * 10) - 40, Objects[i].Position.Z * 10),
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(true, ObjectDataType.Boolean));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Item Capsule
+                if (Objects[i].ObjectType == 0x12 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"itemboxa{i}",
+                        Type = "itemboxa",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    switch (Objects[i].MiscData[0])
+                    {
+                        case 0: s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32)); break;
+                        case 1: s06obj.Parameters.Add(Helpers.Add06Parameter(2, ObjectDataType.Int32)); break;
+                        case 2: s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32)); break;
+                        case 3: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                        case 4: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                        case 5: s06obj.Parameters.Add(Helpers.Add06Parameter(8, ObjectDataType.Int32)); break;
+                        case 6: s06obj.Parameters.Add(Helpers.Add06Parameter(7, ObjectDataType.Int32)); break;
+                        case 8: s06obj.Parameters.Add(Helpers.Add06Parameter(4, ObjectDataType.Int32)); break;
+                        default: s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32)); break;
+                    }
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Roadblock
+                if (Objects[i].ObjectType == 0x1B && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y + 90)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("twn_barricade", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Secret Key
+                if (Objects[i].ObjectType == 0x1D && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"medal_of_royal_bronze{i}",
+                        Type = "medal_of_royal_bronze",
+                        Position = new(Objects[i].Position.X * 10, (Objects[i].Position.Y * 10) + 40, Objects[i].Position.Z * 10),
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Killer Plant
+                if (Objects[i].ObjectType == 0x31 && Objects[i].ObjectList == 0x11)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"enemy{i}",
+                        Type = "enemy",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(1, ObjectDataType.Int32));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("cGazer_Fix", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Energy Core
+                if (Objects[i].ObjectType == 0x33 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"itemboxa{i}",
+                        Type = "itemboxa",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(6, ObjectDataType.Int32));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Weapon Box
+                if (Objects[i].ObjectType == 0x3A && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"objectphysics{i}",
+                        Type = "objectphysics",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("FlashBox", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Vehicle
+                if (Objects[i].ObjectType == 0x4F && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"vehicle{i}",
+                        Type = "vehicle",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    // TODO: Replace the first parameter with a switch for other vehicle types.
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(3, ObjectDataType.Int32));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(false, ObjectDataType.Boolean));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // GUN Beetle
+                if (Objects[i].ObjectType == 0x65 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"enemy{i}",
+                        Type = "enemy",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("eFlyer_Fix", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // GUN Robot
+                if (Objects[i].ObjectType == 0x68 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"enemy{i}",
+                        Type = "enemy",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("eGunner_Fix", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Black Arms Warrior
+                if (Objects[i].ObjectType == 0x8D && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"enemy{i}",
+                        Type = "enemy",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                    if (Objects[i].MiscData[9] == 0)
+                        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Fix", ObjectDataType.String));
+                    else
+                        s06obj.Parameters.Add(Helpers.Add06Parameter("cBiter_Normal", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+
+                // Black Arms Worm
+                if (Objects[i].ObjectType == 0x90 && Objects[i].ObjectList == 0x00)
+                {
+                    SetObject s06obj = new()
+                    {
+                        Name = $"enemy{i}",
+                        Type = "enemy",
+                        Position = Objects[i].Position * 10,
+                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                    };
+
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Int32));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter("cCrawler_Normal", ObjectDataType.String));
+                    s06obj.Parameters.Add(Helpers.Add06Parameter(0, ObjectDataType.Single));
+
+                    set.Data.Objects.Add(s06obj);
+                }
+                #endregion
 
                 #region Stuff for Prison Island
                 //if (Objects[i].ObjectType == 0x88 && Objects[i].ObjectList == 0x25)
@@ -613,34 +613,10 @@ namespace Knux_s_Misc_Tools
                 //            continue;
                 //    }
 
-
-                //    s06param = new()
-                //    {
-                //        Data = type,
-                //        DataType = ObjectDataType.String
-                //    };
-                //    s06obj.Parameters.Add(s06param);
-
-                //    s06param = new()
-                //    {
-                //        Data = "",
-                //        DataType = ObjectDataType.String
-                //    };
-                //    s06obj.Parameters.Add(s06param);
-
-                //    s06param = new()
-                //    {
-                //        Data = 0f,
-                //        DataType = ObjectDataType.Single
-                //    };
-                //    s06obj.Parameters.Add(s06param);
-
-                //    s06param = new()
-                //    {
-                //        Data = 0f,
-                //        DataType = ObjectDataType.Single
-                //    };
-                //    s06obj.Parameters.Add(s06param);
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(type, ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("", ObjectDataType.String));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter(0f, ObjectDataType.Single));
 
                 //    set.Data.Objects.Add(s06obj);
                 //}
@@ -695,34 +671,35 @@ namespace Knux_s_Misc_Tools
                 //    }
 
                 //}
-                if (Objects[i].ObjectType == 0x97 && Objects[i].ObjectList == 0x25)
-                {
-                    SetObject s06obj = new()
-                    {
-                        Name = $"ambience{i}",
-                        Type = "ambience",
-                        Position = Objects[i].Position * 10,
-                        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
-                    };
 
-                    s06obj.Parameters.Add(Helpers.Add06Parameter("stage_tpj", ObjectDataType.String));
+                //if (Objects[i].ObjectType == 0x97 && Objects[i].ObjectList == 0x25)
+                //{
+                //    SetObject s06obj = new()
+                //    {
+                //        Name = $"ambience{i}",
+                //        Type = "ambience",
+                //        Position = Objects[i].Position * 10,
+                //        Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                //    };
 
-                    switch (Objects[i].MiscData[0])
-                    {
-                        case 30026:
-                            s06obj.Parameters.Add(Helpers.Add06Parameter("water1", ObjectDataType.String));
-                            break;
+                //    s06obj.Parameters.Add(Helpers.Add06Parameter("stage_tpj", ObjectDataType.String));
 
-                        case 30017:
-                            s06obj.Parameters.Add(Helpers.Add06Parameter("water2", ObjectDataType.String));
-                            break;
+                //    switch (Objects[i].MiscData[0])
+                //    {
+                //        case 30026:
+                //            s06obj.Parameters.Add(Helpers.Add06Parameter("water1", ObjectDataType.String));
+                //            break;
 
-                        default:
-                            continue;
-                    }
+                //        case 30017:
+                //            s06obj.Parameters.Add(Helpers.Add06Parameter("water2", ObjectDataType.String));
+                //            break;
 
-                    set.Data.Objects.Add(s06obj);
-                }
+                //        default:
+                //            continue;
+                //    }
+
+                //    set.Data.Objects.Add(s06obj);
+                //}
 
                 #endregion
             }
