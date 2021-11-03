@@ -1,4 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 
 namespace Knux_s_Misc_Tools
 {
@@ -6,8 +10,15 @@ namespace Knux_s_Misc_Tools
     {
         static void Main(string[] args)
         {
-            HeroesSET set = new();
-            set.Load(@"D:\Standalone Games\SONICHEROES\dvdroot\s01_P2.bin");
+            string[] hkxFiles = Directory.GetFiles(@"G:\Sonic '06\Extracted Archives\object\xenon\object", "*.hkx", SearchOption.AllDirectories);
+            foreach (string hkxFile in hkxFiles)
+            {
+                Console.WriteLine(hkxFile);
+                S06Havok havok = new();
+                havok.Load(hkxFile);
+
+                File.WriteAllText($"{hkxFile}.json", JsonConvert.SerializeObject(havok.Data, Formatting.Indented));
+            }
         }
     }
 }
