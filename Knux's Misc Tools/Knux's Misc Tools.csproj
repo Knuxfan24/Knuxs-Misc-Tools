@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
-    <RootNamespace>Knux_s_Misc_Tools</RootNamespace>
+    <TargetFramework>net6.0</TargetFramework>
+    <RootNamespace>Knuxs_Misc_Tools</RootNamespace>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BE32.Marathon" Version="1.0.19" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <Reference Include="Marathon">
+      <HintPath>..\..\..\..\Documents\GitHub\Marathon\Marathon\bin\Debug\net6.0\Marathon.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
 </Project>
