@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AssimpNet" Version="5.0.0-beta1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Reference Include="Marathon">
       <HintPath>..\..\..\..\Documents\GitHub\Marathon\Marathon\bin\Debug\net6.0\Marathon.dll</HintPath>
     </Reference>

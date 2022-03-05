@@ -49,7 +49,7 @@ namespace Knuxs_Misc_Tools.SonicNext
         /// <param name="framerate">Framerate for the converted XNMs (defaults to 30 Frames Per Second).</param>
         public static void AnimationImport(string srcDir, string tgtDir, string srcXNO = "sonic_Root", float framerate = 30f)
         {
-            string[] fbxFiles = Directory.GetFiles(srcDir, " *.fbx", SearchOption.TopDirectoryOnly);
+            string[] fbxFiles = Directory.GetFiles(srcDir, "*.fbx", SearchOption.TopDirectoryOnly);
             foreach (string fbxFile in fbxFiles)
             {
                 if (!File.Exists($@"{tgtDir}\{Path.GetFileNameWithoutExtension(fbxFile)}.xnm"))
