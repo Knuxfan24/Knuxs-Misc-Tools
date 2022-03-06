@@ -102,5 +102,46 @@ namespace Knuxs_Misc_Tools.CarZ
             sco.WriteLine("[ObjectEnd]\n");
             sco.Close();
         }
+
+        public void ExportObj(string filepath, string mtlName = null)
+        {
+            StreamWriter obj = new(filepath);
+
+            if (mtlName == null)
+                obj.WriteLine($"mtllib {Path.GetFileNameWithoutExtension(filepath)}.mtl\n");
+            else
+                obj.WriteLine($"mtllib {mtlName}.mtl\n");
+
+            // Vertices.
+            for (int i = 0; i < Data.Vertices.Count; i++)
+                obj.WriteLine($"v {Data.Vertices[i].X} {Data.Vertices[i].Y} {Data.Vertices[i].Z}");
+
+            // Texture Coordinates.
+            obj.WriteLine();
+            for (int i = 0; i < Data.Faces.Count; i++)
+            {
+                obj.WriteLine($"vt {-Data.Faces[i].TextureCoordinates[0].X + 1} {-Data.Faces[i].TextureCoordinates[0].Y}");
+                obj.WriteLine($"vt {-Data.Faces[i].TextureCoordinates[1].X + 1} {-Data.Faces[i].TextureCoordinates[1].Y}");
+                obj.WriteLine($"vt {-Data.Faces[i].TextureCoordinates[2].X + 1} {-Data.Faces[i].TextureCoordinates[2].Y}");
+            }
+
+            // Object.
+            obj.WriteLine($"\no {Data.Name}");
+            obj.WriteLine($"g {Data.Name}");
+            int textureCoordinate = 1;
+            string material = "";
+            for (int i = 0; i < Data.Faces.Count; i++)
+            {
+                if (material != Data.Faces[i].MaterialName)
+                {
+                    obj.WriteLine($"usemtl {Data.Faces[i].MaterialName}");
+                    material = Data.Faces[i].MaterialName;
+                }
+                obj.WriteLine($"f {Data.Faces[i].VertexIndices[0] + 1}/{textureCoordinate} {Data.Faces[i].VertexIndices[1] + 1}/{textureCoordinate + 1} {Data.Faces[i].VertexIndices[2] + 1}/{textureCoordinate + 2}");
+                textureCoordinate += 3;
+            }
+
+            obj.Close();
+        }
     }
 }

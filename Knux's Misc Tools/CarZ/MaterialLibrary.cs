@@ -98,5 +98,24 @@
 
             mat.Close();
         }
+
+        public void ExportMtl(string filepath)
+        {
+            StreamWriter mtl = new(filepath);
+
+            for (int i = 0; i < Materials.Count; i++)
+            {
+                mtl.WriteLine($"newmtl {Materials[i].Name}");
+                if (Materials[i].Opacity != null) { mtl.WriteLine($"\td {Materials[i].Opacity / 255f}"); }
+                if (Materials[i].Colours != null) { mtl.WriteLine($"\tKd {Materials[i].Colours[0] / 255f} {Materials[i].Colours[1] / 255f} {Materials[i].Colours[2] / 255f}"); }
+                if (Materials[i].Texture != null) { mtl.WriteLine($"\tmap_Kd {Materials[i].Texture}"); }
+                if (Materials[i].AlphaMask != null) { mtl.WriteLine($"\tmap_d {Materials[i].AlphaMask}"); }
+                if (Materials[i].NormalMap != null) { mtl.WriteLine($"\tmap_bump {Materials[i].NormalMap}"); }
+                if (Materials[i].EnvironmentMap != null) { mtl.WriteLine($"\t???"); }
+                mtl.WriteLine();
+            }
+
+            mtl.Close();
+        }
     }
 }
