@@ -1,4 +1,5 @@
-﻿using Marathon.Formats.Mesh.Ninja;
+﻿using Marathon.Formats.Mesh;
+using Marathon.Formats.Mesh.Ninja;
 
 namespace Knuxs_Misc_Tools.SonicNext
 {
@@ -109,6 +110,18 @@ namespace Knuxs_Misc_Tools.SonicNext
             NinjaNext fps = new(xnm);
             fps.Data.Motion.Framerate = framerate;
             fps.Save();
+        }
+
+        /// <summary>
+        /// Imports a file as '06 collision.
+        /// </summary>
+        /// <param name="filepath">File to import.</param>
+        /// <param name="target">File to save.</param>
+        public static void CollisionImport(string filepath, string target)
+        {
+            Collision col = new();
+            col.ImportAssimp(filepath);
+            col.Save(target);
         }
     }
 }
