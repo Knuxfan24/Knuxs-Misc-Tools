@@ -195,5 +195,45 @@ namespace Knuxs_Misc_Tools.SonicNext
             else
                 anim.Save(tgt);
         }
+
+        /// <summary>
+        /// Sets the values needed (in our system?) to enable translucency on an object.
+        /// </summary>
+        /// <param name="xnoFile">The XNO to edit.</param>
+        /// <param name="matIndex">The material index to edit, if null, do them all.</param>
+        public static void EnableTranslucency(string xnoFile, int? matIndex = null)
+        {
+            // Load the XNO.
+            NinjaNext xno = new(xnoFile);
+
+            // If matIndex is not specified, do every material, material logic and sub object.
+            if (matIndex == null)
+            {
+                foreach (var material in xno.Data.Object.Materials)
+                    material.Flag = (MaterialType)0x01000036;
+
+                // Alpha Ref gets set to 0 as having it 0x00000096 (which I do a lot for transparent objects) makes this not work.
+                foreach (var materialLogic in xno.Data.Object.MaterialLogics)
+                {
+                    materialLogic.ZUpdate = true;
+                    materialLogic.AlphaRef = 0;
+                }
+
+                foreach (var subObject in xno.Data.Object.SubObjects)
+                    subObject.Type = (SubObjectType)0x00000102;
+            }
+            
+            // If a matIndex is specified, only edit that one.
+            else
+            {
+                xno.Data.Object.Materials[(int)matIndex].Flag = (MaterialType)0x01000036;
+                xno.Data.Object.MaterialLogics[(int)matIndex].ZUpdate = true;
+                xno.Data.Object.MaterialLogics[(int)matIndex].AlphaRef = 0;
+                xno.Data.Object.SubObjects[(int)matIndex].Type = (SubObjectType)0x00000102;
+            }
+
+            // Save the edited XNO.
+            xno.Save();
+        }
     }
 }
