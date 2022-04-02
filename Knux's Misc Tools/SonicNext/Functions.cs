@@ -1,5 +1,6 @@
 ﻿using Marathon.Formats.Mesh;
 using Marathon.Formats.Mesh.Ninja;
+using Marathon.Formats.Placement;
 
 namespace Knuxs_Misc_Tools.SonicNext
 {
@@ -122,6 +123,77 @@ namespace Knuxs_Misc_Tools.SonicNext
             Collision col = new();
             col.ImportAssimp(filepath);
             col.Save(target);
+        }
+
+        /// <summary>
+        /// Creates an '06 SET Object Parameter so I don't need to keep duplicating shit.
+        /// </summary>
+        /// <param name="value">The value of this parameter.</param>
+        /// <param name="type">The type of this parameter.</param>
+        public static SetParameter ParameterCreate(object value, ObjectDataType type)
+        {
+            SetParameter parameter = new SetParameter()
+            {
+                Data = value,
+                Type = type
+            };
+            return parameter;
+        }
+
+        /// <summary>
+        /// Cheaply retargets an animation from one model to another.
+        /// </summary>
+        /// <param name="xnm">The animation to retarget.</param>
+        /// <param name="srcXNO">The model this animation is originally from.</param>
+        /// <param name="tgtXNO">The model this animation should be retargeted onto.</param>
+        /// <param name="tgt">Where to save the retargeted animation.</param>
+        public static void RetargetAnimation(string xnm, string srcXNO, string tgtXNO, string tgt = null)
+        {
+            // Load the XNM and XNOs.
+            NinjaNext anim = new(xnm);
+            NinjaNext srcMdl = new(srcXNO);
+            NinjaNext tgtMdl = new(tgtXNO);
+
+            // Create a list to store the Sub Motions that use a node that doesn't exist on the target model.
+            List<int> Unused = new();
+
+            // Loop through all the Sub Motions in the animation.
+            for (int s = 0; s < anim.Data.Motion.SubMotions.Count; s++)
+            { 
+                // Set a flag to tell if we've retargeted this Sub Motion.
+                bool retargeted = false;
+
+                // Get the name of the node this Sub Motion is for.
+                string nodeName = srcMdl.Data.NodeNameList.NinjaNodeNames[anim.Data.Motion.SubMotions[s].NodeIndex];
+
+                // Loop through the target model's Ninja Node Name List.
+                for (int i = 0; i < tgtMdl.Data.NodeNameList.NinjaNodeNames.Count; i++)
+                {
+                    // If we've found a Node with the same name as the one from the source model, then update the Sub Motion Node Index and set our flag to true.
+                    if (tgtMdl.Data.NodeNameList.NinjaNodeNames[i] == nodeName)
+                    {
+                        anim.Data.Motion.SubMotions[s].NodeIndex = i;
+                        retargeted = true;
+                    }
+                }
+
+                // If our flag is still false, mark this Sub Motion for removal.
+                if (!retargeted)
+                    Unused.Add(s);
+            }
+
+            // Flip the list of Sub Motions to be removed.
+            Unused.Reverse();
+
+            // Remove all the Sub Motions that have a Node Index that has been added to our list.
+            foreach (int node in Unused)
+                anim.Data.Motion.SubMotions.RemoveAt(node);
+
+            // Save the retargeted animation. If a path wasn't specified, just use the original with a .retargeted extension tacked on.
+            if (tgt == null)
+                anim.Save($@"{xnm}.retargeted");
+            else
+                anim.Save(tgt);
         }
     }
 }
