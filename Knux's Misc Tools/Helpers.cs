@@ -1,4 +1,6 @@
-﻿using System.Numerics;
+﻿using Google.Cloud.Translation.V2;
+using System.Numerics;
+using System.Web;
 
 namespace Knuxs_Misc_Tools
 {
@@ -26,6 +28,59 @@ namespace Knuxs_Misc_Tools
         public static float ToSingle(double value)
         {
             return (float)value;
+        }
+
+        /// <summary>
+        /// Uses the Google Cloud API to translate text into gibberish.
+        /// </summary>
+        /// <param name="text">Text to translate.</param>
+        /// <param name="passes">How many times the text should be translated, defaults to 35.</param>
+        public static string GoogleTranslate(string text, int passes = 35)
+        {
+            // Set Console Encoding so we can actually see non ASCII characters.
+            Console.OutputEncoding = System.Text.Encoding.UTF8;
+
+            // Hardcode the language list so we don't ask Google Translate for it every time.
+            List<string> Languages = new() { "af", "am", "ar", "az", "be", "bg", "bn", "bs", "ca", "ceb", "co", "cs", "cy", "da", "de", "el", "eo", "es", "et", "eu", "fa", "fi", "fr", "fy", "ga",
+                                             "gd", "gl", "gu", "ha", "haw", "he", "hi", "hmn", "hr", "ht", "hu", "hy", "id", "ig", "is", "it", "iw", "ja", "jw", "ka", "kk", "km", "kn", "ko", "ku",
+                                             "ky", "la", "lb", "lo", "lt", "lv", "mg", "mi", "mk", "ml", "mn", "mr", "ms", "mt", "my", "ne", "nl", "no", "ny", "or", "pa", "pl", "ps", "pt", "ro",
+                                             "ru", "rw", "sd", "si", "sk", "sl", "sm", "sn", "so", "sq", "sr", "st", "su", "sv", "sw", "ta", "te", "tg", "th", "tk", "tl", "tr", "tt", "ug", "uk",
+                                             "ur", "uz", "vi", "xh", "yi", "yo", "zh", "zh-CN", "zh-TW", "zu" };
+
+            // Set up a random number generator to pick languages.
+            Random rng = new();
+
+            // Print the original passed in string.
+            Console.WriteLine($"Original Line: {text}");
+
+            // Loop through the amount of times the user specified.
+            for (int c = 0; c < passes; c++)
+            {
+                int targetLanguage = rng.Next(Languages.Count);
+                text = HttpUtility.HtmlDecode(Translate(text, Languages[targetLanguage]));
+                Console.WriteLine($"Translation {c + 1}/{passes}. Language {Languages[targetLanguage]}: {text}");
+            }
+            
+            // Translate back to English at the end.
+            text = HttpUtility.HtmlDecode(Translate(text, "en"));
+
+            // Print the final translation.
+            Console.WriteLine($"Final Translation: {text}");
+
+            // Return the final translation.
+            return text;
+        }
+
+        /// <summary>
+        /// Actual text translation function, only called by the Google Translate one.
+        /// </summary>
+        /// <param name="inputString">Text to translate.</param>
+        /// <param name="targetLanguage">Target language.</param>
+        private static string Translate(string inputString, string targetLanguage)
+        {
+            TranslationClient client = TranslationClient.Create();
+            var response = client.TranslateHtml(inputString, targetLanguage);
+            return response.TranslatedText;
         }
     }
 }
