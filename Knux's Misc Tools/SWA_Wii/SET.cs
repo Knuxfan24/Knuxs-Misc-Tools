@@ -1,8 +1,6 @@
 ﻿using HedgeLib.Sets;
-using Marathon.Formats.Placement;
 using Marathon.IO;
 using System.Numerics;
-using System.Xml;
 
 namespace Knuxs_Misc_Tools.SWA_Wii
 {
