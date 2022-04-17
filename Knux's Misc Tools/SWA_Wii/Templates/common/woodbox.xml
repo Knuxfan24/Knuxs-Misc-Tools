@@ -1,0 +1,7 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <Unknown0 type="int" default="0" description="" />
+  <Unknown1 type="int" default="0" description="" />
+  <Unknown2 type="int" default="0" description="" />
+  <Unknown3 type="int" default="0" description="" />
+</Template>

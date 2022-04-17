@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <Unknown0 type="int" default="0" description="" />
+  <Unknown1 type="int" default="0" description="" />
+  <Unknown2 type="int" default="0" description="" />
+  <Unknown3 type="float" default="0" description="" />
+  <Unknown4 type="int" default="0" description="" />
+  <Unknown5 type="int" default="0" description="" />
+  <Unknown6 type="int" default="0" description="" />
+  <Unknown7 type="int" default="0" description="" />
+  <Unknown8 type="int" default="0" description="" />
+  <Unknown9 type="int" default="0" description="" />
+  <Unknown10 type="float" default="0" description="" />
+  <Unknown11 type="float" default="0" description="" />
+  <Unknown12 type="float" default="0" description="" />
+  <Unknown13 type="float" default="0" description="" />
+  <Unknown14 type="int" default="0" description="" />
+  <Unknown15 type="float" default="0" description="" />
+  <Unknown16 type="float" default="0" description="" />
+  <Unknown17 type="float" default="0" description="" />
+  <Unknown18 type="float" default="0" description="" />
+  <Unknown19 type="float" default="0" description="" />
+  <Unknown20 type="float" default="0" description="" />
+  <Unknown21 type="float" default="0" description="" />
+  <Unknown22 type="float" default="0" description="" />
+  <Unknown23 type="float" default="0" description="" />
+  <Unknown24 type="float" default="0" description="" />
+  <Unknown25 type="int" default="0" description="" />
+  <Unknown26 type="int" default="0" description="" />
+  <Unknown27 type="int" default="0" description="" />
+  <Unknown28 type="int" default="0" description="" />
+  <Unknown29 type="int" default="0" description="" />
+  <Unknown30 type="int" default="0" description="" />
+  <Unknown31 type="int" default="0" description="" />
+  <Unknown32 type="int" default="0" description="" />
+  
+  <Extra type="model" name="enm_eggfighter_HD.model" />
+  <Extra type="skeleton" name="enm_eggfighter_HD.skl.hkx" />
+  <Extra type="animation" name="efn_idle_loop.anm.hkx" />
+</Template>

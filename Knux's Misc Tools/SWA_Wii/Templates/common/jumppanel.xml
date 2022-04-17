@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Template>
+  <Unknown0 type="int" default="0" description="" />
+  <Unknown1 type="int" default="0" description="" />
+  <Unknown2 type="int" default="0" description="" />
+  <Unknown3 type="float" default="0" description="" />
+  <Unknown4 type="float" default="0" description="" />
+  <Unknown5 type="float" default="0" description="" />
+  <OutOfControl type="float" default="0" description="" />
+  <Unknown7 type="int" default="0" description="" />
+  
+  <Extra type="model" name="cmn_obj_jumppanel30M_HD.model" />
+</Template>
