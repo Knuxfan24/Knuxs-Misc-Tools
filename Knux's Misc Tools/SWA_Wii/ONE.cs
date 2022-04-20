@@ -85,6 +85,73 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         }
 
         /// <summary>
+        /// Saves the data to a ONE archive.
+        /// TODO: Compression.
+        /// </summary>
+        /// <param name="filepath">Where to save the created ONE archive.</param>
+        /// <param name="compressed">Whether or not to apply LZ11 compression.</param>
+        public void Save(string filepath, bool compressed = false)
+        {
+            // Set up the writer.
+            BinaryWriterEx writer = new(File.OpenWrite(filepath));
+
+            // Header.
+            writer.Write("one.");
+            writer.Write(Files.Count);
+
+            // Filenames, lengths and offsets.
+            for (int i = 0; i < Files.Count; i++)
+            {
+                writer.WriteNullPaddedString(Files[i].FileName, 0x38);
+                writer.AddOffset($"File{i}");
+                writer.Write(Files[i].Data.Length);
+            }
+            
+            // Weird padding fix. Not sure about this one.
+            writer.FixPadding(0x10);
+            writer.WriteNulls(0x10);
+
+            // Actual file data.
+            for (int i = 0; i < Files.Count; i++)
+            {
+                writer.FillOffset($"File{i}");
+                writer.Write(Files[i].Data);
+
+                // Even weirder padding fix. Even less sure about this one.
+                if (writer.BaseStream.Position % 0x10 == 0)
+                    writer.WriteNulls(0x10);
+                writer.FixPadding(0x20);
+            }
+
+            // Third times the charm for weird padding that is probably wrong.
+            writer.WriteNulls(0x10);
+
+            // Close the writer.
+            writer.Close();
+        }
+
+        /// <summary>
+        /// Collects the files in a directory into an archive.
+        /// </summary>
+        /// <param name="directoryPath">The directory to package.</param>
+        public void GetFiles(string directoryPath)
+        {
+            // Get the files in this directory.
+            string[] files = Directory.GetFiles(directoryPath, "*.*", SearchOption.AllDirectories);
+
+            // Loop through each one and add their name and binary data to the list.
+            foreach (string? file in files)
+            {
+                FileEntry entry = new()
+                {
+                    FileName = Path.GetFileName(file),
+                    Data = File.ReadAllBytes(file)
+                };
+                Files.Add(entry);
+            }
+        }
+
+        /// <summary>
         /// Extracts the files to disc.
         /// </summary>
         /// <param name="directory">The directory to extract to.</param>
