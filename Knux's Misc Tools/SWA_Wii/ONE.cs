@@ -9,7 +9,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         public byte[]? Data { get; set; }
     }
 
-    internal class ONE
+    public class ONE
     {
         public List<FileEntry> Files = new();
 
