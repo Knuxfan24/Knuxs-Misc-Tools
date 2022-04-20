@@ -2,9 +2,16 @@
 
 namespace Knuxs_Misc_Tools.SWA_Wii
 {
+    public class FileEntry
+    {
+        public string? FileName { get; set; }
+
+        public byte[]? Data { get; set; }
+    }
+
     internal class ONE
     {
-        public Dictionary<string, byte[]> Files = new();
+        public List<FileEntry> Files = new();
 
         /// <summary>
         /// Loads an uncompressed Sonic Unleashed Wii ONE Archive.
@@ -30,7 +37,10 @@ namespace Knuxs_Misc_Tools.SWA_Wii
 
                 // If it succeeds this time, then throw a placeholder exception until I do something with LZ11.
                 else
+                {
+                    reader.JumpBehind(0x5);
                     throw new NotImplementedException("LZ11 decompression not yet implemented.");
+                }
             }
             
             // Read how many files this archive has.
@@ -56,7 +66,12 @@ namespace Knuxs_Misc_Tools.SWA_Wii
                 byte[] binary = reader.ReadBytes(fileLength);
 
                 // Save this file.
-                Files.Add(fileName, binary);
+                FileEntry file = new()
+                {
+                    FileName = fileName,
+                    Data = binary
+                };
+                Files.Add(file);
 
                 // Jump back for the next one.
                 reader.JumpTo(position);
@@ -75,8 +90,8 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// <param name="directory">The directory to extract to.</param>
         public void Extract(string directory)
         {
-            foreach (KeyValuePair<string, byte[]> file in Files)
-                File.WriteAllBytes($@"{directory}\{file.Key}", file.Value);
+            foreach (FileEntry file in Files)
+                File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
         }
     }
 }
