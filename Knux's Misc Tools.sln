@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Knux's Misc Tools", "Knux's Misc Tools\Knux's Misc Tools.csproj", "{F99F232A-C0B7-4B62-B012-177B899F5FF6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonic_Unleashed_ONE_Extractor", "Sonic Unleashed ONE Extractor\Sonic_Unleashed_ONE_Extractor.csproj", "{D92AB71D-AEB5-4D3A-8C96-E2F53844B65F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonic_Unleashed_ONE_Tool", "Sonic Unleashed ONE Tool\Sonic_Unleashed_ONE_Tool.csproj", "{D92AB71D-AEB5-4D3A-8C96-E2F53844B65F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
