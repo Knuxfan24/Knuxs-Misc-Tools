@@ -15,7 +15,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             public Quaternion Rotation { get; set; }
 
             // Is there anyway to identify the parameter data types like in '06?
-            public List<uint> Parameters_UInts { get; set; } = new();
+            public List<int> Parameters_Ints { get; set; } = new();
 
             public List<float> Parameters_Floats { get; set; } = new();
         }
@@ -85,7 +85,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
                 // Read the remaining length of the object as parameters (this is probably horribly scuffed).
                 uint parameterLength = objectLength - 0x24;
                 for (int p = 0; p < parameterLength / 4; p++)
-                    obj.Parameters_UInts.Add(reader.ReadUInt32());
+                    obj.Parameters_Ints.Add(reader.ReadInt32());
 
                 reader.JumpBehind(parameterLength);
                 for (int p = 0; p < parameterLength / 4; p++)
@@ -124,7 +124,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             for (int i = 0; i < Objects.Count; i++)
             {
                 writer.AddOffset($"Object{i}");
-                writer.Write(0x24 + (Objects[i].Parameters_UInts.Count * 4));
+                writer.Write(0x24 + (Objects[i].Parameters_Ints.Count * 4));
             }
 
             // Write the objects.
@@ -132,13 +132,13 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             {
                 writer.FillOffset($"Object{i}");
 
-                writer.Write(0x24 + (Objects[i].Parameters_UInts.Count * 4));
+                writer.Write(0x24 + (Objects[i].Parameters_Ints.Count * 4));
                 writer.Write(Objects[i].Type);
                 writer.Write(Objects[i].Position);
                 writer.Write(Objects[i].Rotation);
 
-                for (int p = 0; p < Objects[i].Parameters_UInts.Count; p++)
-                    writer.Write(Objects[i].Parameters_UInts[p]);
+                for (int p = 0; p < Objects[i].Parameters_Ints.Count; p++)
+                    writer.Write(Objects[i].Parameters_Ints[p]);
             }
 
             // Flip the writer's endianness (again).
@@ -160,6 +160,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// <param name="filepath">The path to the .set.xml to write.</param>
         public void DumpGLVL(string filepath, string templatesPath)
         {
+            // Load our templates.
             var templates = SetObjectType.LoadObjectTemplates(templatesPath);
 
             // Create the Generations SET File.
@@ -183,8 +184,8 @@ namespace Knuxs_Misc_Tools.SWA_Wii
                 {
                     gensObj.ObjectType = $"Unknown_0x{Objects[i].Type:X}";
 
-                    for (int p = 0; p < Objects[i].Parameters_UInts.Count; p++)
-                        gensObj.Parameters.Add(new SetObjectParam(typeof(uint), Objects[i].Parameters_UInts[p]));
+                    for (int p = 0; p < Objects[i].Parameters_Ints.Count; p++)
+                        gensObj.Parameters.Add(new SetObjectParam(typeof(int), Objects[i].Parameters_Ints[p]));
                 }
 
                 // If we do have a template, fill things out from it.
@@ -196,7 +197,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
                         if (template.Value.Parameters[p].DataType == typeof(Single))
                             gensObj.Parameters.Add(new SetObjectParam(typeof(float), Objects[i].Parameters_Floats[p]));
                         else
-                            gensObj.Parameters.Add(new SetObjectParam(typeof(uint), Objects[i].Parameters_UInts[p]));
+                            gensObj.Parameters.Add(new SetObjectParam(typeof(int), Objects[i].Parameters_Ints[p]));
                     }
                 }
 
@@ -291,6 +292,103 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             StupidHedgeLibWorkaround = StupidHedgeLibWorkaround.Where(x => !string.IsNullOrEmpty(x)).ToArray();
 
             File.WriteAllLines(filepath, StupidHedgeLibWorkaround);
+        }
+    
+        public void ImportGLVL(string filepath, string templatesPath)
+        {
+            // Load our templates.
+            var templates = SetObjectType.LoadObjectTemplates(templatesPath);
+
+            // Load the Generations SET File.
+            GensSetData set = new();
+            set.Load(filepath);
+
+            // Loop through each object.
+            for (int i = 0; i < set.Objects.Count; i++)
+            {
+                // Check if we have a template for this object.
+                var objectType = KnownTypes.FirstOrDefault(x => x.Value == set.Objects[i].ObjectType);
+                var template = templates.FirstOrDefault(x => x.Key == objectType.Value);
+
+                // Create a new Unleashed Wii SET Object.
+                SetObject obj = new()
+                {
+                    Position = new(set.Objects[i].Transform.Position.X, set.Objects[i].Transform.Position.Y, set.Objects[i].Transform.Position.Z),
+                    Rotation = new(set.Objects[i].Transform.Rotation.X, set.Objects[i].Transform.Rotation.Y, set.Objects[i].Transform.Rotation.Z, set.Objects[i].Transform.Rotation.W)
+                };
+
+                // Check if this type is known, if not, then just take it from its name.
+                if (set.Objects[i].ObjectType.StartsWith("Unknown_0x"))
+                    obj.Type = uint.Parse(set.Objects[i].ObjectType[10..], System.Globalization.NumberStyles.HexNumber);
+                else
+                    obj.Type = objectType.Key;
+
+                // Loop through the parameters.
+                for (int p = 0; p < set.Objects[i].Parameters.Count; p++)
+                {
+                    // Use a template for types if we have one.
+                    if (template.Value != null)
+                    {
+                        if (template.Value.Parameters[p].DataType == typeof(int))
+                        {
+                            // Conver the int to hex so we can add it to the floats list correctly.
+                            int data = (int)set.Objects[i].Parameters[p].Data;
+                            string hexStringData = data.ToString("X");
+
+                            // Add this parameter to the lists.
+                            obj.Parameters_Ints.Add(data);
+                            obj.Parameters_Floats.Add(Helpers.FromHexString(hexStringData));
+                        }
+
+                        if (template.Value.Parameters[p].DataType == typeof(float))
+                        {
+                            // Stupid dumb workaround for HedgeLib detecting whole numbers in floats as ints.
+                            int wtf = 0;
+                            float data = 0f;
+
+                            // Try read this value as an int.
+                            try { wtf = (int)set.Objects[i].Parameters[p].Data; }
+                            catch { }
+
+                            // Try read this value as a float.
+                            try { data = (float)set.Objects[i].Parameters[p].Data; }
+                            catch { data = wtf; }
+
+                            // Convert the float to hex so we can add it to the ints list correctly.
+                            string hexStringData = Helpers.ToHexString(data);
+
+                            // Add this parameter to the lists.
+                            obj.Parameters_Ints.Add(int.Parse(hexStringData, System.Globalization.NumberStyles.HexNumber));
+                            obj.Parameters_Floats.Add(data);
+                        }
+                    }
+
+                    // Fall back on HedgeLib#'s awkward type detection if not.
+                    else
+                    {
+                        if (set.Objects[i].Parameters[p].DataType == typeof(int))
+                        {
+                            int data = (int)set.Objects[i].Parameters[p].Data;
+                            string hexStringData = data.ToString("X");
+
+                            obj.Parameters_Ints.Add(data);
+                            obj.Parameters_Floats.Add(Helpers.FromHexString(hexStringData));
+                        }
+
+                        if (set.Objects[i].Parameters[p].DataType == typeof(float))
+                        {
+                            float data = (float)set.Objects[i].Parameters[p].Data;
+                            string hexStringData = Helpers.ToHexString(data);
+
+                            obj.Parameters_Ints.Add(int.Parse(hexStringData, System.Globalization.NumberStyles.HexNumber));
+                            obj.Parameters_Floats.Add(data);
+                        }
+                    }
+                }
+
+                // Add this object.
+                Objects.Add(obj);
+            }
         }
     }
 }
