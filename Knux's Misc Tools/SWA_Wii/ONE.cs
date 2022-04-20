@@ -6,8 +6,6 @@ namespace Knuxs_Misc_Tools.SWA_Wii
     {
         public Dictionary<string, byte[]> Files = new();
 
-        static string Signature { get; } = "one.";
-
         /// <summary>
         /// Loads an uncompressed Sonic Unleashed Wii ONE Archive.
         /// </summary>
@@ -18,7 +16,22 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
             // Check this is an uncompressed Unleashed Wii ONE archive.
-            reader.ReadSignature(4, Signature);
+            string SigCheck = reader.ReadNullPaddedString(4);
+            
+            // If this signature check fails, check again at 0x5 to see if this is a compressed file.
+            if (SigCheck != "one.")
+            {
+                reader.JumpAhead();
+                SigCheck = reader.ReadNullPaddedString(4);
+
+                // If the signature check fails again, then assume this isn't a valid file and throw an exception.
+                if (SigCheck != "one.")
+                    throw new Exception($"File '{filepath}' does not appeared to be a Sonic Unleashed ON* archive.");
+
+                // If it succeeds this time, then throw a placeholder exception until I do something with LZ11.
+                else
+                    throw new NotImplementedException("LZ11 decompression not yet implemented.");
+            }
             
             // Read how many files this archive has.
             uint fileCount = reader.ReadUInt32();
