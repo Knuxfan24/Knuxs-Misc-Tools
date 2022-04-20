@@ -102,6 +102,59 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         }
 
         /// <summary>
+        /// Saves an Unleashed Wii SET File.
+        /// </summary>
+        /// <param name="filepath">The filepath to save to.</param>
+        public void Save(string filepath)
+        {
+            // Set up the writer.
+            BinaryWriterEx writer = new(File.OpenWrite(filepath));
+
+            // Header.
+            writer.Write((byte)1); // Version.
+            writer.Write((ushort)Objects.Count); // Object Count.
+            writer.WriteNulls(0x2); // Padding.
+            writer.Write("FS"); // Placeholder for the file size.
+            writer.FixPadding(0x10); // Padding.
+
+            // Flip the writer's endianness.
+            writer.IsBigEndian = true;
+
+            // Write the object offset table.
+            for (int i = 0; i < Objects.Count; i++)
+            {
+                writer.AddOffset($"Object{i}");
+                writer.Write(0x24 + (Objects[i].Parameters_UInts.Count * 4));
+            }
+
+            // Write the objects.
+            for (int i = 0; i < Objects.Count; i++)
+            {
+                writer.FillOffset($"Object{i}");
+
+                writer.Write(0x24 + (Objects[i].Parameters_UInts.Count * 4));
+                writer.Write(Objects[i].Type);
+                writer.Write(Objects[i].Position);
+                writer.Write(Objects[i].Rotation);
+
+                for (int p = 0; p < Objects[i].Parameters_UInts.Count; p++)
+                    writer.Write(Objects[i].Parameters_UInts[p]);
+            }
+
+            // Flip the writer's endianness (again).
+            writer.IsBigEndian = false;
+
+            // Jump back to the placeholder file size.
+            writer.BaseStream.Position = 0x05;
+
+            // Overwrite it with our actual file size.
+            writer.Write((ushort)writer.BaseStream.Length);
+
+            // Close the writer.
+            writer.Close();
+        }
+
+        /// <summary>
         /// Uses HedgeLib to write a Generations SET File.
         /// </summary>
         /// <param name="filepath">The path to the .set.xml to write.</param>
