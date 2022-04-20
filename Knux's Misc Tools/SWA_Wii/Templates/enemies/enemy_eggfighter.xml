@@ -4,7 +4,7 @@
   <Unknown1 type="int" default="0" description="" />
   <Unknown2 type="int" default="0" description="" />
   <Unknown3 type="float" default="0" description="" />
-  <Unknown4 type="int" default="0" description="" />
+  <Unknown4 type="float" default="0" description="" />
   <Unknown5 type="int" default="0" description="" />
   <Unknown6 type="int" default="0" description="" />
   <Unknown7 type="int" default="0" description="" />
@@ -14,7 +14,7 @@
   <Unknown11 type="float" default="0" description="" />
   <Unknown12 type="float" default="0" description="" />
   <Unknown13 type="float" default="0" description="" />
-  <Unknown14 type="int" default="0" description="" />
+  <Unknown14 type="float" default="0" description="" />
   <Unknown15 type="float" default="0" description="" />
   <Unknown16 type="float" default="0" description="" />
   <Unknown17 type="float" default="0" description="" />

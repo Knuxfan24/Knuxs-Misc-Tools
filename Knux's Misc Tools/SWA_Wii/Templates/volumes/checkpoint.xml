@@ -5,9 +5,9 @@
   <Height type="float" default="0" description="" />
   <Width type="float" default="0" description="" />
   <Length type="float" default="0" description="" />
-  <Unknown5 type="int" default="0" description="" />
-  <Unknown6 type="int" default="0" description="" />
-  <Unknown7 type="int" default="0" description="" />
+  <Unknown5 type="float" default="0" description="" />
+  <Unknown6 type="float" default="0" description="" />
+  <Unknown7 type="float" default="0" description="" />
 
   <Extra type="preview_box_x" name="Width" />
   <Extra type="preview_box_y" name="Height" />
