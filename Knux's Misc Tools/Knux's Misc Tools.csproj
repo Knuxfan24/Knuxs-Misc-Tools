@@ -16,6 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Reference Include="FraGag.Compression.Prs">
+      <HintPath>..\..\..\..\source\repos\prs.net\FraGag.Compression.Prs\bin\Debug\FraGag.Compression.Prs.dll</HintPath>
+    </Reference>
     <Reference Include="HedgeLib">
       <HintPath>..\..\HedgeLib\HedgeLib\bin\Debug\HedgeLib.dll</HintPath>
     </Reference>
