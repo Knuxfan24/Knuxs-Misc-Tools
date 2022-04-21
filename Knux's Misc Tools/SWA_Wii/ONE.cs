@@ -139,15 +139,56 @@ namespace Knuxs_Misc_Tools.SWA_Wii
             // Get the files in this directory.
             string[] files = Directory.GetFiles(directoryPath, "*.*", SearchOption.AllDirectories);
 
-            // Loop through each one and add their name and binary data to the list.
-            foreach (string? file in files)
+            // Check if we have an order to reference, if not, then just do them sequentially.
+            if (!File.Exists(@$"{directoryPath}\fileorder.log"))
             {
-                FileEntry entry = new()
+                // Loop through each file in the directory and add them.
+                foreach (string? file in files)
                 {
-                    FileName = Path.GetFileName(file),
-                    Data = File.ReadAllBytes(file)
-                };
-                Files.Add(entry);
+                    FileEntry entry = new()
+                    {
+                        FileName = Path.GetFileName(file),
+                        Data = File.ReadAllBytes(file)
+                    };
+                    Files.Add(entry);
+                }
+            }
+            else
+            {
+                // Read our order list.
+                string[] fileOrder = File.ReadAllLines(@$"{directoryPath}\fileorder.log");
+
+                // Loop through each file in the list.
+                foreach (var file in fileOrder)
+                {
+                    // Check this file exists. If it does, then add it.
+                    if (File.Exists(@$"{directoryPath}\{file}"))
+                    {
+                        FileEntry entry = new()
+                        {
+                            FileName = Path.GetFileName(@$"{directoryPath}\{file}"),
+                            Data = File.ReadAllBytes(@$"{directoryPath}\{file}")
+                        };
+                        Files.Add(entry);
+                    }
+
+                    // If this file is that stupid space.bin padding, then create it.
+                    else if (file == "space.bin")
+                    {
+                        FileEntry entry = new()
+                        {
+                            FileName = "space.bin",
+                            Data = new byte[] { 0x73, 0x70, 0x61, 0x63, 0x65, 0x20, 0x20, 0x20 }
+                        };
+                        Files.Add(entry);
+                    }
+
+                    // If still not, then give up.
+                    else
+                    {
+                        throw new Exception($"Couldn't find file '{file}' referenced by fileorder.");
+                    }
+                }
             }
         }
 
@@ -157,8 +198,22 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// <param name="directory">The directory to extract to.</param>
         public void Extract(string directory)
         {
+            // Set up our file order log.
+            StreamWriter log = new(File.Open($@"{directory}\fileorder.log", FileMode.Create));
+
+            // Loop through each file.
             foreach (FileEntry file in Files)
-                File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
+            {
+                // Write the file's name to the order log.
+                log.WriteLine(file.FileName);
+
+                // If this isn't a space.bin padding file, then write it to disk.
+                if (file.FileName != "space.bin")
+                    File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
+            }
+
+            // Finish the order log.
+            log.Close();
         }
     }
 }
