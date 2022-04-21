@@ -8,8 +8,6 @@ namespace Knuxs_Misc_Tools.Storybook
         public string? FileName { get; set; }
 
         public byte[]? Data { get; set; }
-
-        public uint UnknownUInt32_1 { get; set; }
     }
     internal class ONE
     {
@@ -34,7 +32,7 @@ namespace Knuxs_Misc_Tools.Storybook
                 int fileIndex = reader.ReadInt32();
                 uint fileOffset = reader.ReadUInt32();
                 int fileLength = reader.ReadInt32();
-                uint UnknownUInt32_3 = reader.ReadUInt32();
+                uint decompressedSize = reader.ReadUInt32();
 
                 // Save our current position so we can jump back for the next file.
                 long position = reader.BaseStream.Position;
@@ -49,8 +47,7 @@ namespace Knuxs_Misc_Tools.Storybook
                 FileEntry file = new()
                 {
                     FileName = fileName,
-                    Data = binary,
-                    UnknownUInt32_1 = UnknownUInt32_3
+                    Data = binary
                 };
 
                 // Decompress this file.
@@ -69,8 +66,19 @@ namespace Knuxs_Misc_Tools.Storybook
             if (extractionPath != null)
                 Extract(extractionPath);
         }
-        public void Save(string filepath, bool compress = true)
+
+        /// <summary>
+        /// Saves the data to a ONE archive.
+        /// </summary>
+        /// <param name="filepath">Where to save the created ONE archive.</param>
+        /// <param name="compressed">Whether or not to apply Prs compression.</param>
+        public void Save(string filepath, bool compressed = true)
         {
+            // Get the decompressed file sizes.
+            List<int> DecompressedSizes = new(Files.Count);
+            foreach (var file in Files)
+                DecompressedSizes.Add(file.Data.Length);
+
             // Set up the writer.
             BinaryWriterEx writer = new(File.OpenWrite(filepath), true);
 
@@ -82,7 +90,7 @@ namespace Knuxs_Misc_Tools.Storybook
 
             // Recompress the files.
             // Concerningly, the recompression does not match the game's original files. Is that a problem?
-            if (compress)
+            if (compressed)
                 for (int i = 0; i < Files.Count; i++)
                     Files[i].Data = Prs.Compress(Files[i].Data);
 
@@ -93,7 +101,7 @@ namespace Knuxs_Misc_Tools.Storybook
                 writer.Write(i);
                 writer.AddOffset($"File{i}");
                 writer.Write(Files[i].Data.Length);
-                writer.Write(Files[i].UnknownUInt32_1); // TODO: What does this mean?
+                writer.Write(DecompressedSizes[i]);
             }
 
             // Write the file binary data.
