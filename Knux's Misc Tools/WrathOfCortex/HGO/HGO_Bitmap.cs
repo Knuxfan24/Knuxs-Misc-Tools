@@ -1,6 +1,4 @@
-﻿using Marathon.IO;
-
-namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
+﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
 {
     internal class HGO_Bitmap
     {

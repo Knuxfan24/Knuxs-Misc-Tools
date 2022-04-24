@@ -1,7 +1,4 @@
-﻿using Marathon.IO;
-using System.Numerics;
-
-namespace Knuxs_Misc_Tools.RockX7
+﻿namespace Knuxs_Misc_Tools.RockX7
 {
     public class SET : FileBase
     {

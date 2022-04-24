@@ -1,7 +1,4 @@
-﻿using Marathon.IO;
-using System.Numerics;
-
-namespace Knuxs_Misc_Tools.WrathOfCortex
+﻿namespace Knuxs_Misc_Tools.WrathOfCortex
 {
     internal class Wumpa
     {

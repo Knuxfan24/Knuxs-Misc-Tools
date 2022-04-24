@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace Knuxs_Misc_Tools.CarZ
+﻿namespace Knuxs_Misc_Tools.CarZ
 {
     internal class SCO
     {

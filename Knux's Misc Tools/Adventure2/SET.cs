@@ -1,6 +1,4 @@
-﻿using Marathon.IO;
-using Marathon.Helpers;
-using System.Numerics;
+﻿using Marathon.Helpers;
 using Marathon.Formats.Placement;
 
 namespace Knuxs_Misc_Tools.Adventure2

@@ -1,7 +1,4 @@
-﻿using Marathon.IO;
-using System.Numerics;
-
-namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
+﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
 {
     public class HGO_Material
     {

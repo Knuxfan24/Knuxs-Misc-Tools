@@ -1,7 +1,4 @@
-﻿using Marathon.IO;
-using System.Numerics;
-
-namespace Knuxs_Misc_Tools.Storybook
+﻿namespace Knuxs_Misc_Tools.Storybook
 {
     public class SetObject
     {

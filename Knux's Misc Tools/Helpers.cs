@@ -1,5 +1,4 @@
 ﻿using Google.Cloud.Translation.V2;
-using System.Numerics;
 using System.Web;
 
 namespace Knuxs_Misc_Tools

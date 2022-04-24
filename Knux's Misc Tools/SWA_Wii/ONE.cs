@@ -1,6 +1,4 @@
-﻿using Marathon.IO;
-
-namespace Knuxs_Misc_Tools.SWA_Wii
+﻿namespace Knuxs_Misc_Tools.SWA_Wii
 {
     public class FileEntry
     {
