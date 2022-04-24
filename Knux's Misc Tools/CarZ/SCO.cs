@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.CarZ
 {
-    internal class SCO
+    public class SCO : FileBase
     {
         public class FormatData
         {
@@ -30,7 +30,7 @@
 
         public FormatData Data = new();
 
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
             // Load the SCO into a String Array.
             string[] file = File.ReadAllLines(filepath);

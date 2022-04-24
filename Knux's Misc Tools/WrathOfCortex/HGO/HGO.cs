@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
 {
-    internal class HGO
+    public class HGO : FileBase
     {
         public class FormatData
         {
@@ -20,8 +20,9 @@
 
         public FormatData Data = new();
 
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
+            // TODO: Consider finishing this.
             int chunkCount = 0;
             BinaryReaderEx reader = new(File.OpenRead($"{filepath}.blk"), true);
 

@@ -3,7 +3,7 @@ using Marathon.Formats.Placement;
 
 namespace Knuxs_Misc_Tools.Adventure2
 {
-    internal class SET
+    public class SET: FileBase
     {
         public class SetObject
         {
@@ -18,7 +18,7 @@ namespace Knuxs_Misc_Tools.Adventure2
 
         public List<SetObject> Objects = new();
 
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath), true);
 

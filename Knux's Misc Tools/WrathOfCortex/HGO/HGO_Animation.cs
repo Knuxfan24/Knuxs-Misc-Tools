@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
 {
-    internal class HGO_Animation
+    public class HGO_Animation
     {
         public uint UnknownUInt32_1 { get; set; }
 

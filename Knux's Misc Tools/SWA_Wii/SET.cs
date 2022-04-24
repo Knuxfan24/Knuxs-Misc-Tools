@@ -2,7 +2,7 @@
 
 namespace Knuxs_Misc_Tools.SWA_Wii
 {
-    internal class SET
+    public class SET : FileBase
     {
         public class SetObject
         {
@@ -46,7 +46,7 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// Loads an Unleashed Wii SET file.
         /// </summary>
         /// <param name="filepath">The file to parse.</param>
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 

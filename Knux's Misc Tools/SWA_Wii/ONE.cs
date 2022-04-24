@@ -9,7 +9,7 @@
         public override string ToString() => FileName;
     }
 
-    public class ONE
+    public class ONE : FileBase
     {
         public List<FileEntry> Files = new();
 
@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="filepath">The archive to load.</param>
         /// <param name="extractionPath">Path to extract the data to.</param>
-        public void Load(string filepath, string? extractionPath = null)
+        public override void Load(string filepath, string? extractionPath = null)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
@@ -90,7 +90,7 @@
         /// </summary>
         /// <param name="filepath">Where to save the created ONE archive.</param>
         /// <param name="compressed">Whether or not to apply LZ11 compression.</param>
-        public void Save(string filepath, bool compressed = false)
+        public override void Save(string filepath, bool compressed = false)
         {
             // Set up the writer.
             BinaryWriterEx writer = new(File.OpenWrite(filepath));

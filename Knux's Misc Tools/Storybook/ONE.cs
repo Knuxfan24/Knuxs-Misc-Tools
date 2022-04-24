@@ -10,7 +10,7 @@ namespace Knuxs_Misc_Tools.Storybook
 
         public override string ToString() => FileName;
     }
-    internal class ONE
+    public class ONE : FileBase
     {
         public List<FileEntry> Files = new();
 
@@ -20,7 +20,7 @@ namespace Knuxs_Misc_Tools.Storybook
         /// <param name="filepath">The archive to load.</param>
         /// <param name="decompress">Whether to decompress the binary data when reading.</param>
         /// <param name="extractionPath">Path to extract the data to.</param>
-        public void Load(string filepath, bool decompress = true, string? extractionPath = null)
+        public override void Load(string filepath, bool decompress = true, string? extractionPath = null)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath), true);
 
@@ -73,7 +73,7 @@ namespace Knuxs_Misc_Tools.Storybook
         /// </summary>
         /// <param name="filepath">Where to save the created ONE archive.</param>
         /// <param name="compressed">Whether or not to apply Prs compression.</param>
-        public void Save(string filepath, bool compressed = true)
+        public override void Save(string filepath, bool compressed = true)
         {
             // Get the decompressed file sizes.
             List<int> DecompressedSizes = new(Files.Count);

@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO
 {
-    internal class HGO_Bitmap
+    public class HGO_Bitmap
     {
         public uint Type { get; set; }
 

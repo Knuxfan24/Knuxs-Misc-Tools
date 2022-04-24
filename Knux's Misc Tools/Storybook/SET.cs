@@ -16,10 +16,11 @@
         public uint UnknownUInt32_9 { get; set; }
     }
 
-    internal class SET
+    public class SET : FileBase
     {
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
+            // TODO: Finish reading this.
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
             string sig = reader.ReadNullPaddedString(0x4);

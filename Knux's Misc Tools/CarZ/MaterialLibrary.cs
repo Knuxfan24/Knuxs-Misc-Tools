@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.CarZ
 {
-    internal class MaterialLibrary
+    public class MaterialLibrary : FileBase
     {
         public class Material
         {
@@ -27,7 +27,7 @@
         
         public List<Material> Materials = new();
 
-        public void Load(string filepath)
+        public override void Load(string filepath)
         {
             // Load the MAT into a String Array.
             string[] file = File.ReadAllLines(filepath);
