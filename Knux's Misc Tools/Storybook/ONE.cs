@@ -20,7 +20,7 @@ namespace Knuxs_Misc_Tools.Storybook
         /// <param name="filepath">The archive to load.</param>
         /// <param name="decompress">Whether to decompress the binary data when reading.</param>
         /// <param name="extractionPath">Path to extract the data to.</param>
-        public override void Load(string filepath, bool decompress = true, string? extractionPath = null)
+        public void Load(string filepath, bool decompress = true, string? extractionPath = null)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath), true);
 

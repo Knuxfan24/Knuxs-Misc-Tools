@@ -18,7 +18,7 @@
         /// </summary>
         /// <param name="filepath">The archive to load.</param>
         /// <param name="extractionPath">Path to extract the data to.</param>
-        public override void Load(string filepath, string? extractionPath = null)
+        public void Load(string filepath, string? extractionPath = null)
         {
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
