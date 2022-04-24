@@ -7,6 +7,8 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         public string? FileName { get; set; }
 
         public byte[]? Data { get; set; }
+
+        public override string ToString() => FileName;
     }
 
     public class ONE
@@ -209,7 +211,10 @@ namespace Knuxs_Misc_Tools.SWA_Wii
 
                 // If this isn't a space.bin padding file, then write it to disk.
                 if (file.FileName != "space.bin")
+                {
+                    Console.WriteLine($"Extracting {file.FileName}.");
                     File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
+                }
             }
 
             // Finish the order log.

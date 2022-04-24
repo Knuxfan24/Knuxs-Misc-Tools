@@ -8,6 +8,8 @@ namespace Knuxs_Misc_Tools.Storybook
         public string? FileName { get; set; }
 
         public byte[]? Data { get; set; }
+
+        public override string ToString() => FileName;
     }
     internal class ONE
     {
@@ -91,8 +93,13 @@ namespace Knuxs_Misc_Tools.Storybook
             // Recompress the files.
             // Concerningly, the recompression does not match the game's original files. Is that a problem?
             if (compressed)
+            {
                 for (int i = 0; i < Files.Count; i++)
+                {
+                    Console.WriteLine($"Compressing {Files[i].FileName}.");
                     Files[i].Data = Prs.Compress(Files[i].Data);
+                }
+            }
 
             // Write the file offset table.
             for (int i = 0; i < Files.Count; i++)
@@ -124,7 +131,10 @@ namespace Knuxs_Misc_Tools.Storybook
             Directory.CreateDirectory(directory);
 
             foreach (FileEntry file in Files)
+            {
+                Console.WriteLine($"Extracting {file.FileName}.");
                 File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
+            }
         }
     }
 }
