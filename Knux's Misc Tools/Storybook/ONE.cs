@@ -135,5 +135,26 @@ namespace Knuxs_Misc_Tools.Storybook
                 File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
             }
         }
+
+        /// <summary>
+        /// Collects the files in a directory into an archive.
+        /// </summary>
+        /// <param name="directoryPath">The directory to package.</param>
+        public void GetFiles(string directoryPath)
+        {
+            // Get the files in this directory.
+            string[] files = Directory.GetFiles(directoryPath, "*.*", SearchOption.AllDirectories);
+
+            // Loop through each file in the directory and add them.
+            foreach (string? file in files)
+            {
+                FileEntry entry = new()
+                {
+                    FileName = Path.GetFileName(file),
+                    Data = File.ReadAllBytes(file)
+                };
+                Files.Add(entry);
+            }
+        }
     }
 }
