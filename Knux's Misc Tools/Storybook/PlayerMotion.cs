@@ -31,12 +31,13 @@
 
             uint fileSize = reader.ReadUInt32();
             uint animationCount = reader.ReadUInt32();
-            uint dataOffset = reader.ReadUInt32(); // ? Think this is always 0x10?
+            uint dataOffset = reader.ReadUInt32(); // ? Always 0x10.
             uint stringTableOffset = reader.ReadUInt32();
             
             for (int i = 0; i < animationCount; i++)
             {
                 MotionEntry entry = new();
+
                 entry.UnknownUInt32_1 = reader.ReadUInt32();
                 uint positionalStringTableOffset = reader.ReadUInt32(); // TODO: Verify.
                 reader.JumpAhead(0x4); // Always 0xFFFFFFFF
@@ -46,10 +47,12 @@
                 entry.UnknownUInt32_3 = reader.ReadUInt32();
                 entry.UnknownFloat_3 = reader.ReadSingle();
                 entry.UnknownFloat_4 = reader.ReadSingle();
+
                 long position = reader.BaseStream.Position;
                 reader.JumpTo(stringTableOffset + positionalStringTableOffset);
                 entry.Name = reader.ReadNullTerminatedString();
                 reader.JumpTo(position);
+
                 Motions.Add(entry);
             }
         }
