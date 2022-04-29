@@ -16,9 +16,9 @@
     {
         public List<BlockEntry> Blocks = new();
 
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
-            BinaryReaderEx reader = new(File.OpenRead(filepath), true);
+            BinaryReaderEx reader = new(stream, true);
 
             reader.ReadSignature(4, "LDBK");
             uint blockCount = reader.ReadUInt32();

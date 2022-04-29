@@ -2,10 +2,10 @@
 {
     public class PTH : FileBase
     {
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
             // TODO: Format is different in Black Knight. Handle that.
-            BinaryReaderEx reader = new(File.OpenRead(filepath));
+            BinaryReaderEx reader = new(stream);
             ushort UnknownUShort_1 = reader.ReadUInt16(); // Always 3, except for a few AIRCAR paths, which have it set to 1. Type maybe?
             ushort UnknownUShort_2 = reader.ReadUInt16(); // Count of something?
             float UnknownFloat_1 = reader.ReadSingle();

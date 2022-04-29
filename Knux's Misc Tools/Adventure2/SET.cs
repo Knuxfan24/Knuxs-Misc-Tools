@@ -18,9 +18,9 @@ namespace Knuxs_Misc_Tools.Adventure2
 
         public List<SetObject> Objects = new();
 
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
-            BinaryReaderEx reader = new(File.OpenRead(filepath), true);
+            BinaryReaderEx reader = new(stream, true);
 
             uint objectCount = reader.ReadUInt32();
             reader.JumpTo(0x20);

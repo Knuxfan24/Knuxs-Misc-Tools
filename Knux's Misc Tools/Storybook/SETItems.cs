@@ -2,10 +2,10 @@
 {
     public class SETItems : FileBase
     {
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
             // TODO: Finish reading this.
-            BinaryReaderEx reader = new(File.OpenRead(filepath));
+            BinaryReaderEx reader = new(stream);
 
             // TODO: RE the Secret Rings version as well.
             uint fileSize = reader.ReadUInt32();
@@ -34,7 +34,7 @@
                 byte objectTable = reader.ReadByte();
                 reader.JumpAhead(0x2); // Always 0xCD.
 
-                reader.JumpAhead(0x24);
+                reader.JumpAhead(0x24); // What is this data for? How does it control whether the object can be loaded or not if it does? Does it control parameters in some way maybe?
             }
 
             reader.Close();

@@ -46,9 +46,9 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// Loads an Unleashed Wii SET file.
         /// </summary>
         /// <param name="filepath">The file to parse.</param>
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
-            BinaryReaderEx reader = new(File.OpenRead(filepath));
+            BinaryReaderEx reader = new(stream);
 
             byte version = reader.ReadByte(); // Not sure if version's the right name, but it's always 1.
             ushort objectCount = reader.ReadUInt16();
@@ -103,10 +103,10 @@ namespace Knuxs_Misc_Tools.SWA_Wii
         /// Saves an Unleashed Wii SET File.
         /// </summary>
         /// <param name="filepath">The filepath to save to.</param>
-        public void Save(string filepath)
+        public override void Save(Stream stream)
         {
             // Set up the writer.
-            BinaryWriterEx writer = new(File.OpenWrite(filepath));
+            BinaryWriterEx writer = new(stream);
 
             // Header.
             writer.Write((byte)1); // Version.

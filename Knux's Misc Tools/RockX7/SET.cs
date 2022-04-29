@@ -57,9 +57,9 @@
 
         public List<SetObject> Objects = new();
 
-        public override void Load(string filepath)
+        public override void Load(Stream stream)
         {
-            BinaryReaderEx reader = new(File.OpenRead(filepath));
+            BinaryReaderEx reader = new(stream);
             uint objectCount = reader.ReadUInt32();
 
             for (int i = 0; i < objectCount - 1; i++)
