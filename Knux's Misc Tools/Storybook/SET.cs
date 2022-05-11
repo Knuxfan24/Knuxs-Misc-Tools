@@ -15,9 +15,9 @@ namespace Knuxs_Misc_Tools.Storybook
         public byte UnknownByte_4 { get; set; } 
 
         public byte UnknownByte_5 { get; set; }
-        public byte UnknownByte_6 { get; set; } // Object Table? Or Draw Distance maybe??????????
-        public byte UnknownByte_7 { get; set; } // Object Type?
-        public byte UnknownByte_8 { get; set; }
+        public byte DrawDistance { get; set; }
+        public byte ObjectType { get; set; }
+        public byte ObjectTable { get; set; }
 
         public uint UnknownUInt32_6 { get; set; }
         public uint UnknownUInt32_7 { get; set; } // Always 0
@@ -72,9 +72,9 @@ namespace Knuxs_Misc_Tools.Storybook
                     UnknownByte_3 = reader.ReadByte(),
                     UnknownByte_4 = reader.ReadByte(),
                     UnknownByte_5 = reader.ReadByte(),
-                    UnknownByte_6 = reader.ReadByte(),
-                    UnknownByte_7 = reader.ReadByte(),
-                    UnknownByte_8 = reader.ReadByte(),
+                    DrawDistance = reader.ReadByte(),
+                    ObjectType = reader.ReadByte(),
+                    ObjectTable = reader.ReadByte(),
                     UnknownUInt32_6 = reader.ReadUInt32(),
                     UnknownUInt32_7 = reader.ReadUInt32(),
                     UnknownUInt32_8 = reader.ReadUInt32(),
@@ -130,9 +130,9 @@ namespace Knuxs_Misc_Tools.Storybook
                 writer.Write(Data.Objects[i].UnknownByte_3);
                 writer.Write(Data.Objects[i].UnknownByte_4);
                 writer.Write(Data.Objects[i].UnknownByte_5);
-                writer.Write(Data.Objects[i].UnknownByte_6);
-                writer.Write(Data.Objects[i].UnknownByte_7);
-                writer.Write(Data.Objects[i].UnknownByte_8);
+                writer.Write(Data.Objects[i].DrawDistance);
+                writer.Write(Data.Objects[i].ObjectType);
+                writer.Write(Data.Objects[i].ObjectTable);
                 writer.Write(Data.Objects[i].UnknownUInt32_6);
                 writer.Write(Data.Objects[i].UnknownUInt32_7);
                 writer.Write(Data.Objects[i].UnknownUInt32_8);
