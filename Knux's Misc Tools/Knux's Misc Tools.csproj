@@ -16,19 +16,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="FraGag.Compression.Prs">
-      <HintPath>..\..\..\..\source\repos\prs.net\FraGag.Compression.Prs\bin\Debug\FraGag.Compression.Prs.dll</HintPath>
-    </Reference>
-    <Reference Include="HedgeLib">
-      <HintPath>..\..\HedgeLib\HedgeLib\bin\Debug\HedgeLib.dll</HintPath>
-    </Reference>
-    <Reference Include="Marathon">
-      <HintPath>..\..\..\..\Documents\GitHub\Marathon\Marathon\bin\Debug\net6.0\Marathon.dll</HintPath>
-    </Reference>
+    <Folder Include="SWA_Wii\Templates\" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="SWA_Wii\Templates\" />
+    <ProjectReference Include="..\HedgeLib\HedgeLib\HedgeLib.csproj" />
+    <ProjectReference Include="..\Marathon\Marathon\Marathon.csproj" />
+    <ProjectReference Include="..\prs.net\FraGag.Compression.Prs\FraGag.Compression.Prs.csproj" />
   </ItemGroup>
 
 </Project>
