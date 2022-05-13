@@ -6,3 +6,5 @@ The stuff here heavily relies on [Marathon](https://github.com/Big-Endian-32/Mar
 [HedgeLib#](https://github.com/Radfordhound/HedgeLib/tree/master) is needed for a couple of the Sonic Unleashed Wii SET functions.
 
 [Prs.net](https://github.com/FraGag/prs.net) is needed for the compression and decompression of Sonic and the Secret Rings/Sonic and the Black Knight ONE archives.
+
+All three projects are included as GitHub Submodules now, so a proper clone will pull them down with it.
