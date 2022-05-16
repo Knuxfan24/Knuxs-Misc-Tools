@@ -60,5 +60,69 @@
                 }
             }
         }
+    
+        public void ExportOBJ(string filepath)
+        {
+            int VertexCount = 0;
+
+            StreamWriter writer = File.CreateText(filepath);
+            for (int i1 = 0; i1 < Geometry.Count; i1++)
+            {
+                writer.WriteLine($"\n# geometry{i1}\n");
+                for (int i2 = 0; i2 < Geometry[i1].Meshes.Count; i2++)
+                {
+                    if (Geometry[i1].Meshes[i2].Primitive != null)
+                    {
+                        if (Geometry[i1].Meshes[i2].Primitive.Type == 6)
+                        {
+                            for (int i = 0; i < Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                            {
+                                writer.WriteLine($"v {Geometry[i1].Meshes[i2].Vertices[i].Position.X} {Geometry[i1].Meshes[i2].Vertices[i].Position.Y} {Geometry[i1].Meshes[i2].Vertices[i].Position.Z}");
+                            }
+
+                            writer.WriteLine();
+                            for (int i = 0; i < Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                            {
+                                writer.WriteLine($"vt {Geometry[i1].Meshes[i2].Vertices[i].UV.X} {Geometry[i1].Meshes[i2].Vertices[i].UV.Y}");
+                            }
+
+                            writer.WriteLine();
+                            for (int i = 0; i < Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                            {
+                                writer.WriteLine($"vn {Geometry[i1].Meshes[i2].Vertices[i].Normals.X} {Geometry[i1].Meshes[i2].Vertices[i].Normals.Y} {Geometry[i1].Meshes[i2].Vertices[i].Normals.Z}");
+                            }
+
+                            writer.WriteLine();
+                            writer.WriteLine($"o geometry{i1}mesh{i2}");
+                            writer.WriteLine($"g geometry{i1}mesh{i2}");
+                            writer.WriteLine($"usemtl Material{Geometry[i1].Meshes[i2].MaterialIndex}");
+                            bool swap = false;
+                            for (int i = 0; i < Geometry[i1].Meshes[i2].Primitive.FaceIndices.Count - 2; i++)
+                            {
+                                if (!swap)
+                                {
+                                    writer.WriteLine($"f {Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1 + VertexCount}" +
+                                                        $" {Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount}" +
+                                                        $" {Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}");
+                                    swap = true;
+                                }
+                                else
+                                {
+                                    writer.WriteLine($"f {Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + 1 + VertexCount} " +
+                                                        $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + 1 + VertexCount} " +
+                                                        $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + 1 + VertexCount}");
+                                    swap = false;
+                                }
+                            }
+
+                            VertexCount += Geometry[i1].Meshes[i2].Vertices.Count;
+                        }
+                    }
+                }
+            }
+
+            writer.Flush();
+            writer.Close();
+        }
     }
 }
