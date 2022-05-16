@@ -2,7 +2,7 @@
 {
     public class Wumpa : FileBase
     {
-        List<Vector3> Coordinates = new();
+        public List<Vector3> Coordinates = new();
 
         public void Load(string filepath, bool bigEndian = false)
         {
