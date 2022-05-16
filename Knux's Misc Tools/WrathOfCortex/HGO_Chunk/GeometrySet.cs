@@ -41,7 +41,7 @@
                                 Position = reader.ReadVector3(),
                                 Normals = reader.ReadVector3(),
                                 Colours = reader.ReadBytes(4),
-                                UV = reader.ReadVector2()
+                                TextureCoordinates = reader.ReadVector2()
                             };
                             mesh.Vertices.Add(vertex);
                         }
@@ -80,7 +80,7 @@
                             Vertex vertex = new()
                             {
                                 Position = reader.ReadVector3(),
-                                UV = reader.ReadVector2(),
+                                TextureCoordinates = reader.ReadVector2(),
                                 Colours = reader.ReadBytes(4)
                             };
                             mesh.Vertices.Add(vertex);
@@ -122,7 +122,7 @@
 
         public byte[] Colours { get; set; }
 
-        public Vector2 UV { get; set; }
+        public Vector2 TextureCoordinates { get; set; }
     }
 
     public class Primitive

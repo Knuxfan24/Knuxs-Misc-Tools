@@ -13,6 +13,7 @@
     <PackageReference Include="CsvHelper" Version="27.2.1" />
     <PackageReference Include="Google.Cloud.Translation.V2" Version="2.1.0" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="System.Drawing.Common" Version="7.0.0-preview.4.22229.4" />
   </ItemGroup>
 
   <ItemGroup>
