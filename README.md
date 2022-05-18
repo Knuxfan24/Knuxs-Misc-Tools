@@ -9,4 +9,4 @@ The stuff here heavily relies on [Marathon](https://github.com/Big-Endian-32/Mar
 
 All three projects are included as GitHub Submodules now, so a proper clone will pull them down with it.
 
-[cs-dxt1](https://github.com/Easimer/cs-dxt1)'s Decompressor is also a part of this repo, but is currently only used in code for the Wrath of Cortex NUS OBJ Export that is commented out due to it not working the way I expected.
+[Rainbow](https://github.com/yodadude2003/Rainbow) is also part of this repo (as a submodule like the others), but the code that involves it doesn't work due to me not understanding how to use its Deswizzler setup to properly decode Gamecube DXT1 textures.

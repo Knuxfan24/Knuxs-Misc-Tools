@@ -1,4 +1,8 @@
-﻿namespace Knuxs_Misc_Tools.WrathOfCortex
+﻿using Rainbow.ImgLib.Encoding;
+using Rainbow.ImgLib.Encoding.Implementation;
+using SkiaSharp;
+
+namespace Knuxs_Misc_Tools.WrathOfCortex
 {
     public class NUS : FileBase
     {
@@ -11,6 +15,16 @@
         public List<HGO_Chunk.Material>? Materials { get; set; }
 
         public List<HGO_Chunk.Geometry>? Geometry { get; set; }
+
+        public HGO_Chunk.INST? INST { get; set; }
+
+        public List<HGO_Chunk.SPECEntry>? SPEC { get; set; }
+
+        public List<HGO_Chunk.SSTEntry>? SST { get; set; }
+
+        public uint? LDirSize { get; set; }
+
+        public HGO_Chunk.TextureAnimation? TextureAnimations { get; set; }
 
         public override void Load(Stream stream)
         {
@@ -49,12 +63,32 @@
                         break;
 
                     case "TSNI":
-                        HGO_Chunk.INST inst = new();
-                        inst.Read(reader);
+                        INST = new();
+                        INST.Read(reader);
+                        break;
+
+                    case "CEPS":
+                        HGO_Chunk.SPEC spec = new();
+                        SPEC = spec.Read(reader);
+                        break;
+
+                    case "0TSS":
+                        HGO_Chunk.SST sst = new();
+                        SST = sst.Read(reader);
+                        break;
+
+                    case "RIDL":
+                        LDirSize = chunkSize; // Literally just a large chunk made entirely of nulls because yes?
+                        reader.JumpAhead(chunkSize);
+                        break;
+
+                    case "0SAT":
+                        TextureAnimations = new();
+                        TextureAnimations.Read(reader);
                         break;
 
                     default:
-                        Console.WriteLine($"NUS Chunk Type '{chunkType}' not yet handled.");
+                        Console.WriteLine($"NUS Chunk Type '{chunkType}' with a size of '0x{chunkSize.ToString("X").PadLeft(8, '0')}' not yet handled.");
                         reader.JumpAhead(chunkSize);
                         break;
                 }
@@ -123,6 +157,7 @@
                                                      $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
                                                      $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
                             }
+                            writer.WriteLine();
                         }
 
                         // Write the standard Triangle List if the type is 5.
@@ -135,6 +170,7 @@
                                                      $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
                                                      $"{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
                             }
+                            writer.WriteLine();
                         }
 
                         // Increment VertexCount so we don't accidentally use Vertices from the wrong mesh.
@@ -181,7 +217,7 @@
                             if (Materials[(int)Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex != -1)
                             {
                                 writer.WriteLine($"\t#Bitmap Type = 0x{Textures[Materials[(int)Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex].Type:X}");
-                                writer.WriteLine($"\tmap_Kd bitmap{Materials[(int)Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex}");
+                                writer.WriteLine($"\tmap_Kd bitmap{Materials[(int)Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex}.png");
                                     
                             }
 
@@ -197,16 +233,21 @@
             #endregion
 
             #region Bitmap Exporting
-            // Not functional, outputs garbage, hardcoded path.
-            //for (int i = 0; i < Textures.Count; i++)
-            //{
-            //    if (Textures[i].Type == 0x80)
-            //    {
-            //        DXT1Decompressor.DXT1Decompressor d = new((int)Textures[i].Width, (int)Textures[i].Height, Textures[i].Data);
-            //        var bitmap = d.ToBitmap();
-            //        bitmap.Save($@"Y:\test{i}.bmp");
-            //    }
-            //}
+            // Not functional, outputs garbage.
+            for (int i = 0; i < Textures.Count; i++)
+            {
+                if (Textures[i].Type == 0x80)
+                {
+                    ImageDecoderDirectColor test = new(Textures[i].Data, (int)Textures[i].Width, (int)Textures[i].Height, new ColorCodecDXT1(Rainbow.ImgLib.Common.ByteOrder.BigEndian, (int)Textures[i].Width, (int)Textures[i].Height));
+                    var wut = test.DecodeImage();
+                    using (var outputStream = new SKFileWStream($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png"))
+                    {
+                        SKPixmap.Encode(outputStream, wut, SKEncodedImageFormat.Png, 100);
+                    }
+                }
+            }
+
+
             #endregion
         }
     }

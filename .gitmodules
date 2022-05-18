@@ -9,3 +9,6 @@
 [submodule "prs.net"]
 	path = prs.net
 	url = https://github.com/FraGag/prs.net
+[submodule "Rainbow"]
+	path = Rainbow
+	url = https://github.com/yodadude2003/Rainbow
