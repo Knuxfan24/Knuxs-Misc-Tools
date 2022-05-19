@@ -99,7 +99,61 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 }
             }
         }
-    
+
+        public override void Save(Stream stream)
+        {
+            // Set up the writer.
+            BinaryWriterEx writer = new(stream, true);
+
+            // Write the 0CSG chunk identifier.
+            writer.Write(Signature);
+
+            // Save the position we'll need to write the file's size to and add a dummy value in its place.
+            long sizePosition = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Save the chunks that exist in this file.
+            // TODO: Missing chunks and order.
+            if (Data.Names != null)
+            {
+                HGO_Chunk.NameTable nameTable = new();
+                nameTable.Write(writer, Data.Names);
+            }
+            if (Data.Textures != null)
+            {
+                HGO_Chunk.TextureSet textureSet = new();
+                textureSet.Write(writer, Data.Textures);
+            }
+            if (Data.Materials != null)
+            {
+                HGO_Chunk.MaterialSet materialSet = new();
+                materialSet.Write(writer, Data.Materials);
+            }
+            if (Data.Geometry != null)
+            {
+                HGO_Chunk.GeometrySet geometrySet = new();
+                geometrySet.Write(writer, Data.Geometry);
+            }
+            if (Data.INST != null)
+            {
+                Data.INST.Write(writer);
+            }
+            if (Data.SPEC != null)
+            {
+                HGO_Chunk.SPEC spec = new();
+                spec.Write(writer, Data.SPEC);
+            }
+            if (Data.SST != null)
+            {
+                HGO_Chunk.SST sst = new();
+                sst.Write(writer, Data.SST);
+            }
+
+            // Write the file size.
+            writer.BaseStream.Position = sizePosition;
+            writer.Write((uint)writer.BaseStream.Length);
+        }
+
         public void ExportOBJ(string filepath)
         {
             #region OBJ Writing

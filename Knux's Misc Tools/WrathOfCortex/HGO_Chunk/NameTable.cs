@@ -22,5 +22,46 @@
 
             return Names;
         }
+
+        public void Write(BinaryWriterEx writer, List<string> Names)
+        {
+            // Chunk Identifier.
+            writer.Write("LBTN");
+
+            // Save the position we'll need to write the chunk's size to and add a dummy value in its place.
+            long chunkSizePos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Save the position we'll need to write the node table's length to and add a dummy value in its place.
+            long nameTableLengthPos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Write all the names.
+            for (int i = 0; i < Names.Count; i++)
+                writer.WriteNullTerminatedString(Names[i]);
+
+            // Calculate the name table length.
+            uint nameTableLength = (uint)(writer.BaseStream.Position - (nameTableLengthPos + 0x4));
+
+            // Align to 0x4.
+            writer.FixPadding();
+
+            // Calculate the chunk size.
+            uint chunkSize = (uint)(writer.BaseStream.Position - (chunkSizePos - 0x4));
+
+            // Save our current position.
+            long pos = writer.BaseStream.Position;
+
+            // Fill in the chunk size.
+            writer.BaseStream.Position = chunkSizePos;
+            writer.Write(chunkSize);
+
+            // Fill in the node table length.
+            writer.BaseStream.Position = nameTableLengthPos;
+            writer.Write(nameTableLength);
+
+            // Jump to our saved position so we can continue.
+            writer.BaseStream.Position = pos;
+        }
     }
 }

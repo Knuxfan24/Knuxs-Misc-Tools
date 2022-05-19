@@ -48,6 +48,61 @@
             // Align to 0x4.
             reader.FixPadding();
         }
+
+        public void Write(BinaryWriterEx writer)
+        {
+            // Chunk Identifier.
+            writer.Write("TSNI");
+
+            // Save the position we'll need to write the chunk's size to and add a dummy value in its place.
+            long chunkSizePos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Write how many of the first entry type there is in this file.
+            writer.Write(UnknownDataStruct_1.Count);
+
+            // Write all the first entry types.
+            for (int i = 0; i < UnknownDataStruct_1.Count; i++)
+            {
+                writer.Write(UnknownDataStruct_1[i].UnknownMatrix4x4_1);
+                writer.Write(UnknownDataStruct_1[i].MatrixIndex);
+                writer.Write(UnknownDataStruct_1[i].UnknownUInt32_1);
+                writer.Write(UnknownDataStruct_1[i].UnknownUInt32_2);
+                writer.WriteNulls(0x4);
+            }
+
+            // Write how many of the second entry type there is in this file.
+            writer.Write(UnknownDataStruct_2.Count);
+
+            // Write all the second entry types.
+            for (int i = 0; i < UnknownDataStruct_2.Count; i++)
+            {
+                writer.WriteNulls(0x40);
+                writer.Write(UnknownDataStruct_2[i].UnknownFloat_1);
+                writer.Write(UnknownDataStruct_2[i].UnknownFloat_2);
+                writer.Write(UnknownDataStruct_2[i].UnknownFloat_3);
+                writer.Write(0x1);
+                writer.Write(UnknownDataStruct_2[i].UnknownFloat_4);
+                writer.WriteNulls(0x8);
+                writer.Write(UnknownDataStruct_2[i].UnknownFloat_5);
+            }
+
+            // Align to 0x4.
+            writer.FixPadding(0x4);
+
+            // Calculate the chunk size.
+            uint chunkSize = (uint)(writer.BaseStream.Position - (chunkSizePos - 0x4));
+
+            // Save our current position.
+            long pos = writer.BaseStream.Position;
+
+            // Fill in the chunk size.
+            writer.BaseStream.Position = chunkSizePos;
+            writer.Write(chunkSize);
+
+            // Jump to our saved position so we can continue.
+            writer.BaseStream.Position = pos;
+        }
     }
 
     public class INSTEntry1

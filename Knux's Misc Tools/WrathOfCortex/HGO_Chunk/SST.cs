@@ -31,6 +31,53 @@
 
             return entries;
         }
+
+        public void Write(BinaryWriterEx writer, List<SSTEntry> sstEntries)
+        {
+            // Chunk Identifier.
+            writer.Write("0TSS");
+
+            // Save the position we'll need to write the chunk's size to and add a dummy value in its place.
+            long chunkSizePos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Write the amount of sst entries in this file.
+            writer.Write(sstEntries.Count);
+
+            // Save the position we'll need to write that weird other size value.
+            long lengthPos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Write the sst entries.
+            for (int i = 0; i < sstEntries.Count; i++)
+            {
+                writer.Write(sstEntries[i].UnknownVector3s.Count);
+                writer.Write(sstEntries[i].UnknownUInt32_1);
+
+                foreach (Vector3 value in sstEntries[i].UnknownVector3s)
+                    writer.Write(value);
+            }
+
+            // Align to 0x4.
+            writer.FixPadding(0x4);
+
+            // Calculate the chunk size.
+            uint chunkSize = (uint)(writer.BaseStream.Position - (chunkSizePos - 0x4));
+
+            // Save our current position.
+            long pos = writer.BaseStream.Position;
+
+            // Fill in the chunk size.
+            writer.BaseStream.Position = chunkSizePos;
+            writer.Write(chunkSize);
+
+            // Fill in that weird length value thing.
+            writer.BaseStream.Position = lengthPos;
+            writer.Write(chunkSize - 0x10);
+
+            // Jump to our saved position so we can continue.
+            writer.BaseStream.Position = pos;
+        }
     }
 
     public class SSTEntry
