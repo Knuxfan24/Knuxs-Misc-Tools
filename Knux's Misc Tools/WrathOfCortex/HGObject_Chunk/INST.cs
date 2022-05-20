@@ -1,4 +1,4 @@
-﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO_Chunk
+﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGObject_Chunk
 {
     // TODO: What the hell is this? Some sort of matrix table? What's the extra data afterwards?
     public class INST
@@ -37,7 +37,7 @@
                 entry.UnknownFloat_1 = reader.ReadSingle();
                 entry.UnknownFloat_2 = reader.ReadSingle();
                 entry.UnknownFloat_3 = reader.ReadSingle();
-                reader.JumpAhead(0x4); // Always 1.
+                reader.JumpAhead(0x4); // Always 1 as a floating point number.
                 entry.UnknownFloat_4 = reader.ReadSingle();
                 reader.JumpAhead(0x8); // Always 0.
                 entry.UnknownFloat_5 = reader.ReadSingle();
@@ -81,7 +81,7 @@
                 writer.Write(UnknownDataStruct_2[i].UnknownFloat_1);
                 writer.Write(UnknownDataStruct_2[i].UnknownFloat_2);
                 writer.Write(UnknownDataStruct_2[i].UnknownFloat_3);
-                writer.Write(0x1);
+                writer.Write((float)1);
                 writer.Write(UnknownDataStruct_2[i].UnknownFloat_4);
                 writer.WriteNulls(0x8);
                 writer.Write(UnknownDataStruct_2[i].UnknownFloat_5);

@@ -1,4 +1,4 @@
-﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGO_Chunk
+﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGObject_Chunk
 {
     public class GeometrySet
     {

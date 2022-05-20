@@ -4,27 +4,27 @@ using SkiaSharp;
 
 namespace Knuxs_Misc_Tools.WrathOfCortex
 {
-    public class NUS : FileBase
+    public class NuScene : FileBase
     {
         public class FormatData
         {
             public List<string>? Names { get; set; }
 
-            public List<HGO_Chunk.Texture>? Textures { get; set; }
+            public List<HGObject_Chunk.Texture>? Textures { get; set; }
 
-            public List<HGO_Chunk.Material>? Materials { get; set; }
+            public List<HGObject_Chunk.Material>? Materials { get; set; }
 
-            public List<HGO_Chunk.Geometry>? Geometry { get; set; }
+            public List<HGObject_Chunk.Geometry>? Geometry { get; set; }
 
-            public HGO_Chunk.INST? INST { get; set; }
+            public HGObject_Chunk.INST? INST { get; set; }
 
-            public List<HGO_Chunk.SPECEntry>? SPEC { get; set; }
+            public List<HGObject_Chunk.SPECEntry>? SPEC { get; set; }
 
-            public List<HGO_Chunk.SSTEntry>? SST { get; set; }
+            public List<HGObject_Chunk.SSTEntry>? SST { get; set; }
 
             public uint? LDirSize { get; set; }
 
-            public HGO_Chunk.TextureAnimation? TextureAnimations { get; set; }
+            public HGObject_Chunk.TextureAnimation? TextureAnimations { get; set; }
         }
 
         public override string Signature { get; } = "0CSG";
@@ -44,26 +44,27 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 string chunkType = reader.ReadNullPaddedString(4);
                 uint chunkSize = reader.ReadUInt32();
                 reader.JumpBehind(8);
+                Console.WriteLine($"'{chunkType}' at '0x{reader.BaseStream.Position.ToString("X").PadLeft(8, '0')}' with a size of '0x{chunkSize.ToString("X").PadLeft(8, '0')}'.");
 
                 switch (chunkType)
                 {
                     case "LBTN":
-                        HGO_Chunk.NameTable? nameTable = new();
+                        HGObject_Chunk.NameTable? nameTable = new();
                         Data.Names = nameTable.Read(reader);
                         break;
 
                     case "0TST":
-                        HGO_Chunk.TextureSet textureSet = new();
+                        HGObject_Chunk.TextureSet textureSet = new();
                         Data.Textures = textureSet.Read(reader);
                         break;
 
                     case "00SM":
-                        HGO_Chunk.MaterialSet materialSet = new();
+                        HGObject_Chunk.MaterialSet materialSet = new();
                         Data.Materials = materialSet.Read(reader);
                         break;
 
                     case "0TSG":
-                        HGO_Chunk.GeometrySet geometrySet = new();
+                        HGObject_Chunk.GeometrySet geometrySet = new();
                         Data.Geometry = geometrySet.Read(reader);
                         break;
 
@@ -73,12 +74,12 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         break;
 
                     case "CEPS":
-                        HGO_Chunk.SPEC spec = new();
+                        HGObject_Chunk.SPEC spec = new();
                         Data.SPEC = spec.Read(reader);
                         break;
 
                     case "0TSS":
-                        HGO_Chunk.SST sst = new();
+                        HGObject_Chunk.SST sst = new();
                         Data.SST = sst.Read(reader);
                         break;
 
@@ -93,7 +94,7 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         break;
 
                     default:
-                        Console.WriteLine($"NUS Chunk Type '{chunkType}' with a size of '0x{chunkSize.ToString("X").PadLeft(8, '0')}' not yet handled.");
+                        Console.WriteLine($"NUS Chunk Type not yet handled.");
                         reader.JumpAhead(chunkSize);
                         break;
                 }
@@ -116,22 +117,26 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             // TODO: Missing chunks and order.
             if (Data.Names != null)
             {
-                HGO_Chunk.NameTable nameTable = new();
+                HGObject_Chunk.NameTable nameTable = new();
                 nameTable.Write(writer, Data.Names);
             }
             if (Data.Textures != null)
             {
-                HGO_Chunk.TextureSet textureSet = new();
+                HGObject_Chunk.TextureSet textureSet = new();
                 textureSet.Write(writer, Data.Textures);
             }
             if (Data.Materials != null)
             {
-                HGO_Chunk.MaterialSet materialSet = new();
+                HGObject_Chunk.MaterialSet materialSet = new();
                 materialSet.Write(writer, Data.Materials);
+            }
+            if (Data.LDirSize != null)
+            {
+                WriteLDir(writer);
             }
             if (Data.Geometry != null)
             {
-                HGO_Chunk.GeometrySet geometrySet = new();
+                HGObject_Chunk.GeometrySet geometrySet = new();
                 geometrySet.Write(writer, Data.Geometry);
             }
             if (Data.INST != null)
@@ -140,18 +145,34 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             }
             if (Data.SPEC != null)
             {
-                HGO_Chunk.SPEC spec = new();
+                HGObject_Chunk.SPEC spec = new();
                 spec.Write(writer, Data.SPEC);
             }
             if (Data.SST != null)
             {
-                HGO_Chunk.SST sst = new();
+                HGObject_Chunk.SST sst = new();
                 sst.Write(writer, Data.SST);
             }
 
             // Write the file size.
             writer.BaseStream.Position = sizePosition;
             writer.Write((uint)writer.BaseStream.Length);
+
+            // Properly close the writer.
+            writer.Flush();
+            writer.Close();
+        }
+
+        private void WriteLDir(BinaryWriterEx writer)
+        {
+            // Chunk Identifier.
+            writer.Write("RIDL");
+
+            // Write this odd chunk length thing.
+            writer.Write((uint)Data.LDirSize);
+
+            for (int i = 0; i < Data.LDirSize - 0x8; i++)
+                writer.Write((byte)0);
         }
 
         public void ExportOBJ(string filepath)
