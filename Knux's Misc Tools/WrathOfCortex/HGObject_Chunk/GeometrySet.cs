@@ -64,6 +64,7 @@
                 }
                 else
                 {
+                    // Seems to be data for flat planes, Position is the position in the world and texture coordinates is the scale.
                     uint MeshCount = reader.ReadUInt32();
                     for (int m = 0; m < MeshCount; m++)
                     {

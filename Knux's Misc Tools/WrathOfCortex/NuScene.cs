@@ -16,7 +16,7 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
             public List<HGObject_Chunk.Geometry>? Geometry { get; set; }
 
-            public HGObject_Chunk.INST? INST { get; set; }
+            public HGObject_Chunk.Instance? Instances { get; set; }
 
             public List<HGObject_Chunk.SPECEntry>? SPEC { get; set; }
 
@@ -69,8 +69,8 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         break;
 
                     case "TSNI":
-                        Data.INST = new();
-                        Data.INST.Read(reader);
+                        Data.Instances = new();
+                        Data.Instances.Read(reader);
                         break;
 
                     case "CEPS":
@@ -139,9 +139,9 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 HGObject_Chunk.GeometrySet geometrySet = new();
                 geometrySet.Write(writer, Data.Geometry);
             }
-            if (Data.INST != null)
+            if (Data.Instances != null)
             {
-                Data.INST.Write(writer);
+                Data.Instances.Write(writer);
             }
             if (Data.SPEC != null)
             {
@@ -177,12 +177,15 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
         public void ExportOBJ(string filepath)
         {
-            #region OBJ Writing
-            // OBJ is stupid and counts from 1 rather than 0.
-            int VertexCount = 1;
-
             // Set up our text writer.
             StreamWriter writer = File.CreateText(filepath);
+
+            #region OBJ Writing
+            // Write a reference to the MTL.
+            writer.Write($"mtllib {Path.GetFileNameWithoutExtension(filepath)}.mtl\n");
+
+            // OBJ is stupid and counts from 1 rather than 0.
+            int VertexCount = 1;
 
             // Loop through all the Geometry entries.
             for (int i1 = 0; i1 < Data.Geometry.Count; i1++)

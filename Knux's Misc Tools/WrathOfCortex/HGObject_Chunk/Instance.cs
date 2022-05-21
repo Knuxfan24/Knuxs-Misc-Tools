@@ -1,11 +1,11 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGObject_Chunk
 {
-    // TODO: What the hell is this? Some sort of matrix table? What's the extra data afterwards?
-    public class INST
+    // TODO: What is the second struct?
+    public class Instance
     {
-        public List<INSTEntry1> UnknownDataStruct_1 { get; set; } = new();
+        public List<InstanceEntry> Instances { get; set; } = new();
 
-        public List<INSTEntry2> UnknownDataStruct_2 { get; set; } = new();
+        public List<INSTEntry2> UnknownDataStruct_1 { get; set; } = new();
 
         public void Read(BinaryReaderEx reader)
         {
@@ -17,15 +17,15 @@
 
             for (int i = 0; i < matrixCount; i++)
             {
-                INSTEntry1 entry = new();
+                InstanceEntry entry = new();
 
                 entry.UnknownMatrix4x4_1 = reader.Read4x4Matrix();
-                entry.MatrixIndex = reader.ReadUInt32(); // TODO: Verify.
+                entry.ModelIndex = reader.ReadUInt32(); // TODO: Verify.
                 entry.UnknownUInt32_1 = reader.ReadUInt32();
                 entry.UnknownUInt32_2 = reader.ReadUInt32();
                 reader.JumpAhead(0x4); // Always 0.
 
-                UnknownDataStruct_1.Add(entry);
+                Instances.Add(entry);
             }
 
             uint UnknownCount = reader.ReadUInt32(); // Count of whatever this is.
@@ -42,7 +42,7 @@
                 reader.JumpAhead(0x8); // Always 0.
                 entry.UnknownFloat_5 = reader.ReadSingle();
 
-                UnknownDataStruct_2.Add(entry);
+                UnknownDataStruct_1.Add(entry);
             }
 
             // Align to 0x4.
@@ -59,32 +59,32 @@
             writer.Write("SIZE");
 
             // Write how many of the first entry type there is in this file.
-            writer.Write(UnknownDataStruct_1.Count);
+            writer.Write(Instances.Count);
 
             // Write all the first entry types.
-            for (int i = 0; i < UnknownDataStruct_1.Count; i++)
+            for (int i = 0; i < Instances.Count; i++)
             {
-                writer.Write(UnknownDataStruct_1[i].UnknownMatrix4x4_1);
-                writer.Write(UnknownDataStruct_1[i].MatrixIndex);
-                writer.Write(UnknownDataStruct_1[i].UnknownUInt32_1);
-                writer.Write(UnknownDataStruct_1[i].UnknownUInt32_2);
+                writer.Write(Instances[i].UnknownMatrix4x4_1);
+                writer.Write(Instances[i].ModelIndex);
+                writer.Write(Instances[i].UnknownUInt32_1);
+                writer.Write(Instances[i].UnknownUInt32_2);
                 writer.WriteNulls(0x4);
             }
 
             // Write how many of the second entry type there is in this file.
-            writer.Write(UnknownDataStruct_2.Count);
+            writer.Write(UnknownDataStruct_1.Count);
 
             // Write all the second entry types.
-            for (int i = 0; i < UnknownDataStruct_2.Count; i++)
+            for (int i = 0; i < UnknownDataStruct_1.Count; i++)
             {
                 writer.WriteNulls(0x40);
-                writer.Write(UnknownDataStruct_2[i].UnknownFloat_1);
-                writer.Write(UnknownDataStruct_2[i].UnknownFloat_2);
-                writer.Write(UnknownDataStruct_2[i].UnknownFloat_3);
+                writer.Write(UnknownDataStruct_1[i].UnknownFloat_1);
+                writer.Write(UnknownDataStruct_1[i].UnknownFloat_2);
+                writer.Write(UnknownDataStruct_1[i].UnknownFloat_3);
                 writer.Write((float)1);
-                writer.Write(UnknownDataStruct_2[i].UnknownFloat_4);
+                writer.Write(UnknownDataStruct_1[i].UnknownFloat_4);
                 writer.WriteNulls(0x8);
-                writer.Write(UnknownDataStruct_2[i].UnknownFloat_5);
+                writer.Write(UnknownDataStruct_1[i].UnknownFloat_5);
             }
 
             // Align to 0x4.
@@ -105,11 +105,11 @@
         }
     }
 
-    public class INSTEntry1
+    public class InstanceEntry
     {
         public Matrix4x4 UnknownMatrix4x4_1 { get; set; }
 
-        public uint MatrixIndex { get; set; }
+        public uint ModelIndex { get; set; }
 
         public uint UnknownUInt32_1 { get; set; }
 
