@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex
 {
-    public class Wumpa : FileBase
+    public class WumpaTable : FileBase
     {
         public List<Vector3> Coordinates = new();
 

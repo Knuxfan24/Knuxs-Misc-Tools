@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex
 {
-    public class Crate : FileBase
+    public class CrateTable : FileBase
     {
         public List<Group> Groups = new();
 
@@ -13,7 +13,7 @@
             for (int i = 0; i < GroupCount; i++)
             {
                 Group group = new();
-                Box crate = new();
+                Crate crate = new();
 
                 crate.Position = reader.ReadVector3();
                 group.ID = reader.ReadUInt16();
@@ -164,10 +164,10 @@
 
             public Vector3 Rotation { get; set; }
 
-            public List<Box> Crates { get; set; } = new();
+            public List<Crate> Crates { get; set; } = new();
         }
 
-        public class Box
+        public class Crate
         {
             public Vector3 Position { get; set; }
             public byte UnknownByte_1 { get; set; }
