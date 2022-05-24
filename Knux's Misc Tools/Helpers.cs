@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.Translation.V2;
+using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using System.Web;
 
 namespace Knuxs_Misc_Tools
@@ -104,5 +106,67 @@ namespace Knuxs_Misc_Tools
             var bytes = BitConverter.GetBytes(i);
             return BitConverter.ToSingle(bytes, 0);
         }
+
+        #region Taken from LibTWOC
+        public static ushort ArrayReadU16(byte[] array, long offset, bool bigEndian = true)
+        {
+            if (bigEndian)
+                return (ushort)(array[offset + 1] | (array[offset] << 8));
+            return (ushort)(array[offset] | (array[offset + 1] << 8));
+        }
+        public static byte Convert5To8(byte v)
+        {
+            return (byte)((v << 3) | (v >> 2));
+        }
+        public static byte Convert6To8(byte v)
+        {
+            return (byte)((v << 2) | (v >> 4));
+        }
+        public static int DXTBlend(int v1, int v2)
+        {
+            return ((v1 * 3 + v2 * 5) >> 3);
+        }
+
+        public static void DecodeDXTBlock(ref Image<Byte4> dst, byte[] src, int srcOffset, int blockX, int blockY)
+        {
+            if (srcOffset >= src.Length) return;
+            var c1 = ArrayReadU16(src, srcOffset, true);
+            var c2 = ArrayReadU16(src, srcOffset + 2, true);
+            var lines = new byte[4] { src[srcOffset + 4], src[srcOffset + 5], src[srcOffset + 6], src[srcOffset + 7] };
+
+            byte blue1 = Convert5To8((byte)(c1 & 0x1F));
+            byte blue2 = Convert5To8((byte)(c2 & 0x1F));
+            byte green1 = Convert6To8((byte)((c1 >> 5) & 0x3F));
+            byte green2 = Convert6To8((byte)((c2 >> 5) & 0x3F));
+            byte red1 = Convert5To8((byte)((c1 >> 11) & 0x1F));
+            byte red2 = Convert5To8((byte)((c2 >> 11) & 0x1F));
+
+            Byte4[] colors = new Byte4[4];
+            colors[0] = new Byte4(red1, green1, blue1, 255);
+            colors[1] = new Byte4(red2, green2, blue2, 255);
+            if (c1 > c2)
+            {
+                colors[2] = new Byte4((byte)DXTBlend(red2, red1), (byte)DXTBlend(green2, green1), (byte)DXTBlend(blue2, blue1), 255);
+                colors[3] = new Byte4((byte)DXTBlend(red1, red2), (byte)DXTBlend(green1, green2), (byte)DXTBlend(blue1, blue2), 255);
+            }
+            else
+            {
+                // color[3] is the same as color[2] (average of both colors), but transparent.
+                // This differs from DXT1 where color[3] is transparent black.
+                colors[2] = new Byte4((byte)((red1 + red2) / 2), (byte)((green1 + green2) / 2), (byte)((blue1 + blue2) / 2), 255);
+                colors[3] = new Byte4((byte)((red1 + red2) / 2), (byte)((green1 + green2) / 2), (byte)((blue1 + blue2) / 2), 0);
+            }
+
+            for (int y = 0; y < 4; y++)
+            {
+                int val = lines[y];
+                for (int x = 0; x < 4; x++)
+                {
+                    dst[x + blockX, y + blockY] = colors[(val >> 6) & 3];
+                    val <<= 2;
+                }
+            }
+        }
+        #endregion
     }
 }

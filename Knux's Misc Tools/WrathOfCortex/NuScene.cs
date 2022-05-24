@@ -1,5 +1,5 @@
-﻿using Rainbow.ImgLib.Encoding;
-using Rainbow.ImgLib.Encoding.Implementation;
+﻿using SixLabors.ImageSharp;
+using SixLabors.ImageSharp.PixelFormats;
 using SkiaSharp;
 
 namespace Knuxs_Misc_Tools.WrathOfCortex
@@ -329,48 +329,42 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             #endregion
 
             #region Bitmap Exporting
-            // Not functional, outputs garbage/crashes due to me not knowing how to use the Deswizzler.
-            //for (int i = 0; i < Data.Textures.Count; i++)
-            //{
-            //    if (Data.Textures[i].Type == 0x80)
-            //    {
-            //        Rainbow.ImgLib.Filters.TileFilter test = new(8, 16, 4, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height);
-            //        SKBitmap? decodedBitmap = new ImageDecoderDirectColor(Data.Textures[i].Data, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height, new ColorCodecDXT1(Rainbow.ImgLib.Common.ByteOrder.BigEndian, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height), test).DecodeImage();
-
-            //        using (SKFileWStream? outputStream = new($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png"))
-            //            SKPixmap.Encode(outputStream, decodedBitmap, SKEncodedImageFormat.Png, 100);
-            //    }
-            //}
-
-
-            #endregion
-        }
-
-        // Literally just to try and see if all the vertices looked like they were in the right positions.
-        // Only Blender will accept this OBJ, Max doesn't find anything in it for obvious reasons.
-        public void DumpVertexPositions(string filepath)
-        {
-            // Set up our text writer.
-            StreamWriter writer = File.CreateText(filepath);
-
-            // Loop through the Geometry Sets.
-            for (int i1 = 0; i1 < Data.Geometry.Count; i1++)
+            // Half functional, fails on certain textures, breaks others and doesn't yet handle any non DXT1 types.
+            for (int i = 0; i < Data.Textures.Count; i++)
             {
-                // Loop through the Meshes in this Geometry entry.
-                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                try
                 {
-                    // Write each vertex in this Mesh Set as its own object.
-                    for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                    switch (Data.Textures[i].Type)
                     {
-                        writer.WriteLine($"o geometry{i1}mesh{i2}vertex{i}");
-                        writer.WriteLine($"v {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Y} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Z}\n");
+                        case 0x80:
+                            var image = new Image<Byte4>((int)Data.Textures[i].Width, (int)Data.Textures[i].Height);
+                            int index = 0;
+                            for (int y = 0; y < Data.Textures[i].Height; y += 8)
+                            {
+                                for (var x = 0; x < Data.Textures[i].Height; x += 8)
+                                {
+                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y);
+                                    index += 8;
+                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y);
+                                    index += 8;
+                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y + 4);
+                                    index += 8;
+                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y + 4);
+                                    index += 8;
+                                }
+                            }
+                            image.SaveAsPng($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png");
+                            break;
                     }
+                }
+                catch
+                {
+                    Console.WriteLine($"Failed on {i}.");
                 }
             }
 
-            // Properly close the writer.
-            writer.Flush();
-            writer.Close();
+
+            #endregion
         }
     }
 }
