@@ -33,9 +33,9 @@
                         mesh.MaterialIndex = reader.ReadUInt32();
                         uint VertexCount = reader.ReadUInt32();
 
+                        // Read the specified amount of vertices.
                         for (int v = 0; v < VertexCount; v++)
                         {
-                            // TODO: Is this right?
                             Vertex vertex = new()
                             {
                                 Position = reader.ReadVector3(),
@@ -50,10 +50,45 @@
 
                         mesh.Primitive = new();
                         mesh.Primitive.Type = reader.ReadUInt32();
-                        uint FaceCount = reader.ReadUInt32();
+                        uint faceTableShortCount = reader.ReadUInt32();
 
-                        for (int f = 0; f < FaceCount; f++)
-                            mesh.Primitive.FaceIndices.Add(reader.ReadUInt16());
+                        // If the primitive type is 6, then this is a triangle strip.
+                        if (mesh.Primitive.Type == 6)
+                        {
+                            // Track how many shorts we've read.
+                            uint readShorts = 0;
+
+                            // Keep going until we've read the right amount.
+                            while (readShorts < faceTableShortCount)
+                            {
+                                // Find out how many values are in this triangle strip.
+                                ushort triCount = reader.ReadUInt16();
+
+                                // Increment readShorts as these count numbers are part of it.
+                                readShorts++;
+
+                                // Set up a list to store the values.
+                                List<ushort> triangleStrip = new();
+
+                                // Loop through based on the amount of tris in this strip.
+                                for (int s = 0; s < triCount; s++)
+                                {
+                                    triangleStrip.Add(reader.ReadUInt16());
+                                    readShorts++;
+                                }
+
+                                // Add this triangle strip to the list of triangle strips in this primitive.
+                                mesh.Primitive.TriangleStrips.Add(triangleStrip);
+                            }
+                        }
+
+                        // If the primitive type is 5, then this should be a triangle list.
+                        // TODO: This produces incorrect faces when exporting, how are these lists made?
+                        else
+                        {
+                            for (int f = 0; f < faceTableShortCount; f++)
+                                mesh.Primitive.FaceIndices.Add(reader.ReadUInt16());
+                        }
 
                         reader.JumpAhead(0x8); // Always 0.
 
@@ -154,12 +189,46 @@
                         // Write this mesh's primitive type.
                         writer.Write(geometry[i].Meshes[m].Primitive.Type);
 
-                        // Write the amount of faces this mesh has.
-                        writer.Write(geometry[i].Meshes[m].Primitive.FaceIndices.Count);
+                        // Write the data depending on the Primitive Type.
+                        if (geometry[i].Meshes[m].Primitive.Type == 6)
+                        {
+                            // Placeholder size writing.
+                            long triStripSizePos = writer.BaseStream.Position;
+                            uint size = 0;
+                            writer.Write("SIZE");
 
-                        // Write all the face indices.
-                        foreach (var face in geometry[i].Meshes[m].Primitive.FaceIndices)
-                            writer.Write(face);
+                            // Loop through each triangle strip
+                            foreach (List<ushort>? triangleStrip in geometry[i].Meshes[m].Primitive.TriangleStrips)
+                            {
+                                // Write the amount of faces in this triangle strip.
+                                writer.Write((ushort)triangleStrip.Count);
+                                size++;
+
+                                // Write each face in this triangle strip.
+                                foreach (ushort face in triangleStrip)
+                                {
+                                    writer.Write(face);
+                                    size++;
+                                }
+                            }
+
+                            // Save our position.
+                            long triStripEndPos = writer.BaseStream.Position;
+
+                            // Jump to write the calculated size then jump back.
+                            writer.BaseStream.Position = triStripSizePos;
+                            writer.Write(size);
+                            writer.BaseStream.Position = triStripEndPos;
+                        }
+                        else
+                        {
+                            // Write the face count.
+                            writer.Write(geometry[i].Meshes[m].Primitive.FaceIndices.Count);
+
+                            // Write the face indices.
+                            foreach (var face in geometry[i].Meshes[m].Primitive.FaceIndices)
+                                writer.Write(face);
+                        }
 
                         // This set of bytes is always 0.
                         writer.WriteNulls(0x8);
@@ -246,6 +315,8 @@
     public class Primitive
     {
         public uint Type { get; set; } // Either 5 or 6? 5 is standard faces, 6 is a triangle strip of some sort.
+
+        public List<List<ushort>> TriangleStrips { get; set; } = new();
 
         public List<ushort> FaceIndices { get; set; } = new();
     }

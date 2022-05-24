@@ -223,35 +223,38 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         writer.WriteLine($"g geometry{i1}mesh{i2}");
                         writer.WriteLine($"usemtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
 
-                        // TODO: All of this is fucked and doesn't work right.
                         // Write the Triangle Strips if the type is 6.
                         if (Data.Geometry[i1].Meshes[i2].Primitive.Type == 6)
                         {
-                            for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices.Count - 2; i++)
+                            // TODO: Half the faces here are backwards.
+                            for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips.Count; i++)
                             {
-                                if ((i & 1) > 0)
-                                    writer.WriteLine($"f " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
-                                else
-                                    writer.WriteLine($"f " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
-                            }
+                                for (int v = 0; v < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i].Count - 2; v++)
+                                {
+                                    if ((i & 1) > 0)
+                                        writer.WriteLine($"f " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
+                                    else
+                                        writer.WriteLine($"f " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
+                                }}
                             writer.WriteLine();
                         }
 
                         // Write the standard Triangle List if the type is 5.
                         else
                         {
+                            // TODO: This doesn't work right.
                             for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices.Count - 2; i++)
                             {
                                 writer.WriteLine($"f " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
-                                                     $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
+                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
+                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
+                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
                             }
                             writer.WriteLine();
                         }
@@ -316,20 +319,48 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             #endregion
 
             #region Bitmap Exporting
-            // Not functional, outputs garbage due to me not knowing how to use the Deswizzler.
-            for (int i = 0; i < Data.Textures.Count; i++)
-            {
-                if (Data.Textures[i].Type == 0x80)
-                {
-                    SKBitmap? decodedBitmap = new ImageDecoderDirectColor(Data.Textures[i].Data, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height, new ColorCodecDXT1(Rainbow.ImgLib.Common.ByteOrder.BigEndian, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height)).DecodeImage();
+            // Not functional, outputs garbage/crashes due to me not knowing how to use the Deswizzler.
+            //for (int i = 0; i < Data.Textures.Count; i++)
+            //{
+            //    if (Data.Textures[i].Type == 0x80)
+            //    {
+            //        Rainbow.ImgLib.Filters.TileFilter test = new(8, 16, 4, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height);
+            //        SKBitmap? decodedBitmap = new ImageDecoderDirectColor(Data.Textures[i].Data, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height, new ColorCodecDXT1(Rainbow.ImgLib.Common.ByteOrder.BigEndian, (int)Data.Textures[i].Width, (int)Data.Textures[i].Height), test).DecodeImage();
 
-                    using (SKFileWStream? outputStream = new($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png"))
-                        SKPixmap.Encode(outputStream, decodedBitmap, SKEncodedImageFormat.Png, 100);
-                }
-            }
+            //        using (SKFileWStream? outputStream = new($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png"))
+            //            SKPixmap.Encode(outputStream, decodedBitmap, SKEncodedImageFormat.Png, 100);
+            //    }
+            //}
 
 
             #endregion
+        }
+
+        // Literally just to try and see if all the vertices looked like they were in the right positions.
+        // Only Blender will accept this OBJ, Max doesn't find anything in it for obvious reasons.
+        public void DumpVertexPositions(string filepath)
+        {
+            // Set up our text writer.
+            StreamWriter writer = File.CreateText(filepath);
+
+            // Loop through the Geometry Sets.
+            for (int i1 = 0; i1 < Data.Geometry.Count; i1++)
+            {
+                // Loop through the Meshes in this Geometry entry.
+                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                {
+                    // Write each vertex in this Mesh Set as its own object.
+                    for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                    {
+                        writer.WriteLine($"o geometry{i1}mesh{i2}vertex{i}");
+                        writer.WriteLine($"v {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Y} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Z}\n");
+                    }
+                }
+            }
+
+            // Properly close the writer.
+            writer.Flush();
+            writer.Close();
         }
     }
 }
