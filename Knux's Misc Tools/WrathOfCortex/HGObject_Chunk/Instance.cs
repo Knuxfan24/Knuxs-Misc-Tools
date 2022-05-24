@@ -20,7 +20,7 @@
                 InstanceEntry entry = new();
 
                 entry.UnknownMatrix4x4_1 = reader.Read4x4Matrix();
-                entry.ModelIndex = reader.ReadUInt32(); // TODO: Verify.
+                entry.ModelIndex = reader.ReadUInt32(); // TODO: Verify, I have my doubts about this.
                 entry.UnknownUInt32_1 = reader.ReadUInt32();
                 entry.UnknownUInt32_2 = reader.ReadUInt32();
                 reader.JumpAhead(0x4); // Always 0.

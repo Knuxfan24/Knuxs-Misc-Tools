@@ -216,11 +216,20 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         {
                             writer.WriteLine($"vn {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Y} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Z}");
                         }
+                    }
+                }
 
-                        // Write the object header.
-                        writer.WriteLine();
-                        writer.WriteLine($"o geometry{i1}mesh{i2}");
-                        writer.WriteLine($"g geometry{i1}mesh{i2}");
+                // Write the object header.
+                writer.WriteLine();
+                writer.WriteLine($"o geometry{i1}");
+                writer.WriteLine($"g geometry{i1}");
+
+                // Loop through by Mesh so we can split it by material.
+                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                {
+                    // If there isn't a Primitive here, don't bother writing it.
+                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
+                    {
                         writer.WriteLine($"usemtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
 
                         // Write the Triangle Strips if the type is 6.
@@ -231,17 +240,18 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                             {
                                 for (int v = 0; v < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i].Count - 2; v++)
                                 {
-                                    if ((i & 1) > 0)
+                                    if ((v & 1) == 0)
                                         writer.WriteLine($"f " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
                                                          $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
                                                          $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
                                     else
                                         writer.WriteLine($"f " +
                                                          $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v] + VertexCount} " +
+                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
                                                          $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
-                                }}
+                                }
+                            }
                             writer.WriteLine();
                         }
 
