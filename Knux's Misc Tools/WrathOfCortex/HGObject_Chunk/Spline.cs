@@ -1,10 +1,10 @@
 ﻿namespace Knuxs_Misc_Tools.WrathOfCortex.HGObject_Chunk
 {
-    public class SST
+    public class Spline
     {
-        public List<SSTEntry> Read(BinaryReaderEx reader)
+        public List<SplineEntry> Read(BinaryReaderEx reader)
         {
-            List<SSTEntry> entries = new();
+            List<SplineEntry> entries = new();
 
             // Basic Chunk Header.
             string chunkType = reader.ReadNullPaddedString(4);
@@ -15,13 +15,13 @@
 
             for (int i = 0; i < entryCount; i++)
             {
-                SSTEntry entry = new();
+                SplineEntry entry = new();
 
-                uint VectorCount = reader.ReadUInt32();
+                uint pointCount = reader.ReadUInt32();
                 entry.UnknownUInt32_1 = reader.ReadUInt32();
 
-                for (int v = 0; v < VectorCount; v++)
-                    entry.UnknownVector3s.Add(reader.ReadVector3());
+                for (int v = 0; v < pointCount; v++)
+                    entry.SplinePoints.Add(reader.ReadVector3());
 
                 entries.Add(entry);
             }
@@ -32,7 +32,7 @@
             return entries;
         }
 
-        public void Write(BinaryWriterEx writer, List<SSTEntry> sstEntries)
+        public void Write(BinaryWriterEx writer, List<SplineEntry> splineEntries)
         {
             // Chunk Identifier.
             writer.Write("0TSS");
@@ -41,20 +41,20 @@
             long chunkSizePos = writer.BaseStream.Position;
             writer.Write("SIZE");
 
-            // Write the amount of sst entries in this file.
-            writer.Write(sstEntries.Count);
+            // Write the amount of spline entries in this file.
+            writer.Write(splineEntries.Count);
 
             // Save the position we'll need to write that weird other size value.
             long lengthPos = writer.BaseStream.Position;
             writer.Write("SIZE");
 
-            // Write the sst entries.
-            for (int i = 0; i < sstEntries.Count; i++)
+            // Write the spline entries.
+            for (int i = 0; i < splineEntries.Count; i++)
             {
-                writer.Write(sstEntries[i].UnknownVector3s.Count);
-                writer.Write(sstEntries[i].UnknownUInt32_1);
+                writer.Write(splineEntries[i].SplinePoints.Count);
+                writer.Write(splineEntries[i].UnknownUInt32_1);
 
-                foreach (Vector3 value in sstEntries[i].UnknownVector3s)
+                foreach (Vector3 value in splineEntries[i].SplinePoints)
                     writer.Write(value);
             }
 
@@ -80,10 +80,10 @@
         }
     }
 
-    public class SSTEntry
+    public class SplineEntry
     {
-        public uint UnknownUInt32_1 { get; set; }
+        public uint UnknownUInt32_1 { get; set; } // Type?
 
-        public List<Vector3> UnknownVector3s { get; set; } = new();
+        public List<Vector3> SplinePoints { get; set; } = new();
     }
 }

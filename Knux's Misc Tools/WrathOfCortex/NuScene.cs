@@ -19,7 +19,7 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
             public List<HGObject_Chunk.SPECEntry>? SPEC { get; set; }
 
-            public List<HGObject_Chunk.SSTEntry>? SST { get; set; }
+            public List<HGObject_Chunk.SplineEntry>? Splines { get; set; }
 
             public uint? LDirSize { get; set; }
 
@@ -78,8 +78,8 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         break;
 
                     case "0TSS":
-                        HGObject_Chunk.SST sst = new();
-                        Data.SST = sst.Read(reader);
+                        HGObject_Chunk.Spline sst = new();
+                        Data.Splines = sst.Read(reader);
                         break;
 
                     case "RIDL":
@@ -147,10 +147,10 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 HGObject_Chunk.SPEC spec = new();
                 spec.Write(writer, Data.SPEC);
             }
-            if (Data.SST != null)
+            if (Data.Splines != null)
             {
-                HGObject_Chunk.SST sst = new();
-                sst.Write(writer, Data.SST);
+                HGObject_Chunk.Spline sst = new();
+                sst.Write(writer, Data.Splines);
             }
 
             // Write the file size.
@@ -272,6 +272,34 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         VertexCount += Data.Geometry[i1].Meshes[i2].Vertices.Count;
                     }
                 }
+            }
+
+            // Write spline data to the file.
+            for (int i = 0; i < Data.Splines.Count; i++)
+            {
+                // Add a comment numbering this SST entry to make the OBJ a tiny bit more organised.
+                writer.WriteLine($"\n# spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}\n");
+
+                // Write each point on this spline.
+                for (int v = 0; v < Data.Splines[i].SplinePoints.Count; v++)
+                    writer.WriteLine($"v {Data.Splines[i].SplinePoints[v].X} {Data.Splines[i].SplinePoints[v].Y} {Data.Splines[i].SplinePoints[v].Z}");
+
+                // Write the object header.
+                writer.WriteLine();
+                writer.WriteLine($"o sst{i}");
+                writer.WriteLine($"g sst{i}");
+
+                // Write the line header.
+                writer.Write("l ");
+
+                // Write each point as a vertex index.
+                for (int v = 0; v < Data.Splines[i].SplinePoints.Count; v++)
+                    writer.Write($"{v + VertexCount} ");
+
+                writer.WriteLine();
+
+                // Increment VertexCount so we don't accidentally use Vertices from the wrong mesh or spline.
+                VertexCount += Data.Splines[i].SplinePoints.Count;
             }
 
             // Properly close the writer.
