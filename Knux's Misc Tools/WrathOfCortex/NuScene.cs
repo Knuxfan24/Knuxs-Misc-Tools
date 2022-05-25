@@ -286,8 +286,8 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
                 // Write the object header.
                 writer.WriteLine();
-                writer.WriteLine($"o sst{i}");
-                writer.WriteLine($"g sst{i}");
+                writer.WriteLine($"o spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}");
+                writer.WriteLine($"g spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}");
 
                 // Write the line header.
                 writer.Write("l ");
