@@ -176,19 +176,23 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
         public void ExportOBJ(string filepath)
         {
-            // Set up our text writer.
-            StreamWriter writer = File.CreateText(filepath);
+            // Initalise a writer variable.
+            StreamWriter writer;
 
-            #region OBJ Writing
-            // Write a reference to the MTL.
-            writer.Write($"mtllib {Path.GetFileNameWithoutExtension(filepath)}.mtl\n");
-
-            // OBJ is stupid and counts from 1 rather than 0.
-            int VertexCount = 1;
-
+            #region OBJ and MTL Writing
             // Loop through all the Geometry entries.
             for (int i1 = 0; i1 < Data.Geometry.Count; i1++)
             {
+                // OBJ is stupid and counts from 1 rather than 0.
+                // Plus we need this count so that we don't mix up vertex indices.
+                int VertexCount = 1;
+
+                // Set up our text writer.
+                writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.obj");
+
+                // Write a reference to the MTL.
+                writer.Write($"mtllib {Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.mtl\n");
+
                 // Add a comment numbering this Geometry entry to make the OBJ a tiny bit more organised.
                 writer.WriteLine($"\n# geometry{i1}\n");
 
@@ -201,19 +205,25 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         // Write the Vertex Positions, Texture Coordinates and Normals.
                         for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"v {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Y} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Z}");
+                            writer.WriteLine($"v {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Y:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Z:F8}");
                         }
 
                         writer.WriteLine();
                         for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vt {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.Y}");
+                            writer.WriteLine($"vt {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.Y:F8}");
                         }
 
                         writer.WriteLine();
                         for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vn {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.X} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Y} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Z}");
+                            writer.WriteLine($"vn {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Y:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Z:F8}");
+                        }
+
+                        writer.WriteLine();
+                        for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                        {
+                            writer.WriteLine($"vc {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[1]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[2]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[3]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[0]}");
                         }
                     }
                 }
@@ -234,7 +244,6 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         // Write the Triangle Strips if the type is 6.
                         if (Data.Geometry[i1].Meshes[i2].Primitive.Type == 6)
                         {
-                            // TODO: Half the faces here are backwards.
                             for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips.Count; i++)
                             {
                                 for (int v = 0; v < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i].Count - 2; v++)
@@ -272,11 +281,63 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         VertexCount += Data.Geometry[i1].Meshes[i2].Vertices.Count;
                     }
                 }
+
+                // Properly close the writer.
+                writer.Flush();
+                writer.Close();
+
+                // Set up a list of Materials Indices we've already written so we don't dupe them.
+                List<uint> writtenMats = new();
+
+                // Recreate the text writer with the same name as the filepath, but with .obj replaced with .mtl.
+                writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.mtl");
+
+                // Loop through the Meshes in this Geometry entry.
+                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                {
+                    // Don't bother writing this material if the Mesh calling it doesn't have any Primitive data.
+                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
+                    {
+                        // Only write this material if we haven't already and if we need to.
+                        if (!writtenMats.Contains(Data.Geometry[i1].Meshes[i2].MaterialIndex))
+                        {
+                            // Mark this index as having been written.
+                            writtenMats.Add(Data.Geometry[i1].Meshes[i2].MaterialIndex);
+
+                            // Write a newmtl header.
+                            writer.WriteLine($"newmtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
+
+                            // Write the material colours.
+                            writer.WriteLine($"\tKd {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.X} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Y} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Z}");
+
+                            // Write a placeholder diffuse map entry if this material has one.
+                            // Also includes a comment with the type.
+                            if (Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex != -1)
+                            {
+                                writer.WriteLine($"\t#Bitmap Type = 0x{Data.Textures[Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex].Type:X}");
+                                writer.WriteLine($"\tmap_Kd bitmap{Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex}.png");
+
+                            }
+
+                            writer.WriteLine();
+                        }
+                    }
+                }
+
+                // Properly close the writer.
+                writer.Flush();
+                writer.Close();
             }
+
+            // Set up our text writer again for the splines.
+            writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_splines.obj");
 
             // Write spline data to the file.
             for (int i = 0; i < Data.Splines.Count; i++)
             {
+                // OBJ is stupid and counts from 1 rather than 0. Same as above.
+                int VertexCount = 1;
+
                 // Add a comment numbering this SST entry to make the OBJ a tiny bit more organised.
                 writer.WriteLine($"\n# spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}\n");
 
@@ -300,54 +361,6 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
                 // Increment VertexCount so we don't accidentally use Vertices from the wrong mesh or spline.
                 VertexCount += Data.Splines[i].SplinePoints.Count;
-            }
-
-            // Properly close the writer.
-            writer.Flush();
-            writer.Close();
-            #endregion
-
-            #region MTL Writing
-            // Set up a list of Materials Indices we've already written so we don't dupe them.
-            List<uint> writtenMats = new();
-
-            // Recreate the text writer with the same name as the filepath, but with .obj replaced with .mtl.
-            writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}.mtl");
-
-            // Loop through all the Geometry entries.
-            for (int i1 = 0; i1 < Data.Geometry.Count; i1++)
-            {
-                // Loop through the Meshes in this Geometry entry.
-                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
-                {
-                    // Don't bother writing this material if the Mesh calling it doesn't have any Primitive data.
-                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
-                    {
-                        // Only write this material if we haven't already.
-                        if (!writtenMats.Contains(Data.Geometry[i1].Meshes[i2].MaterialIndex))
-                        {
-                            // Mark this index as having been written.
-                            writtenMats.Add(Data.Geometry[i1].Meshes[i2].MaterialIndex);
-
-                            // Write a newmtl header.
-                            writer.WriteLine($"newmtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
-
-                            // Write the material colours.
-                            writer.WriteLine($"\tKd {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.X} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Y} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Z}");
-                            
-                            // Write a placeholder diffuse map entry if this material has one.
-                            // Also includes a comment with the type.
-                            if (Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex != -1)
-                            {
-                                writer.WriteLine($"\t#Bitmap Type = 0x{Data.Textures[Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex].Type:X}");
-                                writer.WriteLine($"\tmap_Kd bitmap{Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex}.png");
-                                    
-                            }
-
-                            writer.WriteLine();
-                        }
-                    }
-                }
             }
 
             // Properly close the writer.
