@@ -5,6 +5,7 @@
         public List<SplineEntry> Read(BinaryReaderEx reader)
         {
             List<SplineEntry> entries = new();
+            List<uint> nameOffsets = new();
 
             // Basic Chunk Header.
             string chunkType = reader.ReadNullPaddedString(4);
@@ -18,7 +19,7 @@
                 SplineEntry entry = new();
 
                 uint pointCount = reader.ReadUInt32();
-                entry.UnknownUInt32_1 = reader.ReadUInt32();
+                nameOffsets.Add(reader.ReadUInt32());
 
                 for (int v = 0; v < pointCount; v++)
                     entry.SplinePoints.Add(reader.ReadVector3());
@@ -28,6 +29,33 @@
 
             // Align to 0x4.
             reader.FixPadding();
+
+            // Dumb shit to try and figure out names.
+
+            // Save our current position.
+            long pos = reader.BaseStream.Position;
+
+            // Jump to the first non header chunk.
+            reader.JumpTo(0x8);
+
+            // If it's not the name table, then jump ahead by the specified amount.
+            while (reader.ReadNullPaddedString(4) != "LBTN")
+                reader.JumpAhead(reader.ReadUInt32() - 0x8);
+
+            // Jump to the start of the name table.
+            reader.JumpAhead(0x8);
+
+            // Save the position.
+            long nameTablePosition = reader.BaseStream.Position;
+
+            for (int i = 0; i < entries.Count; i++)
+            {
+                reader.JumpAhead(nameOffsets[i]);
+                entries[i].Name = reader.ReadNullTerminatedString();
+                reader.JumpTo(nameTablePosition);
+            }
+
+            reader.JumpTo(pos);
 
             return entries;
         }
@@ -52,7 +80,7 @@
             for (int i = 0; i < splineEntries.Count; i++)
             {
                 writer.Write(splineEntries[i].SplinePoints.Count);
-                writer.Write(splineEntries[i].UnknownUInt32_1);
+                writer.Write(0); // TODO: How do I figure out the name table offset writing now?
 
                 foreach (Vector3 value in splineEntries[i].SplinePoints)
                     writer.Write(value);
@@ -82,7 +110,7 @@
 
     public class SplineEntry
     {
-        public uint UnknownUInt32_1 { get; set; } // Type?
+        public string Name { get; set; }
 
         public List<Vector3> SplinePoints { get; set; } = new();
     }

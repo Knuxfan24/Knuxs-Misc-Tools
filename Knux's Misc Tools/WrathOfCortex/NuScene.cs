@@ -332,14 +332,14 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             // Set up our text writer again for the splines.
             writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_splines.obj");
 
+            // OBJ is stupid and counts from 1 rather than 0. Same as above.
+            int splineVertexCount = 1;
+
             // Write spline data to the file.
             for (int i = 0; i < Data.Splines.Count; i++)
             {
-                // OBJ is stupid and counts from 1 rather than 0. Same as above.
-                int VertexCount = 1;
-
                 // Add a comment numbering this SST entry to make the OBJ a tiny bit more organised.
-                writer.WriteLine($"\n# spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}\n");
+                writer.WriteLine($"\n# {Data.Splines[i].Name}\n");
 
                 // Write each point on this spline.
                 for (int v = 0; v < Data.Splines[i].SplinePoints.Count; v++)
@@ -347,20 +347,20 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
                 // Write the object header.
                 writer.WriteLine();
-                writer.WriteLine($"o spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}");
-                writer.WriteLine($"g spline{i}_0x{Data.Splines[i].UnknownUInt32_1.ToString("X").PadLeft(8, '0')}");
+                writer.WriteLine($"o {Data.Splines[i].Name}");
+                writer.WriteLine($"g {Data.Splines[i].Name}");
 
                 // Write the line header.
                 writer.Write("l ");
 
                 // Write each point as a vertex index.
                 for (int v = 0; v < Data.Splines[i].SplinePoints.Count; v++)
-                    writer.Write($"{v + VertexCount} ");
+                    writer.Write($"{v + splineVertexCount} ");
 
                 writer.WriteLine();
 
                 // Increment VertexCount so we don't accidentally use Vertices from the wrong mesh or spline.
-                VertexCount += Data.Splines[i].SplinePoints.Count;
+                splineVertexCount += Data.Splines[i].SplinePoints.Count;
             }
 
             // Properly close the writer.
