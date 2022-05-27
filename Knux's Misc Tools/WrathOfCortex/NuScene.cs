@@ -194,7 +194,20 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 writer.Write($"mtllib {Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.mtl\n");
 
                 // Add a comment numbering this Geometry entry to make the OBJ a tiny bit more organised.
-                writer.WriteLine($"\n# geometry{i1}\n");
+                // Use the name in the SPEC chunk if we have it.
+                uint nameIndex = 0xFFFFFFFF;
+
+                // Search for the name in the SPEC chunk.
+                for (uint i3 = 0; i3 < Data.SPEC.Count; i3++)
+                {
+                    if (Data.SPEC[(int)i3].ModelIndex == i1)
+                        nameIndex = i3;
+                }
+
+                if (nameIndex == 0xFFFFFFFF)
+                    writer.WriteLine($"\n# geometry{i1}\n");
+                else
+                    writer.WriteLine($"\n# geometry{i1}_{Data.SPEC[(int)nameIndex].Name}\n");
 
                 // Loop through the Meshes in this Geometry entry.
                 for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
@@ -230,8 +243,16 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
 
                 // Write the object header.
                 writer.WriteLine();
-                writer.WriteLine($"o geometry{i1}");
-                writer.WriteLine($"g geometry{i1}");
+                if (nameIndex == 0xFFFFFFFF)
+                {
+                    writer.WriteLine($"o geometry{i1}");
+                    writer.WriteLine($"g geometry{i1}");
+                }
+                else
+                {
+                    writer.WriteLine($"o geometry{i1}_{Data.SPEC[(int)nameIndex].Name}");
+                    writer.WriteLine($"g geometry{i1}_{Data.SPEC[(int)nameIndex].Name}");
+                }
 
                 // Loop through by Mesh so we can split it by material.
                 for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
