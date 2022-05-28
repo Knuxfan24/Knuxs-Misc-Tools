@@ -19,11 +19,20 @@
             {
                 InstanceEntry entry = new();
 
-                entry.UnknownMatrix4x4_1 = reader.Read4x4Matrix();
+                entry.InvInitMatrix = reader.Read4x4Matrix();
                 entry.ModelIndex = reader.ReadUInt32();
                 entry.UnknownUInt32_1 = reader.ReadUInt32();
                 entry.UnknownUInt32_2 = reader.ReadUInt32();
                 reader.JumpAhead(0x4); // Always 0.
+
+                Vector3 scale = new();
+                Quaternion rotation = new();
+                Vector3 translation = new();
+                Matrix4x4.Decompose(entry.InvInitMatrix, out scale, out rotation, out translation);
+
+                entry.Scale = scale;
+                entry.Rotation = Helpers.ToEulerAngles(rotation);
+                entry.Translation = translation;
 
                 Instances.Add(entry);
             }
@@ -64,7 +73,7 @@
             // Write all the first entry types.
             for (int i = 0; i < Instances.Count; i++)
             {
-                writer.Write(Instances[i].UnknownMatrix4x4_1);
+                writer.Write(Instances[i].InvInitMatrix);
                 writer.Write(Instances[i].ModelIndex);
                 writer.Write(Instances[i].UnknownUInt32_1);
                 writer.Write(Instances[i].UnknownUInt32_2);
@@ -107,13 +116,20 @@
 
     public class InstanceEntry
     {
-        public Matrix4x4 UnknownMatrix4x4_1 { get; set; }
+        public Matrix4x4 InvInitMatrix { get; set; }
 
         public uint ModelIndex { get; set; }
 
         public uint UnknownUInt32_1 { get; set; }
 
         public uint UnknownUInt32_2 { get; set; }
+
+        // These are not actually values in the data, more just pretranslated to make things easier.
+        public Vector3 Translation { get; set; }
+
+        public Vector3 Rotation { get; set; }
+
+        public Vector3 Scale { get; set; }
     }
 
     public class INSTEntry2

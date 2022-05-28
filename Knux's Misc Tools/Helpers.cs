@@ -26,6 +26,44 @@ namespace Knuxs_Misc_Tools
             return quat;
         }
 
+        // Ripped from HedgeLib
+        public static Vector3 ToEulerAngles(Quaternion quat, bool returnResultInRadians = false)
+        {
+            // Credit to http://quat.zachbennett.com/
+            float qw2 = quat.W * quat.W;
+            float qx2 = quat.X * quat.X;
+            float qy2 = quat.Y * quat.Y;
+            float qz2 = quat.Z * quat.Z;
+            float test = quat.X * quat.Y + quat.Z * quat.W;
+
+            if (test > 0.499)
+            {
+                return GetVect(0,
+                    360 / System.Math.PI * System.Math.Atan2(quat.X, quat.W), 90);
+            }
+            if (test < -0.499)
+            {
+                return GetVect(0,
+                    -360 / System.Math.PI * System.Math.Atan2(quat.X, quat.W), -90);
+            }
+
+            double h = System.Math.Atan2(2 * quat.Y * quat.W - 2 * quat.X * quat.Z, 1 - 2 * qy2 - 2 * qz2);
+            double a = System.Math.Asin(2 * quat.X * quat.Y + 2 * quat.Z * quat.W);
+            double b = System.Math.Atan2(2 * quat.X * quat.W - 2 * quat.Y * quat.Z, 1 - 2 * qx2 - 2 * qz2);
+
+            return GetVect(System.Math.Round(b * 180 / System.Math.PI),
+                System.Math.Round(h * 180 / System.Math.PI),
+                System.Math.Round(a * 180 / System.Math.PI));
+
+            // Sub-Methods
+            Vector3 GetVect(double x, double y, double z)
+            {
+                float multi = (returnResultInRadians) ? 0.0174533f : 1;
+                return new Vector3((float)x * multi,
+                    (float)y * multi, (float)z * multi);
+            }
+        }
+
         public static float ToSingle(double value)
         {
             return (float)value;
