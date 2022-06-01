@@ -224,7 +224,7 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         writer.WriteLine();
                         for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vt {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.Y:F8}");
+                            writer.WriteLine($"vt {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.X:F8} {-Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.Y:F8}");
                         }
 
                         writer.WriteLine();
