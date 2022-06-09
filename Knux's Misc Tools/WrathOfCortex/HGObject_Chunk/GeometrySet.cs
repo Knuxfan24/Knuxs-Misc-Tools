@@ -83,7 +83,6 @@
                         }
 
                         // If the primitive type is 5, then this should be a triangle list.
-                        // TODO: This produces incorrect faces when exporting, how are these lists made?
                         else
                         {
                             for (int f = 0; f < faceTableShortCount; f++)

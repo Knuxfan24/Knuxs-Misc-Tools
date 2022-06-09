@@ -179,19 +179,13 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             // Initalise a writer variable.
             StreamWriter writer;
 
-            #region OBJ and MTL Writing
-            // Loop through all the Geometry entries.
-            for (int i1 = 0; i1 < Data.Geometry.Count; i1++)
+            for (int instance = 0; instance < Data.Instances.Instances.Count; instance++)
             {
-                // OBJ is stupid and counts from 1 rather than 0.
-                // Plus we need this count so that we don't mix up vertex indices.
                 int VertexCount = 1;
 
-                // Set up our text writer.
-                writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.obj");
+                writer = File.CreateText($@"{filepath}\instance{instance}.obj");
 
-                // Write a reference to the MTL.
-                writer.Write($"mtllib {Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.mtl\n");
+                writer.Write($"mtllib instance{instance}.mtl\n");
 
                 // Add a comment numbering this Geometry entry to make the OBJ a tiny bit more organised.
                 // Use the name in the SPEC chunk if we have it.
@@ -200,43 +194,51 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 // Search for the name in the SPEC chunk.
                 for (uint i3 = 0; i3 < Data.SPEC.Count; i3++)
                 {
-                    if (Data.SPEC[(int)i3].ModelIndex == i1)
+                    if (Data.SPEC[(int)i3].ModelIndex == Data.Instances.Instances[instance].ModelIndex)
                         nameIndex = i3;
                 }
 
                 if (nameIndex == 0xFFFFFFFF)
-                    writer.WriteLine($"\n# geometry{i1}\n");
+                    writer.WriteLine($"\n# instance{instance}\n");
                 else
-                    writer.WriteLine($"\n# geometry{i1}_{Data.SPEC[(int)nameIndex].Name}\n");
+                    writer.WriteLine($"\n# instance{instance}_{Data.SPEC[(int)nameIndex].Name}\n");
+
+                // Write the positional and Z rotation value (cannot get X and Y working for the life of me.
+                writer.WriteLine($"pos {Data.Instances.Instances[instance].Translation.X:F8} {-Data.Instances.Instances[instance].Translation.Z:F8} {Data.Instances.Instances[instance].Translation.Y:F8}");
+                writer.WriteLine($"rot 0 0 {-Data.Instances.Instances[instance].Rotation.Y:F8}");
 
                 // Loop through the Meshes in this Geometry entry.
-                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                for (int i2 = 0; i2 < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes.Count; i2++)
                 {
                     // If there isn't a Primitive here, don't bother writing it.
-                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
+                    if (Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive != null)
                     {
                         // Write the Vertex Positions, Texture Coordinates and Normals.
-                        for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                        for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"v {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Y:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Position.Z:F8}");
+                            float xPos = ((Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Position.X)/* + Data.Instances.Instances[instance].Translation.X*/) * Data.Instances.Instances[instance].Scale.X;
+                            float yPos = ((Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Position.Y)/* + Data.Instances.Instances[instance].Translation.Y*/) * Data.Instances.Instances[instance].Scale.Y;
+                            float zPos = ((Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Position.Z)/* + Data.Instances.Instances[instance].Translation.Z*/) * Data.Instances.Instances[instance].Scale.Z;
+
+                            writer.WriteLine($"v {xPos:F8} {yPos:F8} {zPos:F8}");
                         }
 
                         writer.WriteLine();
-                        for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                        for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vt {Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.X:F8} {-Data.Geometry[i1].Meshes[i2].Vertices[i].TextureCoordinates.Y:F8}");
+                            writer.WriteLine($"vt {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].TextureCoordinates.X:F8} {-Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].TextureCoordinates.Y:F8}");
                         }
 
                         writer.WriteLine();
-                        for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                        for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vn {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.X:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Y:F8} {Data.Geometry[i1].Meshes[i2].Vertices[i].Normals.Z:F8}");
+                            writer.WriteLine($"vn {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Normals.X:F8} {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Normals.Y:F8} {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Normals.Z:F8}");
                         }
 
                         writer.WriteLine();
-                        for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Vertices.Count; i++)
+                        for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices.Count; i++)
                         {
-                            writer.WriteLine($"vc {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[1]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[2]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[3]} {Data.Geometry[i1].Meshes[i2].Vertices[i].Colours[0]}");
+                            writer.WriteLine($"vc {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Colours[1]} {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Colours[2]} {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Colours[3]} {Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices[i].Colours[0]}");
                         }
                     }
                 }
@@ -245,40 +247,40 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 writer.WriteLine();
                 if (nameIndex == 0xFFFFFFFF)
                 {
-                    writer.WriteLine($"o geometry{i1}");
-                    writer.WriteLine($"g geometry{i1}");
+                    writer.WriteLine($"o instance{instance}");
+                    writer.WriteLine($"g instance{instance}");
                 }
                 else
                 {
-                    writer.WriteLine($"o geometry{i1}_{Data.SPEC[(int)nameIndex].Name}");
-                    writer.WriteLine($"g geometry{i1}_{Data.SPEC[(int)nameIndex].Name}");
+                    writer.WriteLine($"o instance{instance}_{Data.SPEC[(int)nameIndex].Name}");
+                    writer.WriteLine($"g instance{instance}_{Data.SPEC[(int)nameIndex].Name}");
                 }
 
                 // Loop through by Mesh so we can split it by material.
-                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                for (int i2 = 0; i2 < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes.Count; i2++)
                 {
                     // If there isn't a Primitive here, don't bother writing it.
-                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
+                    if (Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive != null)
                     {
-                        writer.WriteLine($"usemtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
+                        writer.WriteLine($"usemtl Material{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex}");
 
                         // Write the Triangle Strips if the type is 6.
-                        if (Data.Geometry[i1].Meshes[i2].Primitive.Type == 6)
+                        if (Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.Type == 6)
                         {
-                            for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips.Count; i++)
+                            for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips.Count; i++)
                             {
-                                for (int v = 0; v < Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i].Count - 2; v++)
+                                for (int v = 0; v < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i].Count - 2; v++)
                                 {
                                     if ((v & 1) == 0)
                                         writer.WriteLine($"f " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
                                     else
                                         writer.WriteLine($"f " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
-                                                         $"{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 1] + VertexCount} " +
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 0] + VertexCount} " +
+                                                         $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.TriangleStrips[i][v + 2] + VertexCount}");
                                 }
                             }
                             writer.WriteLine();
@@ -287,19 +289,18 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                         // Write the standard Triangle List if the type is 5.
                         else
                         {
-                            // TODO: This doesn't work right.
-                            for (int i = 0; i < Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices.Count - 2; i++)
+                            for (int i = 0; i < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices.Count - 2; i += 3)
                             {
                                 writer.WriteLine($"f " +
-                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
-                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
-                                                        $"{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[i1].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
+                                                 $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i] + VertexCount} " +
+                                                 $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 1] + VertexCount} " +
+                                                 $"{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}/{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive.FaceIndices[i + 2] + VertexCount}");
                             }
                             writer.WriteLine();
                         }
 
                         // Increment VertexCount so we don't accidentally use Vertices from the wrong mesh.
-                        VertexCount += Data.Geometry[i1].Meshes[i2].Vertices.Count;
+                        VertexCount += Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Vertices.Count;
                     }
                 }
 
@@ -311,32 +312,32 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
                 List<uint> writtenMats = new();
 
                 // Recreate the text writer with the same name as the filepath, but with .obj replaced with .mtl.
-                writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_geometry{i1}.mtl");
+                writer = File.CreateText($@"{filepath}\instance{instance}.mtl");
 
                 // Loop through the Meshes in this Geometry entry.
-                for (int i2 = 0; i2 < Data.Geometry[i1].Meshes.Count; i2++)
+                for (int i2 = 0; i2 < Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes.Count; i2++)
                 {
                     // Don't bother writing this material if the Mesh calling it doesn't have any Primitive data.
-                    if (Data.Geometry[i1].Meshes[i2].Primitive != null)
+                    if (Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].Primitive != null)
                     {
                         // Only write this material if we haven't already and if we need to.
-                        if (!writtenMats.Contains(Data.Geometry[i1].Meshes[i2].MaterialIndex))
+                        if (!writtenMats.Contains(Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex))
                         {
                             // Mark this index as having been written.
-                            writtenMats.Add(Data.Geometry[i1].Meshes[i2].MaterialIndex);
+                            writtenMats.Add(Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex);
 
                             // Write a newmtl header.
-                            writer.WriteLine($"newmtl Material{Data.Geometry[i1].Meshes[i2].MaterialIndex}");
+                            writer.WriteLine($"newmtl Material{Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex}");
 
                             // Write the material colours.
-                            writer.WriteLine($"\tKd {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.X} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Y} {Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].Colours.Z}");
+                            writer.WriteLine($"\tKd {Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].Colours.X} {Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].Colours.Y} {Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].Colours.Z}");
 
                             // Write a placeholder diffuse map entry if this material has one.
                             // Also includes a comment with the type.
-                            if (Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex != -1)
+                            if (Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].BitmapIndex != -1)
                             {
-                                writer.WriteLine($"\t#Bitmap Type = 0x{Data.Textures[Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex].Type:X}");
-                                writer.WriteLine($"\tmap_Kd bitmap{Data.Materials[(int)Data.Geometry[i1].Meshes[i2].MaterialIndex].BitmapIndex}.png");
+                                writer.WriteLine($"\t#Bitmap Type = 0x{Data.Textures[Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].BitmapIndex].Type:X}");
+                                writer.WriteLine($"\tmap_Kd bitmap{Data.Materials[(int)Data.Geometry[(int)Data.Instances.Instances[instance].ModelIndex].Meshes[i2].MaterialIndex].BitmapIndex}.png");
 
                             }
 
@@ -351,7 +352,8 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             }
 
             // Set up our text writer again for the splines.
-            writer = File.CreateText($@"{Path.GetDirectoryName(filepath)}\{Path.GetFileNameWithoutExtension(filepath)}_splines.obj");
+            writer = File.CreateText($@"{filepath}\splines.pth");
+            writer.Write($"#This is just an OBJ but with a different extension so that the MaxScript doesn't die trying to read it.\n");
 
             // OBJ is stupid and counts from 1 rather than 0. Same as above.
             int splineVertexCount = 1;
@@ -387,45 +389,69 @@ namespace Knuxs_Misc_Tools.WrathOfCortex
             // Properly close the writer.
             writer.Flush();
             writer.Close();
-            #endregion
 
-            #region Bitmap Exporting
-            // Half functional, fails on certain textures, breaks others and doesn't yet handle any non DXT1 types.
+            // Borrowed entirely from LibTWOC.
             for (int i = 0; i < Data.Textures.Count; i++)
             {
-                try
+                var image = new Image<Byte4>((int)Data.Textures[i].Width, (int)Data.Textures[i].Height);
+                switch (Data.Textures[i].Type)
                 {
-                    switch (Data.Textures[i].Type)
-                    {
-                        case 0x80:
-                            var image = new Image<Byte4>((int)Data.Textures[i].Width, (int)Data.Textures[i].Height);
-                            int index = 0;
-                            for (int y = 0; y < Data.Textures[i].Height; y += 8)
+                    case 0x80:
+                        int index = 0;
+                        for (int y = 0; y < Data.Textures[i].Height; y += 8)
+                        {
+                            for (var x = 0; x < Data.Textures[i].Width; x += 8)
                             {
-                                for (var x = 0; x < Data.Textures[i].Height; x += 8)
+                                Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y);
+                                index += 8;
+                                Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y);
+                                index += 8;
+                                Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y + 4);
+                                index += 8;
+                                Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y + 4);
+                                index += 8;
+                            }
+                        }
+                        break;
+
+                    case 0x81:
+                        index = 0;
+                        for (var y = 0; y < Data.Textures[i].Height; y += 4)
+                        {
+                            for (var x = 0; x < Data.Textures[i].Width; x += 4)
+                            {
+                                for (var by = 0; by < 4; by++)
                                 {
-                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y);
-                                    index += 8;
-                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y);
-                                    index += 8;
-                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x, y + 4);
-                                    index += 8;
-                                    Helpers.DecodeDXTBlock(ref image, Data.Textures[i].Data, index, x + 4, y + 4);
-                                    index += 8;
+                                    for (var bx = 0; bx < 4; bx++)
+                                    {
+                                        Helpers.DecodeRGB5A3Block(ref image, Data.Textures[i].Data, index, x + bx, y + by);
+                                        index += 2;
+                                    }
                                 }
                             }
-                            image.SaveAsPng($@"{Path.GetDirectoryName(filepath)}\bitmap{i}.png");
-                            break;
-                    }
+                        }
+                        break;
+
+                    case 0x82: // This is incorrect but I just wanted something to render
+                        index = 0;
+                        for (var y = 0; y < Data.Textures[i].Height; y += 4)
+                        {
+                            for (var x = 0; x < Data.Textures[i].Width; x += 4)
+                            {
+                                for (var by = 0; by < 4; by++)
+                                {
+                                    for (var bx = 0; bx < 4; bx++)
+                                    {
+                                        Helpers.DecodeRGB5A3Block(ref image, Data.Textures[i].Data, index, x + bx, y + by);
+                                        index += 2;
+                                    }
+                                }
+                            }
+                        }
+                        break;
                 }
-                catch
-                {
-                    Console.WriteLine($"Failed on {i}.");
-                }
+                image.SaveAsPng($@"{filepath}\bitmap{i}.png");
             }
-
-
-            #endregion
         }
     }
 }

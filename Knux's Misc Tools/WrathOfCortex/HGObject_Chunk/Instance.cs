@@ -31,6 +31,7 @@
                 Matrix4x4.Decompose(entry.InvInitMatrix, out scale, out rotation, out translation);
 
                 entry.Scale = scale;
+                entry.RotationQuat = rotation;
                 entry.Rotation = Helpers.ToEulerAngles(rotation);
                 entry.Translation = translation;
 
@@ -128,6 +129,8 @@
         public Vector3 Translation { get; set; }
 
         public Vector3 Rotation { get; set; }
+
+        public Quaternion RotationQuat { get; set; }
 
         public Vector3 Scale { get; set; }
     }

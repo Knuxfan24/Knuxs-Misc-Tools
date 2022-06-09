@@ -45,13 +45,19 @@ namespace Knuxs_Misc_Tools.SonicNext
         /// <summary>
         /// Converts a directory of files to an XNM.
         /// </summary>
-        /// <param name="srcDir">Directory containing files to convert.</param>
+        /// <param name="srcDir">Directory containing files (or single file) to convert.</param>
         /// <param name="tgtDir">Directory to save the converted XNMs to.</param>
         /// <param name="srcXNO">The name of the XNO to use for getting Node Indices from (defaults to sonic_Root).</param>
         /// <param name="framerate">Framerate for the converted XNMs (defaults to 30 Frames Per Second).</param>
         public static void AnimationImport(string srcDir, string tgtDir, string srcXNO = "sonic_Root", float framerate = 30f)
         {
-            string[] fbxFiles = Directory.GetFiles(srcDir, "*.fbx", SearchOption.TopDirectoryOnly);
+            string[] fbxFiles;
+
+            if (Path.GetExtension(srcDir.ToLower()) == ".fbx")
+                fbxFiles = new[] { srcDir };
+            else
+                fbxFiles = Directory.GetFiles(srcDir, "*.fbx", SearchOption.TopDirectoryOnly);
+
             foreach (string fbxFile in fbxFiles)
             {
                 if (!File.Exists($@"{tgtDir}\{Path.GetFileNameWithoutExtension(fbxFile)}.xnm"))

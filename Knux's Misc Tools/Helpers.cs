@@ -152,6 +152,14 @@ namespace Knuxs_Misc_Tools
                 return (ushort)(array[offset + 1] | (array[offset] << 8));
             return (ushort)(array[offset] | (array[offset + 1] << 8));
         }
+        public static byte Convert3To8(byte v)
+        {
+            return (byte)((v << 5) | (v << 2) | (v >> 1));
+        }
+        public static byte Convert4To8(byte v)
+        {
+            return (byte)((v << 4) | v);
+        }
         public static byte Convert5To8(byte v)
         {
             return (byte)((v << 3) | (v >> 2));
@@ -204,6 +212,30 @@ namespace Knuxs_Misc_Tools
                     val <<= 2;
                 }
             }
+        }
+
+        public static void DecodeRGB5A3Block(ref Image<Byte4> dst, byte[] src, int srcOffset, int x, int y)
+        {
+            if (srcOffset >= src.Length) return;
+            var c = ArrayReadU16(src, srcOffset, true);
+
+            byte r, g, b, a;
+            if ((c & 0x8000) != 0)
+            {
+                r = Convert5To8((byte)((c >> 10) & 0x1F));
+                g = Convert5To8((byte)((c >> 5) & 0x1F));
+                b = Convert5To8((byte)((c) & 0x1F));
+                a = 0xFF;
+            }
+            else
+            {
+                a = Convert3To8((byte)((c >> 12) & 0x7));
+                b = Convert4To8((byte)((c >> 8) & 0xF));
+                g = Convert4To8((byte)((c >> 4) & 0xF));
+                r = Convert4To8((byte)((c) & 0xF));
+            }
+
+            dst[x, y] = new Byte4(r, g, b, a);
         }
         #endregion
     }
