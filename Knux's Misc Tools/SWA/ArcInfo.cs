@@ -48,7 +48,7 @@
             reader.JumpTo(stringTableEnd, true);
 
             // Rest of the file seems to be a list of numbers incrementing by 0x4 every time? And a count of them?
-            uint offsetCount = reader.ReadUInt32(); // Might be archiveCount aligned to 0x4???
+            uint offsetCount = reader.ReadUInt32(); // Might be archiveCount + 2?
         }
 
         public override void Save(Stream stream)
@@ -86,20 +86,17 @@
                 writer.WriteNullTerminatedString(entries[i].Archive);
             }
 
+            // Align to 0x4.
+            writer.FixPadding(0x4);
+
             // Save the position to the end offset table.
             uint offsetTablePosition = (uint)writer.BaseStream.Position;
 
-            // Calculate the size we need to write here.
-            // https://stackoverflow.com/questions/2705542/returning-the-nearest-multiple-value-of-a-number
-            int result = entries.Count - (entries.Count % 0x4);
-            if ((entries.Count % 0x4) >= (0x4 / 2))
-                result += 0x4;
-
-            // Write said size.
-            writer.Write((uint)result);
+            // Write this weird offset table thing. // TODO: Is this right?
+            writer.Write(entries.Count + 0x2);
 
             // Write this weird offset table.
-            for (int i = 0; i < result; i++)
+            for (int i = 0; i < entries.Count + 0x2; i++)
                 writer.Write(0x4 * (i + 1));
 
             // Write the file size.
