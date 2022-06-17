@@ -6,14 +6,14 @@
         /// Reads a NuScene and prints any instances that aren't at the default x or y rotation.
         /// </summary>
         /// <param name="nusFile"></param>
-        public static void InstanceChecker(string nusFile)
+        public static void InstanceChecker(string nusFile, int startFrom = 0)
         {
             // Load the NuScene.
             NuScene nus = new();
             nus.Load(nusFile);
 
             // Loop through all the instances.
-            for (int i = 0; i < nus.Data.Instances.Instances.Count; i++)
+            for (int i = startFrom; i < nus.Data.Instances.Instances.Count; i++)
             {
                 HGObject_Chunk.InstanceEntry? instance = nus.Data.Instances.Instances[i];
 
