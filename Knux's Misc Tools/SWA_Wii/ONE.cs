@@ -189,10 +189,13 @@
         /// <param name="directory">The directory to extract to.</param>
         public void Extract(string directory)
         {
+            // Create the extraction directory.
+            Directory.CreateDirectory(directory);
+
             // Set up our file order log.
             StreamWriter log = new(File.Open($@"{directory}\fileorder.log", FileMode.Create));
 
-            // Loop through each file.
+            // Loop through each file to extract.
             foreach (GenericFile file in Files)
             {
                 // Write the file's name to the order log.
@@ -201,7 +204,10 @@
                 // If this isn't a space.bin padding file, then write it to disk.
                 if (file.FileName != "space.bin")
                 {
+                    // Print the name of the file we're extracting.
                     Console.WriteLine($"Extracting {file.FileName}.");
+
+                    // Extract the file.
                     File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
                 }
             }

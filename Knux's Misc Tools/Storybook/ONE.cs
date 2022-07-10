@@ -119,11 +119,16 @@ namespace Knuxs_Misc_Tools.Storybook
         /// <param name="directory">The directory to extract to.</param>
         public void Extract(string directory)
         {
+            // Create the extraction directory.
             Directory.CreateDirectory(directory);
 
+            // Loop through each file to extract.
             foreach (GenericFile file in Files)
             {
+                // Print the name of the file we're extracting.
                 Console.WriteLine($"Extracting {file.FileName}.");
+
+                // Extract the file.
                 File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
             }
         }
