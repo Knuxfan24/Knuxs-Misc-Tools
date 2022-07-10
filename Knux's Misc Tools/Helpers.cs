@@ -5,6 +5,15 @@ using System.Web;
 
 namespace Knuxs_Misc_Tools
 {
+    public class GenericFile
+    {
+        public string? FileName { get; set; }
+
+        public byte[]? Data { get; set; }
+
+        public override string ToString() => FileName;
+    }
+
     internal class Helpers
     {
         public static Quaternion ConvertToQuat(float angle)

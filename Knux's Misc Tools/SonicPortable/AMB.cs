@@ -1,17 +1,8 @@
 ﻿namespace Knuxs_Misc_Tools.SonicPortable
 {
-    public class FileEntry
-    {
-        public string? FileName { get; set; }
-
-        public byte[]? Data { get; set; }
-
-        public override string ToString() => FileName;
-    }
-
     public class AMB : FileBase
     {
-        public List<FileEntry> Files = new();
+        public List<GenericFile> Files = new();
 
         public void Load(string filepath, string? extractionPath = null)
         {
@@ -40,7 +31,7 @@
                 // Don't bother reading this file if it's empty.
                 if (FileStart != 0)
                 {
-                    FileEntry file = new();
+                    GenericFile file = new();
 
                     // Save our current position so we can jump back for the next file.
                     long pos = reader.BaseStream.Position;
@@ -87,7 +78,7 @@
             Directory.CreateDirectory(directory);
 
             // Loop through each file to extract.
-            foreach (FileEntry file in Files)
+            foreach (GenericFile file in Files)
             {
                 // Print the name of the file we're extracting.
                 Console.WriteLine($"Extracting {file.FileName}.");

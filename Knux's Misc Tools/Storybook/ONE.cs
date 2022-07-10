@@ -2,17 +2,9 @@
 
 namespace Knuxs_Misc_Tools.Storybook
 {
-    public class FileEntry
-    {
-        public string? FileName { get; set; }
-
-        public byte[]? Data { get; set; }
-
-        public override string ToString() => FileName;
-    }
     public class ONE : FileBase
     {
-        public List<FileEntry> Files = new();
+        public List<GenericFile> Files = new();
 
         /// <summary>
         /// Loads a Sonic and the Secret Rings or Sonic and the Black Knight ONE Archive.
@@ -45,7 +37,7 @@ namespace Knuxs_Misc_Tools.Storybook
                 byte[] binary = reader.ReadBytes(fileLength);
 
                 // Save this file.
-                FileEntry file = new()
+                GenericFile file = new()
                 {
                     FileName = fileName,
                     Data = binary
@@ -129,7 +121,7 @@ namespace Knuxs_Misc_Tools.Storybook
         {
             Directory.CreateDirectory(directory);
 
-            foreach (FileEntry file in Files)
+            foreach (GenericFile file in Files)
             {
                 Console.WriteLine($"Extracting {file.FileName}.");
                 File.WriteAllBytes($@"{directory}\{file.FileName}", file.Data);
@@ -148,7 +140,7 @@ namespace Knuxs_Misc_Tools.Storybook
             // Loop through each file in the directory and add them.
             foreach (string? file in files)
             {
-                FileEntry entry = new()
+                GenericFile entry = new()
                 {
                     FileName = Path.GetFileName(file),
                     Data = File.ReadAllBytes(file)

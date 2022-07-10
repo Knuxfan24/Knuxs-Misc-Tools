@@ -1,17 +1,8 @@
 ﻿namespace Knuxs_Misc_Tools.SWA_Wii
 {
-    public class FileEntry
-    {
-        public string? FileName { get; set; }
-
-        public byte[]? Data { get; set; }
-
-        public override string ToString() => FileName;
-    }
-
     public class ONE : FileBase
     {
-        public List<FileEntry> Files = new();
+        public List<GenericFile> Files = new();
 
         /// <summary>
         /// Loads an uncompressed Sonic Unleashed Wii ONE Archive.
@@ -66,7 +57,7 @@
                 byte[] binary = reader.ReadBytes(fileLength);
 
                 // Save this file.
-                FileEntry file = new()
+                GenericFile file = new()
                 {
                     FileName = fileName,
                     Data = binary
@@ -145,7 +136,7 @@
                 // Loop through each file in the directory and add them.
                 foreach (string? file in files)
                 {
-                    FileEntry entry = new()
+                    GenericFile entry = new()
                     {
                         FileName = Path.GetFileName(file),
                         Data = File.ReadAllBytes(file)
@@ -164,7 +155,7 @@
                     // Check this file exists. If it does, then add it.
                     if (File.Exists(@$"{directoryPath}\{file}"))
                     {
-                        FileEntry entry = new()
+                        GenericFile entry = new()
                         {
                             FileName = Path.GetFileName(@$"{directoryPath}\{file}"),
                             Data = File.ReadAllBytes(@$"{directoryPath}\{file}")
@@ -175,7 +166,7 @@
                     // If this file is that stupid space.bin padding, then create it.
                     else if (file == "space.bin")
                     {
-                        FileEntry entry = new()
+                        GenericFile entry = new()
                         {
                             FileName = "space.bin",
                             Data = new byte[] { 0x73, 0x70, 0x61, 0x63, 0x65, 0x20, 0x20, 0x20 }
@@ -202,7 +193,7 @@
             StreamWriter log = new(File.Open($@"{directory}\fileorder.log", FileMode.Create));
 
             // Loop through each file.
-            foreach (FileEntry file in Files)
+            foreach (GenericFile file in Files)
             {
                 // Write the file's name to the order log.
                 log.WriteLine(file.FileName);
