@@ -5,12 +5,18 @@ using System.Web;
 
 namespace Knuxs_Misc_Tools
 {
+    /// <summary>
+    /// Generic file wrapper for archives.
+    /// </summary>
     public class GenericFile
     {
+        // The name of this file.
         public string? FileName { get; set; }
 
+        // The bytes that make up this file.
         public byte[]? Data { get; set; }
 
+        // Show the file's name in the debugger rather than Knuxs_Misc_Tools.GenericFile.
         public override string ToString() => FileName;
     }
 
