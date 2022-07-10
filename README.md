@@ -1,6 +1,10 @@
 # Knux's Miscellaneous Tools
 A small repository containing simple C# code that I hack together to either make some of the stuff I do easier or just to test some stuff. I also dump random reverse engineering stuff in various states of unfinished here too because why not?
 
+I don't officially support any of the stuff in this repo. It's mostly here for my own archival. If you want to use any of this, you're on your own.
+
+___
+
 The stuff here heavily relies on [Marathon](https://github.com/Big-Endian-32/Marathon), specifically my [custom Ninja fork](https://github.com/Knuxfan24/Marathon/tree/ninja).
 
 [HedgeLib#](https://github.com/Radfordhound/HedgeLib/tree/master) is needed for a couple of the Sonic Unleashed Wii SET functions.
@@ -9,4 +13,6 @@ The stuff here heavily relies on [Marathon](https://github.com/Big-Endian-32/Mar
 
 All three projects are included as GitHub Submodules now, so a proper clone will pull them down with it.
 
-Also included is a modified version of the already modified importvcolorobj script from Heroes Power Plant that has been modified to pull in some additional data to badly emulate instancing. X and Y rotation is missing as Max is fucking stupid when it comes to most things, so that data is easier to input by hand, inputting the Y rotation then the X rotation manually seems to work every time.
+___
+
+Also included is a modified version of the already modified importvcolorobj script from Heroes Power Plant that has been modified to pull in some additional data to badly emulate instancing to help with work for the Wrath of Cortex NuScene files. X and Y rotation is missing as Max is fucking stupid when it comes to most things, so that data is easier to input by hand, inputting the Y rotation then the X rotation manually seems to work every time.
