@@ -15,7 +15,7 @@
 
         public override void Load(Stream fileStream)
         {
-            BinaryReaderEx reader = new BinaryReaderEx(fileStream);
+            BinaryReaderEx reader = new(fileStream, System.Text.Encoding.UTF7);
 
             // Read the amount of messages this file has.
             ushort entryCount = reader.ReadUInt16();
@@ -62,7 +62,7 @@
             for (int i = 0; i < Messages.Count; i++)
                 writer.AddOffset($"Message{i}", 2);
 
-            // Write the message strings (breaks when non ASCII is involved oops).
+            // Write the message strings (currently incredibly borked due to offset lengths).
             for (int i = 0; i < Messages.Count; i++)
             {
                 writer.FillOffset($"Message{i}");
