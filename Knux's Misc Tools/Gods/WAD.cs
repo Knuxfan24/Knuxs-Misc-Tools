@@ -5,7 +5,7 @@
         public List<GenericFile> Files = new();
 
         // TODO: Read folder structure, all my attempts so far have failed and resulted in paths that make no sense.
-        // TODO: Get samples the WAD files from other Data Design Interactive games that run on their GODS engine.
+        // TODO: Get samples of the WAD files from other Data Design Interactive games that run on their GODS engine.
         public override void Load(Stream fileStream)
         {
             BinaryReaderEx reader = new(fileStream);
