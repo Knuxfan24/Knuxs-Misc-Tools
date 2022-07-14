@@ -35,7 +35,7 @@ ___
 
 - Basic [WAD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Gods/WAD.cs) archive reading and extracting. Doesn't handle directories.
 
-## Project M (Metroid Other M)
+## ProjectM (Metroid Other M)
 
 - [Message Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/ProjectM/MessageTable.cs) reading and writing.
 
