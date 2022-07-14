@@ -55,7 +55,7 @@ ___
 
 ## SonicNext (Sonic The Hedgehog (2006)
 
-- [Functions](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicNext/Functions.cs) for importing a model as an XNO, removing an XNO's vertex colours, converting an FBX file's animation to an XNM (either a single file or a directory of files), mergine two XNMs together, changing an XNM's framerate, importing a model as a stage collision mesh, retargeting animations from one XNO to another and enabling translucency on an XNO (either a single material or every material in the XNO). 
+- [Functions](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicNext/Functions.cs) for importing a model as an XNO, removing an XNO's vertex colours, converting an FBX file's animation to an XNM (either a single file or a directory of files), merging two XNMs together, changing an XNM's framerate, importing a model as a stage collision mesh, retargeting animations from one XNO to another and enabling translucency on an XNO (either a single material or every material in the XNO). 
 
 ## SonicPortable (Sonic The Hedgehog 4)
 
