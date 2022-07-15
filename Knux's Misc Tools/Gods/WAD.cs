@@ -6,35 +6,50 @@
 
         // TODO: Read folder structure, all my attempts so far have failed and resulted in paths that make no sense.
         // TODO: Get samples of the WAD files from other Data Design Interactive games that run on their GODS engine.
-        public override void Load(Stream fileStream)
+        public void Load(string filepath, bool isWii = false)
         {
-            BinaryReaderEx reader = new(fileStream);
+            // Set up the size of an entry in the file table for later maths.
+            uint entrySize = 0x18; // Confirmed by the PC and PS2 versions of Ninjabread Man.
+            if (isWii)
+                entrySize = 0x20; // Confirmed by the Wii version of Ninjabread Man.
 
+            BinaryReaderEx reader = new(File.OpenRead(filepath));
+
+            // Read this WAD's header.
             reader.ReadSignature(4, "WADH");
             uint DataTableOffset = reader.ReadUInt32();
             uint NodeCount = reader.ReadUInt32();
             uint StringTableLength = reader.ReadUInt32();
 
             // Calculate where the String Table will be.
-            uint StringTableOffset = (NodeCount * 0x18) + 0x10;
+            uint StringTableOffset = (NodeCount * entrySize) + 0x10;
 
+            // Loop through and read the files.
+            // TODO: Better store the data here (including the Wii exclusive data), something to think about for after reading directories, as only then will I try and resave the file.
             for (int i = 0; i < NodeCount; i++)
             {
                 // Skip root directory.
                 if (i == 0)
                 {
-                    reader.JumpAhead(0x18);
+                    reader.JumpAhead(entrySize);
                     continue;
                 }
 
-                // TODO: The Ninjabread Man Wii WAD is structured differently, each entry is 0x20 long. Figure that one out?
                 // Read this file entry.
                 uint NameOffset = reader.ReadUInt32();
+                if (isWii)
+                {
+                    uint UnknownUInt32_1 = reader.ReadUInt32();
+                }
                 uint DataOffset = reader.ReadUInt32();
                 int DataSize = reader.ReadInt32();
+                if (isWii)
+                {
+                    int UnknownInt32_1 = reader.ReadInt32();
+                }
                 bool UnknownBoolean_1 = reader.ReadBoolean(0x4);
                 uint LastNodeIndex = reader.ReadUInt32();
-                uint UnknownUInt32_1 = reader.ReadUInt32();
+                uint SiblingIndex = reader.ReadUInt32(); // ?
 
                 // Save our current position so we can jump back for the next file.
                 long pos = reader.BaseStream.Position;
@@ -59,6 +74,8 @@
                 // Jump back for the next file.
                 reader.JumpTo(pos);
             }
+
+            reader.Close();
         }
 
         // TODO: Replace with the Sonic 4 AMB Extraction when folders get involved.
