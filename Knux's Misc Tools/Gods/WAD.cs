@@ -122,6 +122,87 @@
                 Nodes[i].Name = paths[i];
         }
 
+        // TODO: Inaccurate, duplicates node names where the original file just points to the earlier existing one.
+        public override void Save(string filepath, bool isWii = false)
+        {
+            BinaryWriterEx writer = new(File.OpenWrite(filepath));
+
+            // WADH header.
+            writer.Write("WADH");
+            writer.AddOffset("DataTable");
+            writer.Write(Nodes.Count + 1);
+
+            // Placeholder size value to be filled in later.
+            long stringTableSizePos = writer.BaseStream.Position;
+            writer.Write("SIZE");
+
+            // Root Node
+            // TODO: Wii version.
+            writer.Write(-1);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(0);
+            writer.Write(1);
+            writer.Write(-1);
+
+            // Set up a value to calculate string table offsets.
+            int stringTableLength = 0;
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                // Write the current string table length.
+                writer.Write(stringTableLength);
+
+                // Calculate how many characters this node should add.
+                stringTableLength += Nodes[i].Name[(Nodes[i].Name.LastIndexOf('\\') + 1)..].Length + 1;
+
+                if (isWii)
+                    writer.Write((int)Nodes[i].UnknownWiiInt32_1);
+
+                writer.AddOffset($"Node{i}DataOffset");
+
+                if (Nodes[i].Data != null)
+                    writer.Write(Nodes[i].Data.Length);
+                else
+                    writer.Write(0);
+
+                if (isWii)
+                    writer.Write((int)Nodes[i].UnknownWiiInt32_2);
+
+                writer.WriteBoolean32(Nodes[i].UnknownBoolean_1);
+                writer.Write(Nodes[i].LastRootNodeIndex);
+                writer.Write(Nodes[i].SiblingIndex);
+            }
+
+            // Write the name for this node.
+            for (int i = 0; i < Nodes.Count; i++)
+                writer.WriteNullTerminatedString(Nodes[i].Name[(Nodes[i].Name.LastIndexOf('\\') + 1)..]);
+
+            writer.FixPadding(0x20);
+            writer.FillOffset("DataTable");
+
+            // Set up a value to calculate data offsets.
+            uint dataOffset = 0;
+
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                if (Nodes[i].Data != null)
+                {
+                    // Write this node's data if any exists.
+                    writer.FillOffset($"Node{i}DataOffset", dataOffset);
+                    dataOffset += (uint)Nodes[i].Data.Length;
+                    writer.Write(Nodes[i].Data);
+                }
+            }
+
+            // Go back and fill in the string table size.
+            writer.BaseStream.Position = stringTableSizePos;
+            writer.Write(stringTableLength);
+
+            // Close the writer.
+            writer.Flush();
+            writer.Close();
+        }
+
         /// <summary>
         /// Extracts the files to disc.
         /// </summary>

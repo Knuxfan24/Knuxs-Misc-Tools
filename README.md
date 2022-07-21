@@ -33,7 +33,7 @@ ___
 
 ## Gods (Data Design Interactive Engine)
 
-- [WAD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Gods/WAD.cs) archive reading and extracting.
+- [WAD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Gods/WAD.cs) archive reading and extracting, alongside inaccurate writing.
 
 ## ProjectM (Metroid Other M)
 
