@@ -120,6 +120,29 @@ namespace Knuxs_Misc_Tools.SonicNext
         }
 
         /// <summary>
+        /// Changes the interpolation values in an XNM based on the presence of the word "loop" in their filename.
+        /// </summary>
+        /// <param name="xnm">The XNM to edit.</param>
+        public static void InterpolationFix(string xnm)
+        {
+            NinjaNext interpolation = new(xnm);
+
+            // Set this XNM's motion type if it's not a loop one.
+            if (!xnm.Contains("loop"))
+                interpolation.Data.Motion.Type = MotionType.NND_MOTIONTYPE_NODE | MotionType.NND_MOTIONTYPE_CONSTREPEAT | MotionType.NND_MOTIONTYPE_VERSION2;
+
+            // Set the interpolation on this XNM's submotion if it is a looping one.
+            foreach (var submot in interpolation.Data.Motion.SubMotions)
+            {
+                if (xnm.Contains("loop"))
+                    submot.InterpolationType = SubMotionInterpolationType.NND_SMOTIPTYPE_CONSTANT | SubMotionInterpolationType.NND_SMOTIPTYPE_CONSTREPEAT;
+            }
+
+            // Resave the edited XNM.
+            interpolation.Save();
+        }
+
+        /// <summary>
         /// Imports a file as '06 collision.
         /// </summary>
         /// <param name="filepath">File to import.</param>
