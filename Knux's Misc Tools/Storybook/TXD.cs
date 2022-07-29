@@ -1,16 +1,8 @@
 ﻿namespace Knuxs_Misc_Tools.Storybook
 {
-    public class Texture
-    {
-        public string? Name { get; set; }
-
-        public byte[]? Data { get; set; }
-
-        public override string ToString() => Name;
-    }
     public class TXD : FileBase
     {
-        public List<Texture> Textures = new();
+        public List<GenericFile> Textures = new();
 
         public override string Signature { get; } = "TXAG";
 
@@ -38,10 +30,10 @@
                 int textureSize = reader.ReadInt32();
 
                 // Create a new texture entry.
-                Texture texture = new();
+                GenericFile texture = new();
 
                 // Read the name of this texture, padded to 0x20 bytes.
-                texture.Name = reader.ReadNullPaddedString(0x20);
+                texture.FileName = reader.ReadNullPaddedString(0x20);
 
                 // Save our current position so we can jump back for the next texture.
                 long position = reader.BaseStream.Position;
@@ -79,7 +71,7 @@
             {
                 writer.AddOffset($"Texture{i}Offset");
                 writer.Write(Textures[i].Data.Length);
-                writer.WriteNullPaddedString(Textures[i].Name, 0x20);
+                writer.WriteNullPaddedString(Textures[i].FileName, 0x20);
             }
 
             // Fix the padding.
@@ -102,10 +94,10 @@
         {
             Directory.CreateDirectory(directory);
 
-            foreach (Texture texture in Textures)
+            foreach (GenericFile texture in Textures)
             {
-                Console.WriteLine($"Extracting {texture.Name}.");
-                File.WriteAllBytes($@"{directory}\{texture.Name}.gvr", texture.Data);
+                Console.WriteLine($"Extracting {texture.FileName}.");
+                File.WriteAllBytes($@"{directory}\{texture.FileName}.gvr", texture.Data);
             }
         }
 
@@ -121,9 +113,9 @@
             // Loop through each file in the directory and add them.
             foreach (string? file in files)
             {
-                Texture texture = new()
+                GenericFile texture = new()
                 {
-                    Name = Path.GetFileName(file),
+                    FileName = Path.GetFileName(file),
                     Data = File.ReadAllBytes(file)
                 };
                 Textures.Add(texture);
