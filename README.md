@@ -73,7 +73,7 @@ ___
 
 - Incomplete [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SET.cs) reading and writing.
 
-- Incomplete reading for the Black Knight version of the [SETItems](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SETItems.cs) format.
+- Basic [SETItems](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SETItems.cs) reading and writing.
 
 - [TXD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/TXD.cs) texture archive reading, writing, extracting and creating (doesn't convert to or from Dolphin GVR textures).
 
