@@ -1,6 +1,6 @@
 ﻿namespace Knuxs_Misc_Tools.Storybook
 {
-    public class Path : FileBase
+    public class PathSpline : FileBase
     {
         public class FormatData
         {
