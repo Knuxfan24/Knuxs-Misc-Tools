@@ -26,18 +26,9 @@
 
             public byte Table { get; set; }
 
-            // TODO: Could these be individual byte values to control stuff???
-            public int UnknownInt32_1 { get; set; }
-            public int UnknownInt32_2 { get; set; }
-            public int UnknownInt32_3 { get; set; }
-
-            // Secret Rings doesn't have these ones?
-            public int? UnknownInt32_4 { get; set; }
-            public int? UnknownInt32_5 { get; set; }
-            public int? UnknownInt32_6 { get; set; }
-            public int? UnknownInt32_7 { get; set; }
-            public int? UnknownInt32_8 { get; set; }
-            public int? UnknownInt32_9 { get; set; }
+            // TODO: How do these control stuff???
+            public byte[] UnknownBytes { get; set; }
+            public List<byte> JsonBytes;
                       
             public override string ToString() => Name;
         }
@@ -61,7 +52,7 @@
 
             uint entryCount = reader.ReadUInt32();
             uint UnknownUInt32_4 = reader.ReadUInt32(); // TODO: Change these values and see if anything gets screwed by it. Might be the object parameter(?) count?
-            uint UnknownUInt32_5 = reader.ReadUInt32(); // TODO: Change these values and see if anything gets screwed by it.
+            uint UnknownUInt32_5 = reader.ReadUInt32(); // TODO: Change these values and see if anything gets screwed by it. Changing this stopped objects from loading in Misty Lake at all.
             uint ObjectTableOffset = reader.ReadUInt32();
 
             for (int c = 0; c < stageCount; c++)
@@ -100,18 +91,13 @@
                 obj.ID = reader.ReadByte();
                 obj.Table = reader.ReadByte();
                 reader.JumpAhead(0x2); // Always 0xCD.
-                obj.UnknownInt32_1 = reader.ReadInt32();
-                obj.UnknownInt32_2 = reader.ReadInt32();
-                obj.UnknownInt32_3 = reader.ReadInt32();
                 if (isBlackKnight)
-                {
-                    obj.UnknownInt32_4 = reader.ReadInt32();
-                    obj.UnknownInt32_5 = reader.ReadInt32();
-                    obj.UnknownInt32_6 = reader.ReadInt32();
-                    obj.UnknownInt32_7 = reader.ReadInt32();
-                    obj.UnknownInt32_8 = reader.ReadInt32();
-                    obj.UnknownInt32_9 = reader.ReadInt32();
-                }
+                    obj.UnknownBytes = reader.ReadBytes(0x24);
+                else
+                    obj.UnknownBytes = reader.ReadBytes(0xC);
+
+                // Because Newtonsoft is stupid and outputs arrays in Base64.
+                obj.JsonBytes = obj.UnknownBytes.ToList();
 
                 Data.Objects.Add(obj);
             }
@@ -176,20 +162,7 @@
                 writer.Write(Data.Objects[i].Table);
                 writer.Write((byte)0xCD);
                 writer.Write((byte)0xCD);
-                writer.Write(Data.Objects[i].UnknownInt32_1);
-                writer.Write(Data.Objects[i].UnknownInt32_2);
-                writer.Write(Data.Objects[i].UnknownInt32_3);
-
-                // Write the extra values for Black Knight objects if this is a Black Knight file.
-                if (isBlackKnight)
-                {
-                    writer.Write((int)Data.Objects[i].UnknownInt32_4);
-                    writer.Write((int)Data.Objects[i].UnknownInt32_5);
-                    writer.Write((int)Data.Objects[i].UnknownInt32_6);
-                    writer.Write((int)Data.Objects[i].UnknownInt32_7);
-                    writer.Write((int)Data.Objects[i].UnknownInt32_8);
-                    writer.Write((int)Data.Objects[i].UnknownInt32_9);
-                }
+                writer.Write(Data.Objects[i].UnknownBytes);
             }
             
             // Go back and fill in the file size.

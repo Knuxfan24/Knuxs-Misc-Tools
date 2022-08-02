@@ -63,11 +63,11 @@ ___
 
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
-- Basic [Visiblity Block](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/BLK.cs) file reading.
+- Basic reading for the Secret Rings version of the [Visiblity Block](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/VisibilityTable.cs) format.
 
 - [ONE](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/ONE.cs) archive reading, writing, extracting and creating.
 
-- Incomplete [Path](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PTH.cs) file reading.
+- Basic [Path](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PathSpline.cs) file reading and writing.
 
 - Basic [Player Motion Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PlayerMotion.cs) reading.
 

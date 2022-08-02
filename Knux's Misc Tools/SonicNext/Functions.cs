@@ -161,7 +161,7 @@ namespace Knuxs_Misc_Tools.SonicNext
         /// <param name="type">The type of this parameter.</param>
         public static SetParameter ParameterCreate(object value, ObjectDataType type)
         {
-            SetParameter parameter = new SetParameter()
+            SetParameter parameter = new()
             {
                 Data = value,
                 Type = type

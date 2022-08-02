@@ -12,7 +12,7 @@
 
     }
 
-    public class BLK : FileBase
+    public class VisibilityTable : FileBase
     {
         public List<BlockEntry> Blocks = new();
 
@@ -24,6 +24,7 @@
             uint blockCount = reader.ReadUInt32();
             reader.JumpAhead(0x8); // TODO: I assume this is padding? Seems to end up as either all 0xCC or 0x00?
 
+            // TODO: Black Knight's BLKs seem to have an extra value in here, before SectorIndices.
             for (int i = 0; i < blockCount; i++)
             {
                 BlockEntry entry = new()
