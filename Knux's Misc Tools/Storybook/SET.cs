@@ -30,7 +30,13 @@
 
             public uint UnknownUInt32_2 { get; set; } // TODO: Find out what this is.
 
-            public List<uint>? Parameters { get; set; } // TODO: Better way to handle parameters, if there was a data type indicator in there that'd be lovely...
+            // TODO: Better way to handle parameters, if there was a data type indicator in there that'd be lovely...
+            public List<uint>? Parameters { get; set; } 
+            public List<float>? ParametersF { get; set; }
+
+            public string? Name { get; set; } // Not actually a thing these have, filled in by function for ease of research.
+
+            public override string ToString() => Name;
         }
 
         public class FormatData
@@ -111,9 +117,12 @@
                 // Read the parameters.
                 // TODO: Actually handle their data types. I have no clue if that's even in here (like in '06) or not...
                 obj.Parameters = new();
+                obj.ParametersF = new();
                 for (int p = 0; p < objectParameterCount; p++)
                 {
                     obj.Parameters.Add(reader.ReadUInt32());
+                    reader.JumpBehind(0x4);
+                    obj.ParametersF.Add(reader.ReadSingle());
                 }
 
                 // Jump back for our next object.
@@ -204,6 +213,18 @@
             // Write parameter table length.
             writer.BaseStream.Position = 0xC;
             writer.Write((uint)parameterTableLength);
+        }
+
+        /// <summary>
+        /// Adds the object names.
+        /// </summary>
+        /// <param name="items">The class parsed from the setobjectbin_objitems.bin file.</param>
+        public void FillObjectNames(SETItems items)
+        {
+            foreach (SetObject obj in Data.Objects)
+                foreach (SETItems.ObjectEntry entry in items.Data.Objects)
+                    if (entry.Table == obj.Table && entry.ID == obj.ID)
+                        obj.Name = entry.Name;
         }
     }
 }
