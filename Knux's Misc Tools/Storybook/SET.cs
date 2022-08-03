@@ -57,6 +57,7 @@
             // Calculate the locations of the Parameters.
             uint parameterTableOffset = (objectCount * 0x30) + 0x10;
             uint parameterDataTableOffset = parameterTableOffset + (parameterCount * 0x8);
+            int readParameterCount = 0;
 
             for(int i = 0; i < objectCount; i++)
             {
@@ -81,18 +82,28 @@
                 long pos = reader.BaseStream.Position;
 
                 // Jump to the parameter table.
-                reader.JumpTo(parameterTableOffset + (parameterIndex * 0x8) + 0x2);
+                reader.JumpTo(parameterTableOffset + 0x2);
+
+                // Calculate the position of this object's parameters data in the data table.
+                uint parameterOffset = 0;
+                for (int i2 = 0; i2 < parameterIndex; i2++)
+                {
+                    parameterOffset += reader.ReadByte();
+                    reader.JumpAhead(0x7);
+                }
 
                 // Calculate how many parameters this object has.
                 int objectParameterCount = reader.ReadByte() / 4;
 
                 // Jump to the apporiate location in the parameter data table.
-                reader.JumpTo(parameterDataTableOffset + (parameterIndex * 0x8));
+                reader.JumpTo(parameterDataTableOffset + parameterOffset);
 
                 // Read the parameters.
                 // TODO: Actually handle their data types. I have no clue if that's even in here (like in '06) or not...
                 for (int p = 0; p < objectParameterCount; p++)
+                {
                     obj.Parameters.Add(reader.ReadUInt32());
+                }
 
                 // Jump back for our next object.
                 reader.JumpTo(pos);
@@ -140,7 +151,6 @@
                 writer.Write((byte)(Data.Objects[i].Parameters.Count * 4));
                 writer.WriteNulls(0x5);
             }
-            writer.FixPadding(0x10);
 
             // Set up parameter table length calculation.
             long parameterTableLength = writer.BaseStream.Position;
