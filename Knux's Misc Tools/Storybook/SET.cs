@@ -8,7 +8,9 @@
 
             public Vector3 Rotation { get; set; } // TODO: Verify if the three values after position are actually rotation in BAMs format.
 
-            public byte UnknownByte_1 { get; set; } // Has three values, 01 seems to imply no parameters, 09 is the most comman and 0D shows up in one object.
+            // Has three values in Black Knight, 01 seems to imply no parameters, 09 is the most comman and 0D shows up in one object.
+            // Secret Rings also has 19 and 89.
+            public byte UnknownByte_1 { get; set; }
 
             public byte UnknownByte_2 { get; set; } // TODO: Find out what this is.
 
