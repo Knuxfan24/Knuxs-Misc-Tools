@@ -1,4 +1,6 @@
-﻿namespace Knuxs_Misc_Tools.Storybook
+﻿using HedgeLib.Sets;
+
+namespace Knuxs_Misc_Tools.Storybook
 {
     internal class SET : FileBase
     {
@@ -33,6 +35,7 @@
             // TODO: Better way to handle parameters, if there was a data type indicator in there that'd be lovely...
             public List<uint>? Parameters { get; set; } 
             public List<float>? ParametersF { get; set; }
+            public List<byte>? ParametersB { get; set; }
 
             public string? Name { get; set; } // Not actually a thing these have, filled in by function for ease of research.
 
@@ -118,11 +121,17 @@
                 // TODO: Actually handle their data types. I have no clue if that's even in here (like in '06) or not...
                 obj.Parameters = new();
                 obj.ParametersF = new();
+                obj.ParametersB = new();
                 for (int p = 0; p < objectParameterCount; p++)
                 {
                     obj.Parameters.Add(reader.ReadUInt32());
                     reader.JumpBehind(0x4);
                     obj.ParametersF.Add(reader.ReadSingle());
+                    reader.JumpBehind(0x4);
+                    obj.ParametersB.Add(reader.ReadByte());
+                    obj.ParametersB.Add(reader.ReadByte());
+                    obj.ParametersB.Add(reader.ReadByte());
+                    obj.ParametersB.Add(reader.ReadByte());
                 }
 
                 // Jump back for our next object.
@@ -225,6 +234,36 @@
                 foreach (SETItems.ObjectEntry entry in items.Data.Objects)
                     if (entry.Table == obj.Table && entry.ID == obj.ID)
                         obj.Name = entry.Name;
+        }
+
+        public void DumpGLVL(string filepath)
+        {
+            // Create the Generations SET File.
+            GensSetData set = new();
+
+            // Loop through each object.
+            for (int i = 0; i < Data.Objects.Count; i++)
+            {
+                // Create a Generations object.
+                HedgeLib.Sets.SetObject gensObj = new();
+                gensObj.Transform.Position = new(Data.Objects[i].Position.X / 10, Data.Objects[i].Position.Y / 10, Data.Objects[i].Position.Z / 10);
+                var rot = Helpers.ConvertToQuat(Data.Objects[i].Rotation.Y);
+                gensObj.Transform.Rotation = new(rot.X, rot.Y, rot.Z, rot.W);
+                gensObj.ObjectID = (uint)i;
+
+                // Add dummy unknown objects.
+                gensObj.ObjectType = $"{Data.Objects[i].Name.Replace(' ', '_')}";
+
+                if (Data.Objects[i].Parameters != null)
+                    for (int p = 0; p < Data.Objects[i].Parameters.Count; p++)
+                        gensObj.Parameters.Add(new SetObjectParam(typeof(int), Data.Objects[i].Parameters[p]));
+
+                // Save this object.
+                set.Objects.Add(gensObj);
+            }
+
+            // Save the SET file.
+            set.Save(filepath, true);
         }
     }
 }
