@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sonic_Unleashed_ArcInfo_Too
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonic_Storybook_ONE_Tool", "Sonic Storybook ONE Tool\Sonic_Storybook_ONE_Tool.csproj", "{3CA4F6E4-7C93-48F2-9616-AFF6528BC192}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sonic_Wii_TXD_Tool", "Sonic Wii TXD Tool\Sonic_Wii_TXD_Tool.csproj", "{150C0D05-F9A2-47EF-A558-48B9D6BD5DFD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{3CA4F6E4-7C93-48F2-9616-AFF6528BC192}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3CA4F6E4-7C93-48F2-9616-AFF6528BC192}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3CA4F6E4-7C93-48F2-9616-AFF6528BC192}.Release|Any CPU.Build.0 = Release|Any CPU
+		{150C0D05-F9A2-47EF-A558-48B9D6BD5DFD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{150C0D05-F9A2-47EF-A558-48B9D6BD5DFD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{150C0D05-F9A2-47EF-A558-48B9D6BD5DFD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{150C0D05-F9A2-47EF-A558-48B9D6BD5DFD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
