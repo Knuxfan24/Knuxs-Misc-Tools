@@ -28,7 +28,7 @@
 
             public uint UnknownUInt32_2 { get; set; } // TODO: Find out what this is.
 
-            public List<uint> Parameters { get; set; } = new(); // TODO: Better way to handle parameters, if there was a data type indicator in there that'd be lovely...
+            public List<uint>? Parameters { get; set; } // TODO: Better way to handle parameters, if there was a data type indicator in there that'd be lovely...
         }
 
         public class FormatData
@@ -57,14 +57,13 @@
             // Calculate the locations of the Parameters.
             uint parameterTableOffset = (objectCount * 0x30) + 0x10;
             uint parameterDataTableOffset = parameterTableOffset + (parameterCount * 0x8);
-            int readParameterCount = 0;
 
             for(int i = 0; i < objectCount; i++)
             {
                 // Read the object entry.
                 SetObject obj = new();
                 obj.Position = reader.ReadVector3();
-                obj.Rotation = new((reader.ReadInt32() * 360.0f / 65535.0f), (reader.ReadInt32() * 360.0f / 65535.0f), (reader.ReadInt32() * 360.0f / 65535.0f));
+                obj.Rotation = new(reader.ReadInt32() * 360.0f / 65535.0f, reader.ReadInt32() * 360.0f / 65535.0f, reader.ReadInt32() * 360.0f / 65535.0f);
                 obj.UnknownByte_1 = reader.ReadByte();
                 obj.UnknownByte_2 = reader.ReadByte();
                 obj.UnknownByte_3 = reader.ReadByte();
@@ -77,6 +76,15 @@
                 reader.JumpAhead(0x4); // Always 0.
                 obj.UnknownUInt32_2 = reader.ReadUInt32();
                 uint parameterIndex = reader.ReadUInt32();
+
+                // TODO: Verify if this is right, do UnknownByte_1 == 0x1 objects not have parameters?
+                if (obj.UnknownByte_1 == 0x1)
+                {
+                    // Save this object.
+                    Data.Objects.Add(obj);
+
+                    continue;
+                }
 
                 // Save our position to jump back for the next object.
                 long pos = reader.BaseStream.Position;
@@ -100,6 +108,7 @@
 
                 // Read the parameters.
                 // TODO: Actually handle their data types. I have no clue if that's even in here (like in '06) or not...
+                obj.Parameters = new();
                 for (int p = 0; p < objectParameterCount; p++)
                 {
                     obj.Parameters.Add(reader.ReadUInt32());
@@ -119,8 +128,10 @@
 
             writer.Write(Data.Signature);
             writer.Write(Data.Objects.Count);
-            writer.Write(Data.Objects.Count); // Parameter Count, isn't accurate for SETs where objects originally shared parameter tables but oh well.
+            writer.Write("COUT"); // Placeholder value for Parameter Count
             writer.Write("SIZE"); // Placeholder Size value for the Parameter Table Length
+
+            int parameterCount = 0;
 
             // Write Objects.
             for (int i = 0; i < Data.Objects.Count; i++)
@@ -140,16 +151,27 @@
                 writer.Write(Data.Objects[i].UnknownUInt32_1);
                 writer.Write(0);
                 writer.Write(Data.Objects[i].UnknownUInt32_2);
-                writer.Write(i);
+                if (Data.Objects[i].UnknownByte_1 != 0x1)
+                {
+                    writer.Write(parameterCount);
+                    parameterCount++;
+                }
+                else
+                {
+                    writer.WriteNulls(0x4);
+                }
             }
 
             // Write Parameter Table.
             for (int i = 0; i < Data.Objects.Count; i++)
             {
-                writer.Write((byte)0x1);
-                writer.Write((byte)0x0);
-                writer.Write((byte)(Data.Objects[i].Parameters.Count * 4));
-                writer.WriteNulls(0x5);
+                if (Data.Objects[i].UnknownByte_1 != 0x1)
+                {
+                    writer.Write((byte)0x1);
+                    writer.Write((byte)0x0);
+                    writer.Write((byte)(Data.Objects[i].Parameters.Count * 4));
+                    writer.WriteNulls(0x5);
+                }
             }
 
             // Set up parameter table length calculation.
@@ -157,14 +179,25 @@
 
             // Write Parameters.
             for (int i = 0; i < Data.Objects.Count; i++)
-                foreach (var parameter in Data.Objects[i].Parameters)
-                    writer.Write(parameter);
+            {
+                if (Data.Objects[i].UnknownByte_1 != 0x1)
+                {
+                    foreach (var parameter in Data.Objects[i].Parameters)
+                    {
+                        writer.Write(parameter);
+                    }
+                }
+            }
 
             // Calculate parameter table length.
             parameterTableLength = writer.BaseStream.Position - parameterTableLength;
 
             writer.FixPadding(0x10); // TODO, are all files 0x10 aligned?
-            
+
+            // Write parameter count.
+            writer.BaseStream.Position = 0x8;
+            writer.Write(parameterCount);
+
             // Write parameter table length.
             writer.BaseStream.Position = 0xC;
             writer.Write((uint)parameterTableLength);
