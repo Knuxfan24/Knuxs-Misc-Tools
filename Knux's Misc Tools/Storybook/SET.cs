@@ -77,7 +77,7 @@
                 obj.UnknownUInt32_2 = reader.ReadUInt32();
                 uint parameterIndex = reader.ReadUInt32();
 
-                // TODO: Verify if this is right, do UnknownByte_1 == 0x1 objects not have parameters?
+                // Objects with 0x1 in UnknownByte_1 don't have any parameters, so stop reading the object here.
                 if (obj.UnknownByte_1 == 0x1)
                 {
                     // Save this object.
@@ -192,7 +192,8 @@
             // Calculate parameter table length.
             parameterTableLength = writer.BaseStream.Position - parameterTableLength;
 
-            writer.FixPadding(0x10); // TODO, are all files 0x10 aligned?
+            // Pad the end of the file to match the original.
+            writer.FixPadding(0x20);
 
             // Write parameter count.
             writer.BaseStream.Position = 0x8;
