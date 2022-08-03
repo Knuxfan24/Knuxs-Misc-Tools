@@ -92,9 +92,7 @@
                 // Read the parameters.
                 // TODO: Actually handle their data types. I have no clue if that's even in here (like in '06) or not...
                 for (int p = 0; p < objectParameterCount; p++)
-                {
                     obj.Parameters.Add(reader.ReadUInt32());
-                }
 
                 // Jump back for our next object.
                 reader.JumpTo(pos);
