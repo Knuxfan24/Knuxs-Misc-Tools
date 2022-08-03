@@ -71,7 +71,7 @@ ___
 
 - Basic [Player Motion Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PlayerMotion.cs) reading.
 
-- Incomplete [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SET.cs) reading and writing.
+-  Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SET.cs) reading and writing.
 
 - Basic [SETItems](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SETItems.cs) reading and writing.
 
