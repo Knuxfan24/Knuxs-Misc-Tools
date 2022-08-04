@@ -73,7 +73,7 @@ ___
 
 - Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SET.cs) reading and writing.
 
-- [SETItems](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SETItems.cs) reading. Writing is currently non functional due to me being unsure how to handle some of the changes made to the data.
+- [SETItems](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SETItems.cs) reading and writing.
 
 - [TXD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/TXD.cs) texture archive reading, writing, extracting and creating (doesn't convert to or from Dolphin GVR textures).
 

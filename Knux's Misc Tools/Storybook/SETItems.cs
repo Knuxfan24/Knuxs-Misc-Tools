@@ -193,8 +193,24 @@
                 writer.Write(Data.Objects[i].Table);
                 writer.Write((byte)0xCD);
                 writer.Write((byte)0xCD);
-                // TODO: Figure out how to replace this with the binary system to get writing working again.
-                // writer.Write(Data.Objects[i].UnknownBytes);
+
+                // Write the stage table.
+                for (int stages = 0; stages < Data.Objects[i].AllowedStages.Count; stages += 32)
+                {
+                    // Set up a temporary string.
+                    string bits = "";
+
+                    // Get the 32 values in these bits and flip them.
+                    List<bool> range = Data.Objects[i].AllowedStages.GetRange(stages, 32);
+                    range.Reverse();
+
+                    // Add this value to the string.
+                    foreach (var stage in range)
+                        bits += Convert.ToInt32(stage);
+
+                    // Convert the string to a uint and write it.
+                    writer.Write(Convert.ToUInt32(bits, 2));
+                }
             }
             
             // Go back and fill in the file size.
