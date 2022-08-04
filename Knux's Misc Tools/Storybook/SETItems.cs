@@ -26,9 +26,7 @@
 
             public byte Table { get; set; }
 
-            // TODO: How do these control stuff???
-            public byte[] UnknownBytes { get; set; }
-            public List<byte> JsonBytes;
+            public List<bool> AllowedStages { get; set; } = new();
                       
             public override string ToString() => Name;
         }
@@ -51,7 +49,7 @@
             }
 
             uint entryCount = reader.ReadUInt32();
-            uint UnknownUInt32_4 = reader.ReadUInt32(); // TODO: Change these values and see if anything gets screwed by it. Might be the object parameter(?) count?
+            uint UnknownUInt32_4 = reader.ReadUInt32(); // Amount of ints needed to store the valid stage binary switches?
             uint UnknownUInt32_5 = reader.ReadUInt32(); // TODO: Change these values and see if anything gets screwed by it. Changing this stopped objects from loading in Misty Lake at all.
             uint ObjectTableOffset = reader.ReadUInt32();
 
@@ -91,14 +89,47 @@
                 obj.ID = reader.ReadByte();
                 obj.Table = reader.ReadByte();
                 reader.JumpAhead(0x2); // Always 0xCD.
+
+                // Read the allowed stage values.
+                // Based on info from here: https://info.sonicretro.org/SCHG:Sonic_Heroes/Object_Porting#1._Editing_the_SET_ID_table
+                List<uint> allowedStages = new();
                 if (isBlackKnight)
-                    obj.UnknownBytes = reader.ReadBytes(0x24);
+                {
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                }
                 else
-                    obj.UnknownBytes = reader.ReadBytes(0xC);
+                {
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                    allowedStages.Add(reader.ReadUInt32());
+                }
 
-                // Because Newtonsoft is stupid and outputs arrays in Base64.
-                obj.JsonBytes = obj.UnknownBytes.ToList();
+                // Convert each allowed stage value to binary and check if it's allowed to load.
+                foreach (var value in allowedStages)
+                {
+                    // Convert this value to a binary string.
+                    string binary = Helpers.ToBinaryString(value);
 
+                    // Loop through each character of the binary string backwards and add a true or false depending.
+                    for (int boolean = binary.Length - 1; boolean >= 0; boolean--)
+                    {
+                        if (binary[boolean] == '1')
+                            obj.AllowedStages.Add(true);
+                        else
+                            obj.AllowedStages.Add(false);
+
+                    }
+                }
+
+                // Save this object.
                 Data.Objects.Add(obj);
             }
 
@@ -162,7 +193,8 @@
                 writer.Write(Data.Objects[i].Table);
                 writer.Write((byte)0xCD);
                 writer.Write((byte)0xCD);
-                writer.Write(Data.Objects[i].UnknownBytes);
+                // TODO: Figure out how to replace this with the binary system to get writing working again.
+                // writer.Write(Data.Objects[i].UnknownBytes);
             }
             
             // Go back and fill in the file size.

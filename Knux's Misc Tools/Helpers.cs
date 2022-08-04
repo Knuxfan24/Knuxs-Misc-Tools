@@ -253,5 +253,11 @@ namespace Knuxs_Misc_Tools
             dst[x, y] = new Byte4(r, g, b, a);
         }
         #endregion
+
+        // https://stackoverflow.com/a/47918790
+        public static string ToBinaryString(uint num)
+        {
+            return Convert.ToString(num, 2).PadLeft(32, '0');
+        }
     }
 }
