@@ -4,6 +4,8 @@
     {
         public class FormatData
         {
+            public ushort Type { get; set; } = 3;
+
             public float UnknownFloat_1 { get; set; }
 
             public uint UnknownUInt32_1 { get; set; }
@@ -11,7 +13,20 @@
             public string? Name { get; set; }
 
             // TODO: How do these actually work????
-            public List<List<Vector3>> Nodes { get; set; } = new();
+            public List<Node> Nodes { get; set; } = new();
+        }
+
+        public class Node
+        {
+            public int? UnknownInt32_1 { get; set; } = null; // Not used by Type 4?
+
+            public Vector3 Position { get; set; }
+
+            public Vector3? UnknownVector3_1 { get; set; } = null; // Not used by Type 1?
+
+            public Vector3? UnknownVector3_2 { get; set; } = null; // Only used by Type 4.
+
+            public Vector3? UnknownVector3_3 { get; set; } = null; // Only used by Type 4.
         }
 
         public FormatData Data = new();
@@ -21,7 +36,7 @@
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
             // File Header.
-            ushort Type = reader.ReadUInt16(); // Always 3 in Secret Rings (barring some being 1 in stg902 (a test stage?)), always 4 in Black Knight (barring the Sand Oasis leftovers in stg902).
+            Data.Type = reader.ReadUInt16(); // Always 3 in Secret Rings (barring some being 1 in stg902 (a test stage?)), always 4 in Black Knight (besides a handful of test stages?).
             ushort PointCount = reader.ReadUInt16();
             Data.UnknownFloat_1 = reader.ReadSingle();
             uint UnknownUInt32_1 = reader.ReadUInt32(); // Always 0x10. Pointless offset to data maybe?
@@ -31,32 +46,38 @@
             if (isBlackKnight)
                 Data.Name = reader.ReadNullPaddedString(0x20);
 
+
             // Read the actual points.
             for (int i = 0; i < PointCount; i++)
             {
-                switch (Type)
+                Node node = new();
+                switch (Data.Type)
                 {
                     // TODO: How is this set up? Looks like an int (always 0), a vector3 then a float? Maybe swap those two???
                     case 0x1:
                         reader.JumpAhead(0x14);
                         break;
 
-                    // TODO: How is this set up? Looks like an int then two vector3s.
                     case 0x3:
-                        reader.JumpAhead(0x1C);
+                        node = new()
+                        {
+                            UnknownInt32_1 = reader.ReadInt32(),
+                            UnknownVector3_1 = reader.ReadVector3(), // Controls how far Sonic can go left and right? Might not be a vector3? Only the second value seemed to do anything?
+                            Position = reader.ReadVector3() // Actual Path Node Position
+                        };
+                        Data.Nodes.Add(node);
                         break;
 
-                    // TODO: How does this fit together to form the collision and spline?
+                    // TODO: What are the other values? Finding whatever UnknownVector3_1 in Type3 is here would allow path porting from Black Knight to Secret Rings in theory?
                     case 0x4:
-                        List<Vector3> NodeValues = new()
+                        node = new()
                         {
-                            reader.ReadVector3(),
-                            reader.ReadVector3(),
-                            reader.ReadVector3(),
-                            reader.ReadVector3()
+                            Position = reader.ReadVector3(),
+                            UnknownVector3_1 = reader.ReadVector3(),
+                            UnknownVector3_2 = reader.ReadVector3(),
+                            UnknownVector3_3 = reader.ReadVector3()
                         };
-
-                        Data.Nodes.Add(NodeValues);
+                        Data.Nodes.Add(node);
                         break;
                 }
             }
@@ -67,7 +88,7 @@
             BinaryWriterEx writer = new(stream);
             
             // File Header.
-            writer.Write((ushort)Data.Nodes[0].Count);
+            writer.Write(Data.Type);
             writer.Write((ushort)Data.Nodes.Count);
             writer.Write(Data.UnknownFloat_1);
             writer.Write(0x10);
@@ -77,12 +98,26 @@
             if (Data.Name != null)
                 writer.WriteNullPaddedString(Data.Name, 0x20);
 
-            // TODO: This only handles Type 4, handle the others with a nicer data setup.
-            foreach (List<Vector3> Node in Data.Nodes)
+            // TODO: Handle 0x1.
+            foreach (Node node in Data.Nodes)
             {
-                foreach (Vector3 value in Node)
+                switch (Data.Type)
                 {
-                    writer.Write(value);
+                    case 0x1:
+                        throw new NotImplementedException();
+
+                    case 0x3:
+                        writer.Write((int)node.UnknownInt32_1);
+                        writer.Write((Vector3)node.UnknownVector3_1);
+                        writer.Write(node.Position);
+                        break;
+
+                    case 0x4:
+                        writer.Write(node.Position);
+                        writer.Write((Vector3)node.UnknownVector3_1);
+                        writer.Write((Vector3)node.UnknownVector3_2);
+                        writer.Write((Vector3)node.UnknownVector3_3);
+                        break;
                 }
             }
         }
