@@ -14,7 +14,7 @@
             {
                 foreach (string file in args)
                 {
-                    if (Path.GetExtension(file) is ".one" or ".onz")
+                    if (Path.GetExtension(file).ToLower() is ".one" or ".onz")
                     {
                         Directory.CreateDirectory(@$"{Path.GetDirectoryName(file)}\{Path.GetFileNameWithoutExtension(file)}");
                         Knuxs_Misc_Tools.SWA_Wii.ONE archive = new();

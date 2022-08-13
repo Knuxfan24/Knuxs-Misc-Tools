@@ -14,7 +14,7 @@
             {
                 foreach (string file in args)
                 {
-                    if (Path.GetExtension(file) is ".txd")
+                    if (Path.GetExtension(file).ToLower() is ".txd")
                     {
                         Directory.CreateDirectory(@$"{Path.GetDirectoryName(file)}\{Path.GetFileNameWithoutExtension(file)}");
                         Knuxs_Misc_Tools.Storybook.TXD textures = new();

@@ -14,7 +14,7 @@
             {
                 foreach (string file in args)
                 {
-                    if (Path.GetExtension(file) is ".one")
+                    if (Path.GetExtension(file).ToLower() is ".one")
                     {
                         Directory.CreateDirectory(@$"{Path.GetDirectoryName(file)}\{Path.GetFileNameWithoutExtension(file)}");
                         Knuxs_Misc_Tools.Storybook.ONE archive = new();
