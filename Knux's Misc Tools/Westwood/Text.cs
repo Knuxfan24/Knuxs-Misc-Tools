@@ -15,7 +15,7 @@
 
         public override void Load(Stream fileStream)
         {
-            BinaryReaderEx reader = new(fileStream, System.Text.Encoding.UTF7);
+            BinaryReaderEx reader = new(fileStream, System.Text.Encoding.Latin1);
 
             // Read the amount of messages this file has.
             ushort entryCount = reader.ReadUInt16();
@@ -49,7 +49,7 @@
 
         public override void Save(Stream stream)
         {
-            BinaryWriterEx writer = new(stream);
+            BinaryWriterEx writer = new(stream, System.Text.Encoding.Latin1);
 
             // Write the amount of messages this file has.
             writer.Write((ushort)Messages.Count);
@@ -62,10 +62,25 @@
             for (int i = 0; i < Messages.Count; i++)
                 writer.AddOffset($"Message{i}", 2);
 
-            // Write the message strings (currently incredibly borked due to offset lengths).
+            // Get a list of the offsets.
+            List<uint> offsets = writer.GetOffsets();
+
+            // Write the message strings.
             for (int i = 0; i < Messages.Count; i++)
             {
-                writer.FillOffset($"Message{i}");
+                // Save our current position.
+                long pos = writer.BaseStream.Position;
+                
+                // Jump back to this message's offset position.
+                writer.BaseStream.Position = offsets[i];
+
+                // Fill in the offset.
+                writer.Write((ushort)pos);
+
+                // Return to the message position.
+                writer.BaseStream.Position = pos;
+
+                // Write the message.
                 writer.WriteNullTerminatedString(Messages[i].MessageText);
             }
         }

@@ -81,7 +81,7 @@ ___
 
 ## Westwood (Monopoly (1995))
 
-- [Message Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Westwood/Text.cs) reading and broken writing.
+- [Message Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Westwood/Text.cs) reading and writing.
 
 ## WrathOfCortex (Crash Bandicoot: The Wrath of Cortex)
 
