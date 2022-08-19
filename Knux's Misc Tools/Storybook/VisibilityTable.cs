@@ -2,16 +2,23 @@
 {
     public class BlockEntry
     {
-        public uint UnknownUInt32_1 { get; set; } // Thought this was like block index or something, apparently not???
-        public Vector3 UnknownVector3_1 { get; set; }
-        public Vector3 UnknownVector3_2 { get; set; }
-        public Vector3 UnknownVector3_3 { get; set; }
-        public float UnknownFloat_1 { get; set; }
-        public float UnknownFloat_2 { get; set; }
-        public uint? UnknownUInt32_2 { get; set; } = null; // Seems to only exist in Black Knight?
-        public byte[]? SectorIndices { get; set; }
+        public uint UnknownUInt32_1 { get; set; } // TODO: Does this do anything? Or is it just an old index value? Not always linear though.
 
-    }
+        public Vector3 UnknownVector3_1 { get; set; }
+
+        public Vector3 UnknownVector3_2 { get; set; } // TODO: These are always 0 in Secret Rings, check Black Knight as well.
+
+        public Vector3 UnknownVector3_3 { get; set; }
+
+        public float UnknownFloat_1 { get; set; }
+
+        public float UnknownFloat_2 { get; set; }
+
+        public uint? UnknownUInt32_2 { get; set; } = null; // Seems to only exist in Black Knight?
+
+        public byte[] SectorIndices { get; set; } = new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+
+}
 
     public class VisibilityTable : FileBase
     {

@@ -1,10 +1,22 @@
-﻿namespace Knuxs_Misc_Tools.Storybook
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Knuxs_Misc_Tools.Storybook
 {
     public class PathSpline : FileBase
     {
+        [Flags]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum Type : ushort
+        {
+            Test = 1,
+            SecretRings = 3,
+            BlackKnight = 4
+        }
+
         public class FormatData
         {
-            public ushort Type { get; set; } = 3;
+            public Type Type { get; set; } = Type.SecretRings;
 
             public float UnknownFloat_1 { get; set; }
 
@@ -36,7 +48,7 @@
             BinaryReaderEx reader = new(File.OpenRead(filepath));
 
             // File Header.
-            Data.Type = reader.ReadUInt16(); // Always 3 in Secret Rings (barring some being 1 in stg902 (a test stage?)), always 4 in Black Knight (besides a handful of test stages?).
+            Data.Type = (Type)reader.ReadUInt16(); // Always 3 in Secret Rings (barring some being 1 in stg902 (a test stage?)), always 4 in Black Knight (besides a handful of test stages?).
             ushort PointCount = reader.ReadUInt16();
             Data.UnknownFloat_1 = reader.ReadSingle();
             uint UnknownUInt32_1 = reader.ReadUInt32(); // Always 0x10. Pointless offset to data maybe?
@@ -46,7 +58,6 @@
             if (isBlackKnight)
                 Data.Name = reader.ReadNullPaddedString(0x20);
 
-
             // Read the actual points.
             for (int i = 0; i < PointCount; i++)
             {
@@ -54,11 +65,11 @@
                 switch (Data.Type)
                 {
                     // TODO: How is this set up? Looks like an int (always 0), a vector3 then a float? Maybe swap those two???
-                    case 0x1:
+                    case Type.Test:
                         reader.JumpAhead(0x14);
                         break;
 
-                    case 0x3:
+                    case Type.SecretRings:
                         node = new()
                         {
                             UnknownInt32_1 = reader.ReadInt32(),
@@ -69,7 +80,7 @@
                         break;
 
                     // TODO: What are the other values? Finding whatever UnknownVector3_1 in Type3 is here would allow path porting from Black Knight to Secret Rings in theory?
-                    case 0x4:
+                    case Type.BlackKnight:
                         node = new()
                         {
                             Position = reader.ReadVector3(),
@@ -88,7 +99,7 @@
             BinaryWriterEx writer = new(stream);
             
             // File Header.
-            writer.Write(Data.Type);
+            writer.Write((ushort)Data.Type);
             writer.Write((ushort)Data.Nodes.Count);
             writer.Write(Data.UnknownFloat_1);
             writer.Write(0x10);
@@ -103,16 +114,16 @@
             {
                 switch (Data.Type)
                 {
-                    case 0x1:
+                    case Type.Test:
                         throw new NotImplementedException();
 
-                    case 0x3:
+                    case Type.SecretRings:
                         writer.Write((int)node.UnknownInt32_1);
                         writer.Write((Vector3)node.UnknownVector3_1);
                         writer.Write(node.Position);
                         break;
 
-                    case 0x4:
+                    case Type.BlackKnight:
                         writer.Write(node.Position);
                         writer.Write((Vector3)node.UnknownVector3_1);
                         writer.Write((Vector3)node.UnknownVector3_2);
