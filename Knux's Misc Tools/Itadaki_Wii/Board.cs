@@ -15,7 +15,7 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
 
             public ushort PromotionBonus { get; set; }
 
-            public ushort MaxDiceValue { get; set; } // TODO: Confirm, tutorial board is rigged.
+            public ushort MaxDiceValue { get; set; }
 
             public ushort GravityType { get; set; } // TODO: Is 2 on colony and mooncity, 1 on galaxy1.
 
