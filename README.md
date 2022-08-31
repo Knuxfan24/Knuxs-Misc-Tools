@@ -35,6 +35,10 @@ ___
 
 - [WAD](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Gods/WAD.cs) archive reading and extracting, alongside inaccurate writing.
 
+## Itadaki_Wii (Fortune Street)
+
+- [FRB](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Itadaki_Wii/Board.cs) file reading and writing.
+
 ## ProjectM (Metroid Other M)
 
 - [Message Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/ProjectM/MessageTable.cs) reading and writing.
