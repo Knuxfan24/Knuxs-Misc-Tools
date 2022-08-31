@@ -47,7 +47,7 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
 
             public short ShopPrice { get; set; }
 
-            public short UnknownUShort_1 { get; set; }
+            public short ShopType { get; set; } // TODO: Enum of names maybe? Will probably require making a huge cube and just going through manually.
         }
 
         [Flags]
@@ -138,7 +138,7 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
                 space.UnknownByte1 = reader.ReadByte();
                 space.PropertyValue = reader.ReadUInt16();
                 space.ShopPrice = reader.ReadInt16();
-                space.UnknownUShort_1 = reader.ReadInt16();
+                space.ShopType = reader.ReadInt16();
                 Data.Spaces.Add(space);
             }
         }
@@ -187,7 +187,7 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
                 writer.Write(space.UnknownByte1);
                 writer.Write(space.PropertyValue);
                 writer.Write(space.ShopPrice);
-                writer.Write(space.UnknownUShort_1);
+                writer.Write(space.ShopType);
             }
 
             // Fill in size value.
@@ -217,8 +217,75 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
                         {
                             Type = SpaceType.Property,
                             XPosition = (short)(j * 64),
-                            YPosition = (short)(i * 64),
+                            YPosition = (short)(i * 64)
                         };
+
+                        // If the pixel is white, set it as the bank and make it the first space in the list.
+                        if (pixel.R == 255 && pixel.G == 255 && pixel.B == 255)
+                        {
+                            space.Type = SpaceType.Bank;
+                            Data.Spaces.Insert(0, space);
+                            continue;
+                        }
+
+                        // Districts
+                        if (pixel.R == 255 && pixel.G == 0 && pixel.B == 0)
+                            space.DistrictIndex = 0;
+
+                        if (pixel.R == 0 && pixel.G == 255 && pixel.B == 255)
+                            space.DistrictIndex = 1;
+
+                        if (pixel.R == 255 && pixel.G == 83 && pixel.B == 0)
+                            space.DistrictIndex = 2;
+
+                        if (pixel.R == 0 && pixel.G == 255 && pixel.B == 0)
+                            space.DistrictIndex = 3;
+
+                        if (pixel.R == 0 && pixel.G == 0 && pixel.B == 255)
+                            space.DistrictIndex = 4;
+
+                        if (pixel.R == 255 && pixel.G == 0 && pixel.B == 255)
+                            space.DistrictIndex = 5;
+
+                        if (pixel.R == 99 && pixel.G == 4 && pixel.B == 96)
+                            space.DistrictIndex = 6;
+
+                        if (pixel.R == 255 && pixel.G == 255 && pixel.B == 0)
+                            space.DistrictIndex = 7;
+
+                        // Suits
+                        if (pixel.R == 32 && pixel.G == 32 && pixel.B == 32)
+                            space.Type = SpaceType.Spade;
+
+                        if (pixel.R == 64 && pixel.G == 64 && pixel.B == 64)
+                            space.Type = SpaceType.Heart;
+
+                        if (pixel.R == 96 && pixel.G == 96 && pixel.B == 96)
+                            space.Type = SpaceType.Diamond;
+
+                        if (pixel.R == 128 && pixel.G == 128 && pixel.B == 128)
+                            space.Type = SpaceType.Club;
+
+                        // Venture Card
+                        if (pixel.R == 237 && pixel.G == 20 && pixel.B == 91)
+                            space.Type = SpaceType.VentureCard;
+
+                        // Roll Again
+                        if (pixel.R == 196 && pixel.G == 196 && pixel.B == 196)
+                            space.Type = SpaceType.RollAgain;
+
+                        // Day Off
+                        if (pixel.R == 46 && pixel.G == 49 && pixel.B == 146)
+                            space.Type = SpaceType.TakeABreak;
+
+                        // Arcade
+                        if (pixel.R == 246 && pixel.G == 150 && pixel.B == 121)
+                            space.Type = SpaceType.Arcade;
+
+                        // Comission
+                        if (pixel.R == 255 && pixel.G == 242 && pixel.B == 0)
+                            space.Type = SpaceType.Comission;
+
                         Data.Spaces.Add(space);
                     }
                 }
