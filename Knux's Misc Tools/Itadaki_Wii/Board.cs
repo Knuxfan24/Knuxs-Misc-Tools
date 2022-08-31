@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using System.Drawing;
 
 namespace Knuxs_Misc_Tools.Itadaki_Wii
 {
@@ -192,6 +193,36 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
             // Fill in size value.
             writer.BaseStream.Position = fileSizePosition;
             writer.Write((uint)writer.BaseStream.Length);
+        }
+
+        public void ImportBitmap(string filepath)
+        {
+            // Load the bitmap.
+            Bitmap img = new(filepath);
+
+            // Loop through every column of pixels.
+            for (int i = 0; i < img.Height; i++)
+            {
+                // Loop through every row of pixels.
+                for (int j = 0; j < img.Width; j++)
+                {
+                    // Load this pixel.
+                    Color pixel = img.GetPixel(j, i);
+
+                    // Make a basic space on the board if this pixel is full alpha.
+                    // TODO: Literally everything 😬
+                    if (pixel.A == 255)
+                    {
+                        Space space = new()
+                        {
+                            Type = SpaceType.Property,
+                            XPosition = (short)(j * 64),
+                            YPosition = (short)(i * 64),
+                        };
+                        Data.Spaces.Add(space);
+                    }
+                }
+            }
         }
     }
 }

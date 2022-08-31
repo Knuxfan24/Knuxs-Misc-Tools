@@ -37,7 +37,7 @@ ___
 
 ## Itadaki_Wii (Fortune Street)
 
-- [FRB](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Itadaki_Wii/Board.cs) file reading and writing.
+- [FRB](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Itadaki_Wii/Board.cs) file reading and writing. Also contains a very very basic Bitmap importer that only makes the general outline of a board.
 
 ## ProjectM (Metroid Other M)
 
