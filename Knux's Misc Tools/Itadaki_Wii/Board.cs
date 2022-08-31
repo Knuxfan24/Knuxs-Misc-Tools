@@ -1,4 +1,7 @@
-﻿namespace Knuxs_Misc_Tools.Itadaki_Wii
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace Knuxs_Misc_Tools.Itadaki_Wii
 {
     internal class Board : FileBase
     {
@@ -21,35 +24,71 @@
 
         public class Space
         {
-            public ushort Type { get; set; } // TODO: Enum for types?
+            public SpaceType Type { get; set; }
 
             public short XPosition { get; set; }
 
             public short YPosition { get; set; }
 
-            public short UnknownUShort_2 { get; set; } // Controls something to do with adjacent spaces???
+            public byte[] Adjacent1 { get; set; } = new byte[4] {0xFF, 0xFF, 0xFF, 0xFF};
 
-            public short UnknownUShort_3 { get; set; } // Controls something to do with adjacent spaces???
+            public byte[] Adjacent2 { get; set; } = new byte[4] {0xFF, 0xFF, 0xFF, 0xFF};
 
-            public short UnknownUShort_4 { get; set; } // Controls something to do with adjacent spaces???
+            public byte[] Adjacent3 { get; set; } = new byte[4] {0xFF, 0xFF, 0xFF, 0xFF};
 
-            public short UnknownUShort_5 { get; set; } // Controls something to do with adjacent spaces???
+            public byte[] Adjacent4 { get; set; } = new byte[4] {0xFF, 0xFF, 0xFF, 0xFF};
 
-            public short UnknownUShort_6 { get; set; } // Controls something to do with adjacent spaces???
+            public byte DistrictIndex { get; set; }
 
-            public short UnknownUShort_7 { get; set; } // Controls something to do with adjacent spaces???
-
-            public short UnknownUShort_8 { get; set; } // Controls something to do with adjacent spaces???
-
-            public short UnknownUShort_9 { get; set; } // Usually -1, very rarely not.
-
-            public short UnknownUShort_10 { get; set; }
+            public byte UnknownByte1 { get; set; }
 
             public ushort PropertyValue { get; set; }
 
-            public short UnknownUShort_12 { get; set; }
+            public short ShopPrice { get; set; }
 
-            public short UnknownUShort_13 { get; set; }
+            public short UnknownUShort_1 { get; set; }
+        }
+
+        [Flags]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum SpaceType : ushort
+        {
+            Property = 0,
+            Bank = 1,
+            VentureCard = 2,
+            Spade = 3,
+            Heart = 4,
+            Diamond = 5,
+            Club = 6,
+            SpadeShuffle = 7,
+            HeartShuffle = 8,
+            DiamondShuffle = 9,
+            ClubShuffle = 10,
+            TakeABreak = 11,
+            Comission = 12,
+            BigComission = 13,
+            Stocks = 14,
+            RollAgain = 16,
+            Arcade = 17,
+            Button = 18,
+            Cannon = 19,
+            TelporterA_Blue = 20,
+            TelporterA_Red = 21,
+            TelporterA_Green = 22,
+            TelporterA_Yellow = 23,
+            TelporterA_Purple = 24,
+            TelporterB_Blue = 25,
+            TelporterB_Green = 26,
+            TelporterB_Purple = 27,
+            Tunnel_Blue = 28,
+            Tunnel_Purple = 29,
+            Tunnel_Yellow = 30,
+            Tunnel_Green = 31,
+            LiftSquare = 32,
+            LiftSquareInactive = 33,
+            Tunnel_Destination = 34,
+            LiftDestination = 35,
+            Vacant = 48,
         }
 
         public FormatData Data = new();
@@ -86,22 +125,19 @@
             for (int i = 0; i < spaceCount; i++)
             {
                 Space space = new();
-                space.Type = reader.ReadUInt16();
+                space.Type = (SpaceType)reader.ReadUInt16();
                 space.XPosition = reader.ReadInt16();
                 space.YPosition = reader.ReadInt16();
                 reader.JumpAhead(0x2); // Always 0.
-                space.UnknownUShort_2 = reader.ReadInt16();
-                space.UnknownUShort_3 = reader.ReadInt16();
-                space.UnknownUShort_4 = reader.ReadInt16();
-                space.UnknownUShort_5 = reader.ReadInt16();
-                space.UnknownUShort_6 = reader.ReadInt16();
-                space.UnknownUShort_7 = reader.ReadInt16();
-                space.UnknownUShort_8 = reader.ReadInt16();
-                space.UnknownUShort_9 = reader.ReadInt16();
-                space.UnknownUShort_10 = reader.ReadInt16();
+                space.Adjacent1 = reader.ReadBytes(4);
+                space.Adjacent2 = reader.ReadBytes(4);
+                space.Adjacent3 = reader.ReadBytes(4);
+                space.Adjacent4 = reader.ReadBytes(4);
+                space.DistrictIndex = reader.ReadByte();
+                space.UnknownByte1 = reader.ReadByte();
                 space.PropertyValue = reader.ReadUInt16();
-                space.UnknownUShort_12 = reader.ReadInt16();
-                space.UnknownUShort_13 = reader.ReadInt16();
+                space.ShopPrice = reader.ReadInt16();
+                space.UnknownUShort_1 = reader.ReadInt16();
                 Data.Spaces.Add(space);
             }
         }
@@ -138,22 +174,19 @@
             // Spaces
             foreach (Space space in Data.Spaces)
             {
-                writer.Write(space.Type);
+                writer.Write((ushort)space.Type);
                 writer.Write(space.XPosition);
                 writer.Write(space.YPosition);
                 writer.WriteNulls(0x2);
-                writer.Write(space.UnknownUShort_2);
-                writer.Write(space.UnknownUShort_3);
-                writer.Write(space.UnknownUShort_4);
-                writer.Write(space.UnknownUShort_5);
-                writer.Write(space.UnknownUShort_6);
-                writer.Write(space.UnknownUShort_7);
-                writer.Write(space.UnknownUShort_8);
-                writer.Write(space.UnknownUShort_9);
-                writer.Write(space.UnknownUShort_10);
+                writer.Write(space.Adjacent1);
+                writer.Write(space.Adjacent2);
+                writer.Write(space.Adjacent3);
+                writer.Write(space.Adjacent4);
+                writer.Write(space.DistrictIndex);
+                writer.Write(space.UnknownByte1);
                 writer.Write(space.PropertyValue);
-                writer.Write(space.UnknownUShort_12);
-                writer.Write(space.UnknownUShort_13);
+                writer.Write(space.ShopPrice);
+                writer.Write(space.UnknownUShort_1);
             }
 
             // Fill in size value.
