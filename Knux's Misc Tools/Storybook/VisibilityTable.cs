@@ -2,23 +2,20 @@
 {
     public class BlockEntry
     {
-        public uint UnknownUInt32_1 { get; set; } // TODO: Does this do anything? Or is it just an old index value? Not always linear though.
+        public uint UnknownUInt32_1 { get; set; } // TODO: Does this do anything? Or is it just an old index value? Not always linear though. Priority maybe? Doesn't seem right.
 
         public Vector3 UnknownVector3_1 { get; set; }
 
-        public Vector3 UnknownVector3_2 { get; set; } // TODO: These are always 0 in Secret Rings, check Black Knight as well.
+        public Vector3 UnknownVector3_2 { get; set; } // TODO: Always 0, except for ONE file in Black Knight (stg221), which has the Y value be nonsensical? Could this be a BAMs rotation????
 
         public Vector3 UnknownVector3_3 { get; set; }
 
         public float UnknownFloat_1 { get; set; }
 
-        public float UnknownFloat_2 { get; set; }
-
         public uint? UnknownUInt32_2 { get; set; } = null; // Seems to only exist in Black Knight?
 
         public byte[] SectorIndices { get; set; } = new byte[16] { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
-
-}
+    }
 
     public class VisibilityTable : FileBase
     {
@@ -38,11 +35,14 @@
                 {
                     UnknownUInt32_1 = reader.ReadUInt32(),
                     UnknownVector3_1 = reader.ReadVector3(),
-                    UnknownVector3_2 = reader.ReadVector3(),
+                    UnknownVector3_2 = new(reader.ReadInt32() * 360.0f / 65535.0f, reader.ReadInt32() * 360.0f / 65535.0f, reader.ReadInt32() * 360.0f / 65535.0f),
+                    //UnknownVector3_2 = reader.ReadVector3(),
                     UnknownVector3_3 = reader.ReadVector3(),
-                    UnknownFloat_1 = reader.ReadSingle(),
-                    UnknownFloat_2 = reader.ReadSingle()
+                    UnknownFloat_1 = reader.ReadSingle()
                 };
+
+                reader.JumpAhead(0x4); // Always a float of -10.
+
                 if (isBlackKnight)
                     entry.UnknownUInt32_2 = reader.ReadUInt32();
 
@@ -69,7 +69,7 @@
                 writer.Write(entry.UnknownVector3_2);
                 writer.Write(entry.UnknownVector3_3);
                 writer.Write(entry.UnknownFloat_1);
-                writer.Write(entry.UnknownFloat_2);
+                writer.Write(-10f);
 
                 if (isBlackKnight)
                     writer.Write((uint)entry.UnknownUInt32_2);

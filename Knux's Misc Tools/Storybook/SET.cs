@@ -44,7 +44,7 @@ namespace Knuxs_Misc_Tools.Storybook
 
         public class FormatData
         {
-            public string Signature { get; set; } = "STP1";
+            public string Signature { get; set; } = "STP1"; // The P1 part depends on the set file itself, also not sure if this is actually used for anything?
 
             public List<SetObject> Objects { get; set; } = new();
         }
@@ -202,9 +202,22 @@ namespace Knuxs_Misc_Tools.Storybook
             {
                 if (Data.Objects[i].UnknownByte_1 != 0x1)
                 {
-                    foreach (var parameter in Data.Objects[i].Parameters)
+                    if (Data.Objects[i].ID != 0x01 && Data.Objects[i].Table != 0x00)
                     {
-                        writer.Write(parameter);
+                        foreach (var parameter in Data.Objects[i].Parameters)
+                        {
+                            writer.Write(parameter);
+                        }
+                    }
+                    else
+                    {
+                        writer.Write(Data.Objects[i].ParametersB[0]);
+                        writer.Write(Data.Objects[i].ParametersB[1]);
+                        writer.Write(Data.Objects[i].ParametersB[2]);
+                        writer.Write(Data.Objects[i].ParametersB[3]);
+                        writer.Write(Data.Objects[i].ParametersF[1]);
+                        writer.Write(Data.Objects[i].Parameters[2]);
+                        writer.Write(Data.Objects[i].Parameters[3]);
                     }
                 }
             }
@@ -252,7 +265,10 @@ namespace Knuxs_Misc_Tools.Storybook
                 gensObj.ObjectID = (uint)i;
 
                 // Add dummy unknown objects.
-                gensObj.ObjectType = $"{Data.Objects[i].Name.Replace(' ', '_')}";
+                if (Data.Objects[i].Name != null)
+                    gensObj.ObjectType = $"{Data.Objects[i].Name.Replace(' ', '_')}";
+                else
+                    gensObj.ObjectType = $"Unknown_Table{Data.Objects[i].Table}Index{Data.Objects[i].ID}";
 
                 if (Data.Objects[i].Parameters != null)
                     for (int p = 0; p < Data.Objects[i].Parameters.Count; p++)

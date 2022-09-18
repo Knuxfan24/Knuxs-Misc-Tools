@@ -327,5 +327,108 @@ namespace Knuxs_Misc_Tools.Adventure2
             unhandledTypes.Sort();
             set.Save(filepath);
         }
+
+        public void Dump06GreenHill(string filepath, bool keepUnhandled = true, bool onlyUnhandled = false)
+        {
+            List<ushort> unhandledTypes = new();
+
+            ObjectPlacement set = new();
+            set.Data.Name = "test";
+
+            for (int i = 0; i < Objects.Count; i++)
+            {
+                Marathon.Formats.Placement.SetObject obj = new()
+                {
+                    Name = $"objectphysics{i}",
+                    Type = "objectphysics",
+                    Position = new(Objects[i].Position.X * 10, Objects[i].Position.Y * 10, Objects[i].Position.Z * 10),
+                    Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y)
+                };
+                SetParameter parameter = new();
+
+                switch (Objects[i].Type)
+                {
+                    case 0x0000:
+                    case 0x0001:
+                    case 0x0002:
+                        obj.Name = $"ring{i}";
+                        obj.Type = "ring";
+                        //obj.Position = new(Objects[i].Position.X * 10, (Objects[i].Position.Y * 10) - 20, Objects[i].Position.Z * 10);
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(true, ObjectDataType.Boolean));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(0, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate("", ObjectDataType.String));
+                        break;
+                    case 0x0003:
+                    case 0x0004:
+                        obj.Name = $"spring{i}";
+                        obj.Type = "spring";
+                        obj.Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y - 90);
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(3000, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(0.5, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(4294967295, ObjectDataType.UInt32));
+                        break;
+                    case 0x0006:
+                        obj.Name = $"jumppanel{i}";
+                        obj.Type = "jumppanel";
+                        obj.Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y + 90);
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(20, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(2000, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(Objects[i].Properties.Z * 10, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(4294967295, ObjectDataType.UInt32));
+                        break;
+                    case 0x0007:
+                        obj.Name = $"dashpanel{i}";
+                        obj.Type = "dashpanel";
+                        obj.Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y - 90);
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(3000, ObjectDataType.Single));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(0.5, ObjectDataType.Single));
+                        break;
+                    case 0x0008:
+                        obj.Name = $"savepoint{i}";
+                        obj.Type = "savepoint";
+                        obj.Rotation = Helpers.ConvertToQuat(Objects[i].Rotation.Y + 90);
+                        break;
+                    case 0x000A:
+                        obj.Name = $"itemboxg{i}";
+                        obj.Type = "itemboxg";
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(2, ObjectDataType.Int32));
+                        break;
+                    case 0x000E:
+                        obj.Name = $"goalring{i}";
+                        obj.Type = "goalring";
+                        break;
+                    case 0x0044:
+                        obj.Name = $"common_thorn{i}";
+                        obj.Type = "common_thorn";
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(1, ObjectDataType.Int32));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(1, ObjectDataType.Int32));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(1, ObjectDataType.Int32));
+                        break;
+                    default:
+                        if (!unhandledTypes.Contains(Objects[i].Type))
+                            unhandledTypes.Add(Objects[i].Type);
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate($"0x{Objects[i].Type:X}", ObjectDataType.String));
+                        obj.Parameters.Add(SonicNext.Functions.ParameterCreate(false, ObjectDataType.Boolean));
+                        if (!keepUnhandled)
+                            continue;
+                        break;
+                }
+
+                if (onlyUnhandled)
+                {
+                    if (unhandledTypes.Contains(Objects[i].Type))
+                    {
+                        set.Data.Objects.Add(obj);
+                    }
+                }
+                else
+                {
+                    set.Data.Objects.Add(obj);
+                }
+            }
+
+            unhandledTypes.Sort();
+            set.Save(filepath);
+        }
     }
 }

@@ -45,9 +45,9 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
 
             public ushort PropertyValue { get; set; }
 
-            public short ShopPrice { get; set; }
+            public ushort ShopPrice { get; set; }
 
-            public short ShopType { get; set; } // TODO: Enum of names maybe? Will probably require making a huge cube and just going through manually.
+            public ShopType ShopType { get; set; } // TODO: Enum of names maybe? Will probably require making a huge cube and just going through manually.
         }
 
         [Flags]
@@ -91,6 +91,114 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
             LiftDestination = 35,
             Vacant = 48,
         }
+
+        [Flags]
+        [JsonConverter(typeof(StringEnumConverter))]
+        public enum ShopType : ushort
+        {
+            not_set_10G = 1,
+            not_set_20G = 2,
+            not_set_30G = 3,
+            not_set_40G = 4,
+            Scrappaper_shop = 5,
+            Wool_shop = 6,
+            Bottle_store = 7,
+            Secondhand_book_shop = 8,
+            Scrapmetal_supplier = 9,
+            Stationery_shop = 10,
+            General_store = 11,
+            Florists = 12,
+            Icecream_shop = 13,
+            Comicbook_shop = 14,
+            Dairy = 15,
+            Doughnut_shop = 16,
+            Pizza_shack = 17,
+            Bakery = 18,
+            Grocery_store = 19,
+            Pharmacy = 20,
+            Fish_market = 21,
+            Toy_shop = 22,
+            Bookshop = 23,
+            Cosmetics_boutique = 24,
+            Tshirt_shop = 25,
+            Fruit_stall = 26,
+            Photography_studio = 27,
+            Coffee_shop = 28,
+            Butcher_shop = 29,
+            Restaurant = 30,
+            Barbershop = 31,
+            Hat_boutique = 32,
+            Hardware_store = 33,
+            Gift_shop = 34,
+            Launderette = 35,
+            Shoe_shop = 36,
+            Clothing_store = 37,
+            Opticians = 38,
+            Clockmakers = 39,
+            Furniture_shop = 40,
+            Sports_shop = 41,
+            Locksmiths = 42,
+            Glassmakers = 43,
+            Sushi_restaurant = 44,
+            Art_gallery = 45,
+            Leatherware_boutique = 46,
+            Pet_shop = 47,
+            Nail_salon = 48,
+            Spice_shop = 49,
+            Music_shop = 50,
+            Surf_shop = 51,
+            Boating_shop = 52,
+            Cartographers = 53,
+            Alloy_rims_shop = 54,
+            Fashion_boutique = 55,
+            Waxworks = 56,
+            Lens_shop = 57,
+            Kaleidoscope_shop = 58,
+            Crystal_ball_shop = 59,
+            not_set_600G = 60,
+            Gemstone_supplier = 61,
+            Taxidermy_studio = 62,
+            not_set_630G = 63,
+            not_set_640G = 64,
+            Antiques_dealers = 65,
+            not_set_660G = 66,
+            not_set_670G = 67,
+            Goldsmiths = 68,
+            not_set_690G = 69,
+            Fossil_shop = 70,
+            not_set_710G = 71,
+            Musicbox_shop = 72,
+            not_set_730G = 73,
+            not_set_740G = 74,
+            Marionette_workshop = 75,
+            Health_shop = 76,
+            not_set_770G = 77,
+            not_set_780G = 78,
+            not_set_790G = 79,
+            Organic_food_shop = 80,
+            Bridal_boutique = 81,
+            not_set_820G = 82,
+            not_set_830G = 83,
+            not_set_840G = 84,
+            Autograph_shop = 85,
+            not_set_860G = 86,
+            not_set_870G = 87,
+            not_set_880G = 88,
+            not_set_890G = 89,
+            Meteorite_shop = 90,
+            not_set_910G = 91,
+            not_set_920G = 92,
+            not_set_930G = 93,
+            not_set_940G = 94,
+            not_set_950G = 95,
+            not_set_960G = 96,
+            not_set_970G = 97,
+            Department_store = 98,
+            SYSTEM_MSG_NAME_shop_name_990A = 99,
+            SYSTEM_MSG_NAME_shop_name_1000A = 100
+        }
+
+
 
         public FormatData Data = new();
 
@@ -137,15 +245,15 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
                 space.DistrictIndex = reader.ReadByte();
                 space.UnknownByte1 = reader.ReadByte();
                 space.PropertyValue = reader.ReadUInt16();
-                space.ShopPrice = reader.ReadInt16();
-                space.ShopType = reader.ReadInt16();
+                space.ShopPrice = reader.ReadUInt16();
+                space.ShopType = (ShopType)reader.ReadUInt16();
                 Data.Spaces.Add(space);
             }
         }
 
         public override void Save(Stream fileStream)
         {
-            BinaryWriterEx writer = new BinaryWriterEx(fileStream, true);
+            BinaryWriterEx writer = new(fileStream, true);
 
             // Header I4DT Chunk
             writer.Write("I4DT");
@@ -187,7 +295,7 @@ namespace Knuxs_Misc_Tools.Itadaki_Wii
                 writer.Write(space.UnknownByte1);
                 writer.Write(space.PropertyValue);
                 writer.Write(space.ShopPrice);
-                writer.Write(space.ShopType);
+                writer.Write((ushort)space.ShopType);
             }
 
             // Fill in size value.

@@ -67,6 +67,7 @@ namespace Knuxs_Misc_Tools.SonicNext
                     xnm.ImportAnimation(fbxFile, $@"{tgtDir}\{srcXNO}.xno");
                     xnm.Data.Motion.Framerate = framerate;
                     xnm.Save($@"{tgtDir}\{Path.GetFileNameWithoutExtension(fbxFile)}.xnm");
+                    InterpolationFix($@"{tgtDir}\{Path.GetFileNameWithoutExtension(fbxFile)}.xnm");
                 }
             }
         }
