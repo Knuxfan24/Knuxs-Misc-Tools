@@ -10,13 +10,13 @@
     {
         public uint UnknownUInt32_1 { get; set; } // TODO: Does this do anything? Or is it just an old index value? Not always linear though. Priority maybe? Doesn't seem right.
 
-        public Vector3 UnknownVector3_1 { get; set; }
+        public Vector3 UnknownVector3_1 { get; set; } // Position?
 
         public Vector3 UnknownVector3_2 { get; set; } // TODO: Always 0, except for ONE file in Black Knight (stg221), which has the Y value be nonsensical? Could this be a BAMs rotation????
 
-        public Vector3 UnknownVector3_3 { get; set; }
+        public Vector3 UnknownVector3_3 { get; set; } // Some sort of inner boundry?
 
-        public float UnknownFloat_1 { get; set; }
+        public float UnknownFloat_1 { get; set; } // Radius???
 
         public uint? UnknownUInt32_2 { get; set; } = null; // Seems to only exist in Black Knight?
 
@@ -72,7 +72,7 @@
 
             writer.Write("LDBK");
             writer.Write(Blocks.Count);
-            writer.WriteNulls(0x8);
+            writer.Write((ulong)type);
 
             foreach (var entry in Blocks)
             {
