@@ -75,6 +75,8 @@ ___
 
 - Unfinished [Path](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PathSpline.cs) file reading and writing.
 
+- [Uhu Ghost](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/GhostPath.cs) data reading and writing.
+
 - Basic [Player Motion Table](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/PlayerMotion.cs) reading.
 
 - Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/SET.cs) reading and writing.
