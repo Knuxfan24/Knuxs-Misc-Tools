@@ -47,6 +47,10 @@ ___
 
 - Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/RockX7/SET.cs) reading.
 
+## RockX8 (Megaman X8)
+
+- Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/RockX8/SET.cs) reading and writing.
+
 ## SWA (Sonic Unleashed HD)
 
 - [ArcInfo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SWA/ArcInfo.cs) reading and writing.
