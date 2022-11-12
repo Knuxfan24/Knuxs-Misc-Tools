@@ -71,6 +71,14 @@ ___
 
 - [AMB](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicPortable/AMB.cs) archive reading and extracting.
 
+## SonicRangers (Sonic Frontiers)
+
+**These are more for research than actually being used. As I don't really have a system for writing BINA V2 files**
+
+- Basic [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and OBJ exporting.
+
+- Basic [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading, minus parameters.
+
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
 - Basic [Visiblity Block](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/VisibilityTable.cs) reading and writing.
