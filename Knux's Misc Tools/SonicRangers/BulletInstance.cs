@@ -25,7 +25,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
         public HedgeLib.Headers.BINAHeader Header = new BINAv2Header(210);
 
         // Set up the Signature we expect.
-        public const string Signature = "CPIC";
+        public new const string Signature = "CPIC";
 
         public List<Instance> Instances = new();
 
