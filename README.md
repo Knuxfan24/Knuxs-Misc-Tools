@@ -73,11 +73,9 @@ ___
 
 ## SonicRangers (Sonic Frontiers)
 
-**These are more for research than actually being used. As I don't really have a system for writing BINA V2 files**
-
 - Basic [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and OBJ exporting.
 
-- Basic [Bullet Instance](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletInstance.cs) reading.
+- [Bullet Instance](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletInstance.cs) reading and writing.
 
 - Basic [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading, minus parameters.
 

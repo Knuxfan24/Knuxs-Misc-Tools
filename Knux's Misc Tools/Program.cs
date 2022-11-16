@@ -1,6 +1,7 @@
 ﻿global using Marathon.IO;
 global using System.Diagnostics;
 global using System.Numerics;
+global using System.Text;
 
 namespace Knuxs_Misc_Tools
 {
@@ -8,6 +9,7 @@ namespace Knuxs_Misc_Tools
     {
         static void Main(string[] args)
         {
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
         }
     }
 }
