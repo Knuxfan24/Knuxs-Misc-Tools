@@ -1,6 +1,7 @@
 ﻿// Based on: https://info.sonicretro.org/SCHG:Sonic_Forces/Formats/BINA/GEdit
 
 using HedgeLib.Headers;
+using HedgeLib.Sets;
 
 namespace Knuxs_Misc_Tools.SonicRangers
 {
@@ -54,10 +55,10 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
         public List<SetObject> Objects = new();
 
-        public override void Load(Stream stream)
+        public void Load(string filepath, Dictionary<string, SetObjectType> templates)
         {
             // Set up our BINAReader and read the BINAV2 header.
-            HedgeLib.IO.BINAReader reader = new(stream);
+            HedgeLib.IO.BINAReader reader = new(File.OpenRead(filepath));
             Header = reader.ReadHeader();
 
             reader.JumpAhead(0x10); // Always 0? Verify.
@@ -109,36 +110,29 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
                 reader.JumpTo(ParametersOffset, false);
 
-                // Hardcoding some shit to test.
-                if (obj.Type == "StartPosition")
+                if (!templates.ContainsKey(obj.Type))
                 {
-                    SetParameter param = new()
-                    {
-                        Data = reader.ReadUInt32(),
-                        DataType = typeof(uint)
-                    };
-                    obj.Parameters.Add(param);
+                    reader.JumpTo(pos);
+                    continue;
+                }
 
-                    param = new()
+                foreach (var param in templates[obj.Type].Parameters)
+                {
+                    SetParameter parameter = new();
+                    switch (param.DataType.ToString())
                     {
-                        Data = reader.ReadSingle(),
-                        DataType = typeof(float)
-                    };
-                    obj.Parameters.Add(param);
-
-                    param = new()
-                    {
-                        Data = reader.ReadSingle(),
-                        DataType = typeof(float)
-                    };
-                    obj.Parameters.Add(param);
-
-                    param = new()
-                    {
-                        Data = reader.ReadSingle(),
-                        DataType = typeof(float)
-                    };
-                    obj.Parameters.Add(param);
+                        case "System.Byte":
+                            parameter.DataType = typeof(uint);
+                            parameter.Data = reader.ReadUInt32();
+                            obj.Parameters.Add(parameter);
+                            break;
+                        case "System.Single":
+                            parameter.DataType = typeof(float);
+                            parameter.Data = reader.ReadSingle();
+                            obj.Parameters.Add(parameter);
+                            break;
+                        default: Console.WriteLine(param.DataType); break;
+                    }
                 }
 
                 reader.JumpTo(TagsOffsetTableOffset, false);
@@ -244,10 +238,16 @@ namespace Knuxs_Misc_Tools.SonicRangers
             for (int i = 0; i < Objects.Count; i++)
             {
                 writer.FillInOffsetLong($"object{i}Parameters", false, false);
-                writer.Write((uint)Objects[i].Parameters[0].Data);
-                writer.Write((float)Objects[i].Parameters[1].Data);
-                writer.Write((float)Objects[i].Parameters[2].Data);
-                writer.Write((float)Objects[i].Parameters[3].Data);
+                foreach (var param in Objects[i].Parameters)
+                {
+                    switch (param.DataType.ToString())
+                    {
+                        case "System.Byte": writer.Write((uint)param.Data); break;
+                        case "System.UInt32": writer.Write((uint)param.Data); break;
+                        case "System.Single": writer.Write((float)param.Data); break;
+                        default: Console.WriteLine(param.DataType); break;
+                    }
+                }
                 
                 for (int tags = 0; tags < Objects[i].Tags.Count; tags++)
                 {
