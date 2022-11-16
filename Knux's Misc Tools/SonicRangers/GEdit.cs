@@ -185,6 +185,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.Write((ulong)Objects.Count);
             writer.FixPadding(0x10);
 
+            writer.FillInOffsetLong($"objectTableOffset", false);
             writer.AddOffsetTable("objectOffset", (uint)Objects.Count, 8);
 
             for (int i = 0; i < Objects.Count; i++)
@@ -252,8 +253,10 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 {
                     writer.FillInOffsetLong($"object{i}Tag{tags}Data", false);
                     writer.Write(Objects[i].Tags[tags].Data);
-                    writer.FixPadding(0x10);
                 }
+
+                if (i != Objects.Count - 1)
+                    writer.FixPadding(0x10);
             }
 
             // Finish writing the BINA information.
