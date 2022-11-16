@@ -185,7 +185,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.Write((ulong)Objects.Count);
             writer.FixPadding(0x10);
 
-            writer.FillInOffsetLong($"objectTableOffset", false);
+            writer.FillInOffsetLong($"objectTableOffset", false, false);
             writer.AddOffsetTable("objectOffset", (uint)Objects.Count, 8);
 
             for (int i = 0; i < Objects.Count; i++)
@@ -226,7 +226,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.FixPadding(0x10);
 
                 // Tags?
-                writer.FillInOffsetLong($"object{i}Tags", false);
+                writer.FillInOffsetLong($"object{i}Tags", false, false);
 
                 writer.AddOffsetTable($"object{i}TagTable", (uint)Objects[i].Tags.Count, 8);
                 writer.FixPadding(0x10);
@@ -243,7 +243,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             for (int i = 0; i < Objects.Count; i++)
             {
-                writer.FillInOffsetLong($"object{i}Parameters", false);
+                writer.FillInOffsetLong($"object{i}Parameters", false, false);
                 writer.Write((uint)Objects[i].Parameters[0].Data);
                 writer.Write((float)Objects[i].Parameters[1].Data);
                 writer.Write((float)Objects[i].Parameters[2].Data);
@@ -251,7 +251,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 
                 for (int tags = 0; tags < Objects[i].Tags.Count; tags++)
                 {
-                    writer.FillInOffsetLong($"object{i}Tag{tags}Data", false);
+                    writer.FillInOffsetLong($"object{i}Tag{tags}Data", false, false);
                     writer.Write(Objects[i].Tags[tags].Data);
                 }
 
