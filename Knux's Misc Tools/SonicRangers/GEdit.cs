@@ -13,14 +13,6 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             public string Name { get; set; } = "";
 
-            public ushort ID { get; set; }
-
-            public ushort GroupID { get; set; }
-
-            public ushort ParentID { get; set; }
-
-            public ushort ParentGroupID { get; set; }
-
             public byte[] UnknownBytes { get; set; } = new byte[0x20];
 
             public Vector3 Position { get; set; }
@@ -61,61 +53,80 @@ namespace Knuxs_Misc_Tools.SonicRangers
             HedgeLib.IO.BINAReader reader = new(File.OpenRead(filepath));
             Header = reader.ReadHeader();
 
-            reader.JumpAhead(0x10); // Always 0? Verify.
-            long ObjectTableOffset = reader.ReadInt64(); // Should always be 0x30?
+            // Read the BINA Data Table.
+            reader.JumpAhead(0x10); // Always 0.
+            long ObjectTableOffset = reader.ReadInt64(); // Should always be 0x30 if the gedit has any objects.
             ulong ObjectCount = reader.ReadUInt64();
-            ulong ObjectCount2 = reader.ReadUInt64(); //?
-            reader.JumpAhead(0x8); // Always 0? Verify.
+            reader.JumpAhead(0x8); // Always the same as ObjectCount.
+            reader.JumpAhead(0x8); // Always 0
 
+            // Jump to the Table of Objects.
             reader.JumpTo(ObjectTableOffset, false);
 
+            // Loop through each object.
             for (ulong i = 0; i < ObjectCount; i++)
             {
                 SetObject obj = new();
 
+                // Get the offset to this object's data.
                 long ObjectOffset = reader.ReadInt64();
+
+                // Save our current position in the object table.
                 long pos = reader.BaseStream.Position;
 
+                // Jump to the data for this object.
                 reader.JumpTo(ObjectOffset, false);
 
+                // Skip eight bytes of nulls.
                 reader.JumpAhead(0x8);
 
+                // Get the type and name offsets for this object.
                 long TypeOffset = reader.ReadInt64();
                 long NameOffset = reader.ReadInt64();
 
-                obj.ID = reader.ReadUInt16();
-                obj.GroupID = reader.ReadUInt16();
-                obj.ParentID = reader.ReadUInt16();
-                obj.ParentGroupID = reader.ReadUInt16();
+                // Skip eight bytes of nulls, these were the IDs in Forces, but seem to have been scrapped in Frontiers?
+                reader.JumpAhead(0x8);
 
+                // Read the new data that Frontiers added.
+                // TODO: Figure out what this is, I expect the ID stuff was incorporated into here maybe?
                 obj.UnknownBytes = reader.ReadBytes(0x20);
 
+                // Read the position and rotation values for this object.
+                // Vector3s are done this way as HedgeLib# had a custom Vector3 thing for some reason???
                 obj.Position = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 obj.Rotation = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 obj.ChildPositionOffset = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 obj.ChildRotationOffset = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
+                // Read this object's tag entry information.
                 long TagsOffsetTableOffset = reader.ReadInt64();
                 ulong TagCount = reader.ReadUInt64();
-                ulong TagCount2 = reader.ReadUInt64();
-                reader.JumpAhead(0x8); // Always 0? Verify.
+                reader.JumpAhead(0x8); // Always the same as TagCount.
+                reader.JumpAhead(0x8); // Always 0.
 
+                // Read the offset for this object's parameter table.
                 long ParametersOffset = reader.ReadInt64();
 
+                // Jump to and read this object's type and name.
                 reader.JumpTo(TypeOffset, false);
                 obj.Type = reader.ReadNullTerminatedString();
 
                 reader.JumpTo(NameOffset, false);
                 obj.Name = reader.ReadNullTerminatedString();
 
+                // Jump to this object's parameters.
                 reader.JumpTo(ParametersOffset, false);
 
+                // Skip this object we don't have a template for it.
                 if (!templates.ContainsKey(obj.Type))
                 {
+                    Console.WriteLine($"Skipped '{obj.Name}' with type '{obj.Type}', Parameters located at 0x{ParametersOffset.ToString("X").PadLeft(8, '0')}.");
                     reader.JumpTo(pos);
                     continue;
                 }
 
+                // Read each parameter in this object's template.
+                // TODO: Finish the data types.
                 foreach (var param in templates[obj.Type].Parameters)
                 {
                     SetParameter parameter = new();
@@ -135,35 +146,52 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     }
                 }
 
+                // Jump to this object's tag table.
                 reader.JumpTo(TagsOffsetTableOffset, false);
+
+                // Loop through this object's tags.
                 for (ulong t = 0; t < TagCount; t++)
                 {
                     ObjectTag tag = new();
 
+                    // Get the offset to this tag's data.
                     long TagOffset = reader.ReadInt64();
+
+                    // Save our current position in the tag table.
                     long tagPos = reader.BaseStream.Position;
 
+                    // Jump to the data for this tag.
                     reader.JumpTo(TagOffset, false);
 
-                    reader.JumpAhead(0x8); // Always 0? Verify.
+                    // Skip eight bytes of nulls.
+                    reader.JumpAhead(0x8);
+
+                    // Get the offset to this tag's type.
                     long TagTypeOffset = reader.ReadInt64();
+
+                    // Read the length and offset for this tag's data.
                     ulong DataLength = reader.ReadUInt64();
                     long DataOffset = reader.ReadInt64();
 
+                    // Jump to and read this tag's type.
                     reader.JumpTo(TagTypeOffset, false);
                     tag.Type = reader.ReadNullTerminatedString();
 
+                    // Jump to and read this tag's data.
                     reader.JumpTo(DataOffset, false);
                     tag.Data = reader.ReadBytes((int)DataLength);
 
+                    // Save this tag to the object.
                     obj.Tags.Add(tag);
 
+                    // Jump back for the next tag in the table.
                     reader.JumpTo(tagPos);
                 }
 
+                // Save this object.
                 Objects.Add(obj);
 
-
+                // Jump back for the next object in the table.
                 reader.JumpTo(pos);
             }
         }
@@ -189,10 +217,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.WriteNulls(0x8);
                 writer.AddString($"object{i}Type", Objects[i].Type, 8);
                 writer.AddString($"object{i}Name", Objects[i].Name, 8);
-                writer.Write(Objects[i].ID);
-                writer.Write(Objects[i].GroupID);
-                writer.Write(Objects[i].ParentID);
-                writer.Write(Objects[i].ParentGroupID);
+                writer.WriteNulls(0x8);
                 writer.Write(Objects[i].UnknownBytes);
 
                 writer.Write(Objects[i].Position.X);
