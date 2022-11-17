@@ -202,54 +202,73 @@ namespace Knuxs_Misc_Tools.SonicRangers
             HedgeLib.IO.BINAWriter writer = new(stream, Header);
             writer.WriteNulls(0x10);
 
+            // Write the BINA Data Table.
             writer.AddOffset($"objectTableOffset", 8);
             writer.Write((ulong)Objects.Count);
             writer.Write((ulong)Objects.Count);
             writer.FixPadding(0x10);
 
+            // Create our object offset table.
             writer.FillInOffsetLong($"objectTableOffset", false, false);
             writer.AddOffsetTable("objectOffset", (uint)Objects.Count, 8);
 
+            // Loop through each object.
             for (int i = 0; i < Objects.Count; i++)
             {
+                // Fill in this object's offset in the table.
                 writer.FillInOffsetLong($"objectOffset_{i}", false, false);
 
+                // Write the empty null bytes.
                 writer.WriteNulls(0x8);
+
+                // Add the two strings to the BINA String Table and write their offsets.
                 writer.AddString($"object{i}Type", Objects[i].Type, 8);
                 writer.AddString($"object{i}Name", Objects[i].Name, 8);
+
+                // Write the nulls where the Forces ID info was.
                 writer.WriteNulls(0x8);
+
+                // Write our Unknown Data.
                 writer.Write(Objects[i].UnknownBytes);
 
+                // Write this object's position.
                 writer.Write(Objects[i].Position.X);
                 writer.Write(Objects[i].Position.Y);
                 writer.Write(Objects[i].Position.Z);
 
+                // Write this object's rotation.
                 writer.Write(Objects[i].Rotation.X);
                 writer.Write(Objects[i].Rotation.Y);
                 writer.Write(Objects[i].Rotation.Z);
 
+                // Write this object's child position offset.
                 writer.Write(Objects[i].ChildPositionOffset.X);
                 writer.Write(Objects[i].ChildPositionOffset.Y);
                 writer.Write(Objects[i].ChildPositionOffset.Z);
 
+                // Write this object's child rotation offset.
                 writer.Write(Objects[i].ChildRotationOffset.X);
                 writer.Write(Objects[i].ChildRotationOffset.Y);
                 writer.Write(Objects[i].ChildRotationOffset.Z);
 
+                // Write this object's tag entry information.
                 writer.AddOffset($"object{i}Tags", 8);
                 writer.Write((ulong)Objects[i].Tags.Count);
                 writer.Write((ulong)Objects[i].Tags.Count);
                 writer.FixPadding(0x10);
 
+                // Write the offset for this object's parameters.
                 writer.AddOffset($"object{i}Parameters", 8);
                 writer.FixPadding(0x10);
 
-                // Tags?
+                // Fill in the offset for this object's tag table.
                 writer.FillInOffsetLong($"object{i}Tags", false, false);
 
+                // Create the offset table for this object's tags.
                 writer.AddOffsetTable($"object{i}TagTable", (uint)Objects[i].Tags.Count, 8);
                 writer.FixPadding(0x10);
 
+                // Fill in this object's tag table.
                 for (int tags = 0; tags < Objects[i].Tags.Count; tags++)
                 {
                     writer.FillInOffsetLong($"object{i}TagTable_{tags}", false, false);
@@ -260,9 +279,14 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 }
             }
 
+            // Loop through the objects again for parameters and tags.
             for (int i = 0; i < Objects.Count; i++)
             {
+                // Fill in the offset for this object's parameter table.
                 writer.FillInOffsetLong($"object{i}Parameters", false, false);
+
+                // Write each of this object's parameters.
+                // TODO: Should we be fixing the padding after this?
                 foreach (var param in Objects[i].Parameters)
                 {
                     switch (param.DataType.ToString())
@@ -274,12 +298,14 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     }
                 }
                 
+                // Write this object's tags.
                 for (int tags = 0; tags < Objects[i].Tags.Count; tags++)
                 {
                     writer.FillInOffsetLong($"object{i}Tag{tags}Data", false, false);
                     writer.Write(Objects[i].Tags[tags].Data);
                 }
 
+                // The last object doesn't align and instead just goes straight into the string table, so don't fix the padding if this is the last object.
                 if (i != Objects.Count - 1)
                     writer.FixPadding(0x10);
             }
