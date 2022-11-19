@@ -13,7 +13,10 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             public string Name { get; set; } = "";
 
-            public byte[] UnknownBytes { get; set; } = new byte[0x20];
+            // TODO: Verify these.
+            public Guid ID { get; set; }
+
+            public Guid ParentID { get; set; }
 
             public Vector3 Position { get; set; }
 
@@ -47,7 +50,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
         public List<SetObject> Objects = new();
 
-        public void Load(string filepath, Dictionary<string, SetObjectType> templates)
+        public void Load(string filepath, Dictionary<string, SetObjectType> templates, bool showAllObjectsInLog = false)
         {
             // Set up our BINAReader and read the BINAV2 header.
             HedgeLib.IO.BINAReader reader = new(File.OpenRead(filepath));
@@ -88,8 +91,9 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 reader.JumpAhead(0x8);
 
                 // Read the new data that Frontiers added.
-                // TODO: Figure out what this is, I expect the ID stuff was incorporated into here maybe?
-                obj.UnknownBytes = reader.ReadBytes(0x20);
+                // TODO: Verify if these are actually GUIDs.
+                obj.ID = new(reader.ReadBytes(0x10));
+                obj.ParentID = new(reader.ReadBytes(0x10));
 
                 // Read the position and rotation values for this object.
                 // Vector3s are done this way as HedgeLib# had a custom Vector3 thing for some reason???
@@ -120,30 +124,35 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 // Skip this object we don't have a template for it.
                 if (!templates.ContainsKey(obj.Type))
                 {
-                    Console.WriteLine($"Skipped '{obj.Name}' with type '{obj.Type}', Parameters located at 0x{ParametersOffset.ToString("X").PadLeft(8, '0')}.");
-                    reader.JumpTo(pos);
-                    continue;
+                    Console.WriteLine($"Skipped '{obj.Name}' with type '{obj.Type}', Parameters located at 0x{(ParametersOffset + 0x40).ToString("X").PadLeft(8, '0')}.");
+                    
                 }
-
-                // Read each parameter in this object's template.
-                // TODO: Finish the data types.
-                foreach (var param in templates[obj.Type].Parameters)
+                else
                 {
-                    SetParameter parameter = new();
-                    switch (param.DataType.ToString())
+                    // Read each parameter in this object's template.
+                    // TODO: Finish the data types.
+                    foreach (var param in templates[obj.Type].Parameters)
                     {
-                        case "System.Byte":
-                            parameter.DataType = typeof(uint);
-                            parameter.Data = reader.ReadUInt32();
-                            obj.Parameters.Add(parameter);
-                            break;
-                        case "System.Single":
-                            parameter.DataType = typeof(float);
-                            parameter.Data = reader.ReadSingle();
-                            obj.Parameters.Add(parameter);
-                            break;
-                        default: Console.WriteLine(param.DataType); break;
+                        SetParameter parameter = new();
+                        switch (param.DataType.ToString())
+                        {
+                            case "System.Byte":
+                                parameter.DataType = typeof(uint);
+                                parameter.Data = reader.ReadUInt32();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.Single":
+                                parameter.DataType = typeof(float);
+                                parameter.Data = reader.ReadSingle();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            default: Console.WriteLine(param.DataType); break;
+                        }
                     }
+
+                    // Log the known object in the console if requested.
+                    if (showAllObjectsInLog)
+                        Console.WriteLine($"Has template for '{obj.Name}' with type '{obj.Type}', Parameters located at 0x{(ParametersOffset + 0x40).ToString("X").PadLeft(8, '0')}.");
                 }
 
                 // Jump to this object's tag table.
@@ -228,8 +237,9 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 // Write the nulls where the Forces ID info was.
                 writer.WriteNulls(0x8);
 
-                // Write our Unknown Data.
-                writer.Write(Objects[i].UnknownBytes);
+                // Write our IDs.
+                writer.Write(Objects[i].ID.ToByteArray());
+                writer.Write(Objects[i].ParentID.ToByteArray());
 
                 // Write this object's position.
                 writer.Write(Objects[i].Position.X);
