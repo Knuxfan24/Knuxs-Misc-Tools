@@ -29,6 +29,8 @@ namespace Knuxs_Misc_Tools.SonicRangers
             public List<SetParameter> Parameters { get; set; } = new();
 
             public List<ObjectTag> Tags { get; set; } = new();
+
+            public override string ToString() => Name;
         }
 
         public class SetParameter
@@ -136,14 +138,70 @@ namespace Knuxs_Misc_Tools.SonicRangers
                         SetParameter parameter = new();
                         switch (param.DataType.ToString())
                         {
+                            case "HedgeLib.Sets.ForcesSetData+ObjectReference[]":
+                                param.DataType = typeof(ForcesSetData.ObjectReference);
+                                reader.JumpAhead(0x20);
+                                break;
+                            case "HedgeLib.Vector2":
+                                parameter.DataType = typeof(HedgeLib.Vector2);
+                                parameter.Data = reader.ReadVector2();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "HedgeLib.Vector3":
+                                parameter.DataType = typeof(HedgeLib.Vector3);
+                                parameter.Data = reader.ReadVector3();
+                                obj.Parameters.Add(parameter);
+                                reader.FixPadding(0x10);
+                                break;
+                            case "System.Boolean":
+                                parameter.DataType = typeof(bool);
+                                parameter.Data = reader.ReadBoolean();
+                                obj.Parameters.Add(parameter);
+                                break;
                             case "System.Byte":
-                                parameter.DataType = typeof(uint);
-                                parameter.Data = reader.ReadUInt32();
+                                parameter.DataType = typeof(byte);
+                                parameter.Data = reader.ReadByte();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.Int32":
+                                parameter.DataType = typeof(int);
+                                parameter.Data = reader.ReadInt32();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.SByte":
+                                parameter.DataType = typeof(sbyte);
+                                parameter.Data = reader.ReadSByte();
                                 obj.Parameters.Add(parameter);
                                 break;
                             case "System.Single":
                                 parameter.DataType = typeof(float);
                                 parameter.Data = reader.ReadSingle();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.String":
+                                parameter.DataType = typeof(string);
+                                long stringOffset = reader.ReadInt64();
+                                reader.JumpAhead(0x8);
+                                long paramPos = reader.BaseStream.Position;
+                                reader.JumpTo(stringOffset, false);
+                                parameter.Data = reader.ReadNullTerminatedString();
+                                reader.JumpTo(paramPos);
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.UInt16":
+                                parameter.DataType = typeof(ushort);
+                                parameter.Data = reader.ReadUInt16();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.UInt32":
+                            case "HedgeLib.Sets.ForcesSetData+ObjectReference":
+                                parameter.DataType = typeof(uint);
+                                parameter.Data = reader.ReadUInt32();
+                                obj.Parameters.Add(parameter);
+                                break;
+                            case "System.UInt64":
+                                parameter.DataType = typeof(ulong);
+                                parameter.Data = reader.ReadUInt64();
                                 obj.Parameters.Add(parameter);
                                 break;
                             default: Console.WriteLine(param.DataType); break;
@@ -265,7 +323,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.AddOffset($"object{i}Tags", 8);
                 writer.Write((ulong)Objects[i].Tags.Count);
                 writer.Write((ulong)Objects[i].Tags.Count);
-                writer.FixPadding(0x10);
+                writer.WriteNulls(0x8);
 
                 // Write the offset for this object's parameters.
                 writer.AddOffset($"object{i}Parameters", 8);
@@ -297,17 +355,55 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
                 // Write each of this object's parameters.
                 // TODO: Should we be fixing the padding after this?
-                foreach (var param in Objects[i].Parameters)
+                for (int i1 = 0; i1 < Objects[i].Parameters.Count; i1++)
                 {
+                    SetParameter param = Objects[i].Parameters[i1];
                     switch (param.DataType.ToString())
                     {
-                        case "System.Byte": writer.Write((uint)param.Data); break;
-                        case "System.UInt32": writer.Write((uint)param.Data); break;
-                        case "System.Single": writer.Write((float)param.Data); break;
-                        default: Console.WriteLine(param.DataType); break;
+                        case "HedgeLib.Sets.ForcesSetData+ObjectReference[]":
+                            writer.WriteNulls(0x20);
+                            break;
+                        case "HedgeLib.Vector2":
+                            writer.Write((HedgeLib.Vector2)param.Data);
+                            break;
+                        case "HedgeLib.Vector3":
+                            writer.Write((HedgeLib.Vector3)param.Data);
+                            writer.FixPadding(0x10);
+                            break;
+                        case "System.Boolean":
+                            writer.Write((bool)param.Data);
+                            break;
+                        case "System.Byte":
+                            writer.Write((byte)param.Data);
+                            break;
+                        case "System.Int32":
+                            writer.Write((int)param.Data);
+                            break;
+                        case "System.SByte":
+                            writer.Write((sbyte)param.Data);
+                            break;
+                        case "System.Single":
+                            writer.Write((float)param.Data);
+                            break;
+                        case "System.String":
+                            writer.AddString($"object{i}param{i1}", (string)param.Data, 8);
+                            writer.WriteNulls(0x8);
+                            break;
+                        case "System.UInt16":
+                            writer.Write((ushort)param.Data);
+                            break;
+                        case "System.UInt32":
+                            writer.Write((uint)param.Data);
+                            break;
+                        case "System.UInt64":
+                            writer.Write((ulong)param.Data);
+                            break;
+                        default:
+                            break;
                     }
                 }
-                
+                writer.FixPadding(0x10);
+
                 // Write this object's tags.
                 for (int tags = 0; tags < Objects[i].Tags.Count; tags++)
                 {
