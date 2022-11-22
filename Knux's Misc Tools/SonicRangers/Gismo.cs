@@ -252,7 +252,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             Data.IgnoreMeteorShowerAndRespawnOnReenterRange = reader.ReadBoolean();
         }
 
-        private void ReadReactionData(HedgeLib.IO.BINAReader reader, ReactionData data)
+        private static void ReadReactionData(HedgeLib.IO.BINAReader reader, ReactionData data)
         {
             // Read Motion Data struct.
             long MotionNameOffset = reader.ReadInt64();
@@ -417,6 +417,124 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             // Jump back to the saved position.
             reader.JumpTo(pos);
+        }
+
+        // TODO: Properly comment and test on a Gismo with more than one string reference.
+        public override void Save(Stream stream)
+        {
+            // Set up our BINAWriter and write the BINAV2 header.
+            HedgeLib.IO.BINAWriter writer = new(stream, Header);
+
+            writer.Write(Data.RangeIn);
+            writer.Write(Data.RangeDistance);
+
+            writer.AddString("ModelNameOffset", Data.BasicParameters.ModelName, 8);
+            writer.WriteNulls(0x8);
+            writer.AddString("SkeletonNameOffset", Data.BasicParameters.SkeletonName, 8);
+            writer.WriteNulls(0x8);
+            writer.Write(Data.BasicParameters.NoInstance);
+            writer.FixPadding(0x10);
+
+            // Col.
+            writer.Write(Data.Collision.Shape);
+            writer.Write(Data.Collision.BasePoint);
+            writer.FixPadding(0x4);
+            writer.Write(Data.Collision.Size.X);
+            writer.Write(Data.Collision.Size.Y);
+            writer.Write(Data.Collision.Size.Z);
+            writer.AddString("MeshNameOffset", Data.Collision.MeshName, 8);
+            writer.FixPadding(0x10);
+            writer.Write(Data.Collision.ShapeOffset.X);
+            writer.Write(Data.Collision.ShapeOffset.Y);
+            writer.Write(Data.Collision.ShapeOffset.Z);
+            writer.FixPadding(0x10);
+            writer.Write(Data.Collision.ShapeSizeOffset);
+            writer.FixPadding(0x10);
+
+            // Phys.
+            writer.Write(Data.RigidBody.Type);
+            writer.Write(Data.RigidBody.Material);
+            writer.FixPadding(0x4);
+            writer.Write(Data.RigidBody.PhysicsParam.Mass);
+            writer.Write(Data.RigidBody.PhysicsParam.Friction);
+            writer.Write(Data.RigidBody.PhysicsParam.GravityFactor);
+            writer.Write(Data.RigidBody.PhysicsParam.Restitution);
+            writer.Write(Data.RigidBody.PhysicsParam.LinearDamping);
+            writer.Write(Data.RigidBody.PhysicsParam.AngularDamping);
+            writer.Write(Data.RigidBody.PhysicsParam.MaxLinearVelocity);
+
+            WriteReactionData(writer, Data.ReactionIdle);
+            WriteReactionData(writer, Data.ReactionEnter);
+            WriteReactionData(writer, Data.ReactionLeave);
+            WriteReactionData(writer, Data.ReactionStay);
+            WriteReactionData(writer, Data.ReactionStayMove);
+            WriteReactionData(writer, Data.ReactionDamage);
+
+            writer.Write(Data.IgnoreMeteorShowerAndRespawnOnReenterRange);
+            writer.FixPadding(0x10);
+
+            // Finish writing the BINA information.
+            writer.FinishWrite(Header);
+        }
+
+        private static void WriteReactionData(HedgeLib.IO.BINAWriter writer, ReactionData data)
+        {
+            // Motion.
+            writer.AddString("MotionNameOffset", data.Motion.MotionName, 8);
+            writer.FixPadding(0x10);
+            writer.Write(data.Motion.SyncFrame);
+            writer.Write(data.Motion.StopEndFrame);
+            writer.FixPadding(0x8);
+
+            // MirageAnim.
+            writer.AddString("TexSrtAnimName0Offset", data.MirageAnimations.TexSrtAnimNames[0], 8);
+            writer.AddString("TexSrtAnimName1Offset", data.MirageAnimations.TexSrtAnimNames[1], 8);
+            writer.AddString("TexSrtAnimName2Offset", data.MirageAnimations.TexSrtAnimNames[2], 8);
+            writer.WriteNulls(0x18);
+            writer.AddString("TexPatAnimName0Offset", data.MirageAnimations.TexPatAnimNames[0], 8);
+            writer.AddString("TexPatAnimName1Offset", data.MirageAnimations.TexPatAnimNames[1], 8);
+            writer.AddString("TexPatAnimName2Offset", data.MirageAnimations.TexPatAnimNames[2], 8);
+            writer.WriteNulls(0x18);
+            writer.AddString("MatAnimName0Offset", data.MirageAnimations.MatAnimNames[0], 8);
+            writer.AddString("MatAnimName1Offset", data.MirageAnimations.MatAnimNames[1], 8);
+            writer.AddString("MatAnimName2Offset", data.MirageAnimations.MatAnimNames[2], 8);
+            writer.WriteNulls(0x20);
+
+            // ProgramMotionData.
+            writer.Write(data.ProgramMotion.Type);
+            writer.FixPadding(0x10);
+            writer.Write(data.ProgramMotion.Axis.X);
+            writer.Write(data.ProgramMotion.Axis.Y);
+            writer.Write(data.ProgramMotion.Axis.Z);
+            writer.FixPadding(0x10);
+            writer.Write(data.ProgramMotion.Power);
+            writer.Write(data.ProgramMotion.SpeedScale);
+            writer.Write(data.ProgramMotion.Time);
+            writer.FixPadding(0x10);
+
+            // EffectData.
+            writer.AddString("EffectNameOffset", data.Effect.EffectName, 8);
+            writer.FixPadding(0x10);
+            writer.Write(data.Effect.LinkMotionStop);
+            writer.FixPadding(0x8);
+
+            // SoundData.
+            writer.AddString("SoundCueOffset", data.SoundCue, 8);
+            writer.WriteNulls(0x8);
+
+            // KillData.
+            writer.Write(data.Kill.Type);
+            writer.FixPadding(0x4);
+            writer.Write(data.Kill.KillTime);
+            writer.AddString("BreakMotionNameOffset", data.Kill.BreakMotionName, 8);
+            writer.FixPadding(0x10);
+            writer.Write(data.Kill.Debris.Gravity);
+            writer.Write(data.Kill.Debris.LifeTime);
+            writer.Write(data.Kill.Debris.Mass);
+            writer.Write(data.Kill.Debris.Friction);
+            writer.Write(data.Kill.Debris.ExplosionScale);
+            writer.Write(data.Kill.Debris.ImpulseScale);
+            writer.FixPadding(0x10);
         }
     }
 }

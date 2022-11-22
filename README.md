@@ -79,7 +79,7 @@ ___
 
 - [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading and writing, using HedgeEdit styled templates for object parameter information.
 
-- [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading.
+- [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading and basic writing.
 
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
