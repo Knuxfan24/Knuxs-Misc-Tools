@@ -419,7 +419,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             reader.JumpTo(pos);
         }
 
-        // TODO: Properly comment and test on a Gismo with more than one string reference.
+        // TODO: Properly comment.
         public override void Save(Stream stream)
         {
             // Set up our BINAWriter and write the BINAV2 header.
@@ -463,12 +463,12 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.Write(Data.RigidBody.PhysicsParam.AngularDamping);
             writer.Write(Data.RigidBody.PhysicsParam.MaxLinearVelocity);
 
-            WriteReactionData(writer, Data.ReactionIdle);
-            WriteReactionData(writer, Data.ReactionEnter);
-            WriteReactionData(writer, Data.ReactionLeave);
-            WriteReactionData(writer, Data.ReactionStay);
-            WriteReactionData(writer, Data.ReactionStayMove);
-            WriteReactionData(writer, Data.ReactionDamage);
+            WriteReactionData(writer, Data.ReactionIdle, 0);
+            WriteReactionData(writer, Data.ReactionEnter, 1);
+            WriteReactionData(writer, Data.ReactionLeave, 2);
+            WriteReactionData(writer, Data.ReactionStay, 3);
+            WriteReactionData(writer, Data.ReactionStayMove, 4);
+            WriteReactionData(writer, Data.ReactionDamage, 5);
 
             writer.Write(Data.IgnoreMeteorShowerAndRespawnOnReenterRange);
             writer.FixPadding(0x10);
@@ -477,27 +477,27 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.FinishWrite(Header);
         }
 
-        private static void WriteReactionData(HedgeLib.IO.BINAWriter writer, ReactionData data)
+        private static void WriteReactionData(HedgeLib.IO.BINAWriter writer, ReactionData data, int reactionIndex)
         {
             // Motion.
-            writer.AddString("MotionNameOffset", data.Motion.MotionName, 8);
+            writer.AddString($"MotionNameOffset_{reactionIndex}", data.Motion.MotionName, 8);
             writer.FixPadding(0x10);
             writer.Write(data.Motion.SyncFrame);
             writer.Write(data.Motion.StopEndFrame);
             writer.FixPadding(0x8);
 
             // MirageAnim.
-            writer.AddString("TexSrtAnimName0Offset", data.MirageAnimations.TexSrtAnimNames[0], 8);
-            writer.AddString("TexSrtAnimName1Offset", data.MirageAnimations.TexSrtAnimNames[1], 8);
-            writer.AddString("TexSrtAnimName2Offset", data.MirageAnimations.TexSrtAnimNames[2], 8);
+            writer.AddString($"TexSrtAnimName0Offset_{reactionIndex}", data.MirageAnimations.TexSrtAnimNames[0], 8);
+            writer.AddString($"TexSrtAnimName1Offset_{reactionIndex}", data.MirageAnimations.TexSrtAnimNames[1], 8);
+            writer.AddString($"TexSrtAnimName2Offset_{reactionIndex}", data.MirageAnimations.TexSrtAnimNames[2], 8);
             writer.WriteNulls(0x18);
-            writer.AddString("TexPatAnimName0Offset", data.MirageAnimations.TexPatAnimNames[0], 8);
-            writer.AddString("TexPatAnimName1Offset", data.MirageAnimations.TexPatAnimNames[1], 8);
-            writer.AddString("TexPatAnimName2Offset", data.MirageAnimations.TexPatAnimNames[2], 8);
+            writer.AddString($"TexPatAnimName0Offset_{reactionIndex}", data.MirageAnimations.TexPatAnimNames[0], 8);
+            writer.AddString($"TexPatAnimName1Offset_{reactionIndex}", data.MirageAnimations.TexPatAnimNames[1], 8);
+            writer.AddString($"TexPatAnimName2Offset_{reactionIndex}", data.MirageAnimations.TexPatAnimNames[2], 8);
             writer.WriteNulls(0x18);
-            writer.AddString("MatAnimName0Offset", data.MirageAnimations.MatAnimNames[0], 8);
-            writer.AddString("MatAnimName1Offset", data.MirageAnimations.MatAnimNames[1], 8);
-            writer.AddString("MatAnimName2Offset", data.MirageAnimations.MatAnimNames[2], 8);
+            writer.AddString($"MatAnimName0Offset_{reactionIndex}", data.MirageAnimations.MatAnimNames[0], 8);
+            writer.AddString($"MatAnimName1Offset_{reactionIndex}", data.MirageAnimations.MatAnimNames[1], 8);
+            writer.AddString($"MatAnimName2Offset_{reactionIndex}", data.MirageAnimations.MatAnimNames[2], 8);
             writer.WriteNulls(0x20);
 
             // ProgramMotionData.
@@ -513,20 +513,20 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.FixPadding(0x10);
 
             // EffectData.
-            writer.AddString("EffectNameOffset", data.Effect.EffectName, 8);
+            writer.AddString($"EffectNameOffset_{reactionIndex}", data.Effect.EffectName, 8);
             writer.FixPadding(0x10);
             writer.Write(data.Effect.LinkMotionStop);
             writer.FixPadding(0x8);
 
             // SoundData.
-            writer.AddString("SoundCueOffset", data.SoundCue, 8);
+            writer.AddString($"SoundCueOffset_{reactionIndex}", data.SoundCue, 8);
             writer.WriteNulls(0x8);
 
             // KillData.
             writer.Write(data.Kill.Type);
             writer.FixPadding(0x4);
             writer.Write(data.Kill.KillTime);
-            writer.AddString("BreakMotionNameOffset", data.Kill.BreakMotionName, 8);
+            writer.AddString($"BreakMotionNameOffset_{reactionIndex}", data.Kill.BreakMotionName, 8);
             writer.FixPadding(0x10);
             writer.Write(data.Kill.Debris.Gravity);
             writer.Write(data.Kill.Debris.LifeTime);
