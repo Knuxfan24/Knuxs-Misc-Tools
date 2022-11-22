@@ -73,11 +73,13 @@ ___
 
 ## SonicRangers (Sonic Frontiers)
 
-- Basic [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and OBJ exporting.
-
 - [Bullet Instance](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletInstance.cs) reading and writing.
 
+- Basic [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and OBJ exporting.
+
 - [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading and writing, using HedgeEdit styled templates for object parameter information.
+
+- [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading.
 
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
