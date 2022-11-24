@@ -34,17 +34,17 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             // Read this file's header(?).
             reader.JumpAhead(0x4); // Always 00 02 00 00.
-            long NodeTable = reader.ReadInt64(); // Always 0x68.
+            long NodeTableOffset = reader.ReadInt64(); // Always 0x68.
             ulong NodeCount = reader.ReadUInt64();
             reader.JumpAhead(0x10); // Always the same as NodeCount, followed by eight nulls.
             long StringTableOffset = reader.ReadInt64();
             reader.JumpAhead(0x18); // Both values here are the same as NodeCount, followed by eight nulls.
-            long UnknownOffset = reader.ReadInt64();
+            long DataOffset = reader.ReadInt64();
             reader.JumpAhead(0x18); // Both values here are the same as NodeCount, followed by eight nulls.
 
             // Read this skeleton's node table.
             // Jump to the node table (should already be here but just to be safe).
-            reader.JumpTo(NodeTable, false);
+            reader.JumpTo(NodeTableOffset, false);
 
             // TODO: Properly name this. Index feels way off.
             for (ulong i = 0; i < NodeCount; i++)
@@ -81,7 +81,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             // Read whatever data is at the UnknownOffset.
             // Jump to the UnknownOffset (should already be here but just to be safe).
-            reader.JumpTo(UnknownOffset, false);
+            reader.JumpTo(DataOffset, false);
 
             // TODO: Examine this data.
             for (ulong i = 0; i < NodeCount; i++)
@@ -99,6 +99,59 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 Nodes[(int)i].UnknownFloats[10] = reader.ReadSingle();
                 Nodes[(int)i].UnknownFloats[11] = reader.ReadSingle();
             }
+        }
+
+        public override void Save(Stream stream)
+        {
+            // Set up our BINAWriter and write the BINAV2 header.
+            HedgeLib.IO.BINAWriter writer = new(stream, Header);
+
+            writer.WriteSignature(Signature);
+            writer.Write(512);
+            writer.AddOffset("NodeTableOffset", 8);
+            writer.Write((long)Nodes.Count);
+            writer.Write((long)Nodes.Count);
+            writer.WriteNulls(0x8);
+            writer.AddOffset("StringTableOffset", 8);
+            writer.Write((long)Nodes.Count);
+            writer.Write((long)Nodes.Count);
+            writer.WriteNulls(0x8);
+            writer.AddOffset("UnknownDataOffset", 8);
+            writer.Write((long)Nodes.Count);
+            writer.Write((long)Nodes.Count);
+            writer.WriteNulls(0x8);
+
+            writer.FillInOffsetLong($"NodeTableOffset", false, false);
+            for (int i = 0; i < Nodes.Count; i++)
+                writer.Write(Nodes[i].Index);
+            writer.FixPadding(0x4);
+
+            writer.FillInOffsetLong($"StringTableOffset", false, false);
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                writer.AddString($"Node{i}Name", Nodes[i].Name, 8);
+                writer.WriteNulls(0x8);
+            }
+
+            writer.FillInOffsetLong($"UnknownDataOffset", false, false);
+            for (int i = 0; i < Nodes.Count; i++)
+            {
+                writer.Write(Nodes[i].UnknownFloats[0]);
+                writer.Write(Nodes[i].UnknownFloats[1]);
+                writer.Write(Nodes[i].UnknownFloats[2]);
+                writer.Write(Nodes[i].UnknownFloats[3]);
+                writer.Write(Nodes[i].UnknownFloats[4]);
+                writer.Write(Nodes[i].UnknownFloats[5]);
+                writer.Write(Nodes[i].UnknownFloats[6]);
+                writer.Write(Nodes[i].UnknownFloats[7]);
+                writer.Write(Nodes[i].UnknownFloats[8]);
+                writer.Write(Nodes[i].UnknownFloats[9]);
+                writer.Write(Nodes[i].UnknownFloats[10]);
+                writer.Write(Nodes[i].UnknownFloats[11]);
+            }
+
+
+            writer.FinishWrite(Header);
         }
     }
 }
