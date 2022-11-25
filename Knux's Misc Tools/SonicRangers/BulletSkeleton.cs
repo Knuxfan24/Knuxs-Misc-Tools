@@ -4,9 +4,13 @@ namespace Knuxs_Misc_Tools.SonicRangers
 {
     public class Node
     {
-        public ushort Index { get; set; } // Almost certainly the wrong term for this.
+        public ushort Index { get; set; } = 0xFFFF; // Not actually a thing, used for easier ID in JSON.
+
+        public ushort ParentNodeIndex { get; set; }
 
         public string Name { get; set; } = "";
+
+        public string? ParentNodeName { get; set; } // Not actually a thing, used for easier ID in JSON.
 
         public float[] UnknownFloats { get; set; } = new float[12];
     }
@@ -32,9 +36,9 @@ namespace Knuxs_Misc_Tools.SonicRangers
             if (signature != Signature)
                 throw new Exception($"Invalid signature, got '{signature}', expected '{Signature}'.");
 
-            // Read this file's header(?).
+            // Read this file's header.
             reader.JumpAhead(0x4); // Always 00 02 00 00.
-            long NodeTableOffset = reader.ReadInt64(); // Always 0x68.
+            long HierarchyTableOffset = reader.ReadInt64(); // Always 0x68.
             ulong NodeCount = reader.ReadUInt64();
             reader.JumpAhead(0x10); // Always the same as NodeCount, followed by eight nulls.
             long StringTableOffset = reader.ReadInt64();
@@ -42,14 +46,18 @@ namespace Knuxs_Misc_Tools.SonicRangers
             long DataOffset = reader.ReadInt64();
             reader.JumpAhead(0x18); // Both values here are the same as NodeCount, followed by eight nulls.
 
-            // Read this skeleton's node table.
-            // Jump to the node table (should already be here but just to be safe).
-            reader.JumpTo(NodeTableOffset, false);
+            // Read this skeleton's node hierarchy.
+            // Jump to the hierarchy table (should already be here but just to be safe).
+            reader.JumpTo(HierarchyTableOffset, false);
 
-            // TODO: Properly name this. Index feels way off.
+            // Read each Node's Parent Index. Also store the index of the node itself for reference.
             for (ulong i = 0; i < NodeCount; i++)
             {
-                Node node = new() { Index = reader.ReadUInt16() };
+                Node node = new()
+                {
+                    Index = (ushort)i,
+                    ParentNodeIndex = reader.ReadUInt16()
+                };
                 Nodes.Add(node);
             }
 
@@ -77,6 +85,10 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
                 // Jump back.
                 reader.JumpTo(pos);
+
+                // Fill in the name of the Parent Node for reference.
+                if (Nodes[(int)i].ParentNodeIndex != 0xFFFF)
+                    Nodes[(int)i].ParentNodeName = Nodes[Nodes[(int)i].ParentNodeIndex].Name;
             }
 
             // Read whatever data is at the UnknownOffset.
@@ -86,9 +98,9 @@ namespace Knuxs_Misc_Tools.SonicRangers
             // TODO: Examine this data.
             for (ulong i = 0; i < NodeCount; i++)
             {
-                Nodes[(int)i].UnknownFloats[0] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[1] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[2] = reader.ReadSingle();
+                Nodes[(int)i].UnknownFloats[0] = reader.ReadSingle(); // Position X?
+                Nodes[(int)i].UnknownFloats[1] = reader.ReadSingle(); // Position Y?
+                Nodes[(int)i].UnknownFloats[2] = reader.ReadSingle(); // Position Z?
                 Nodes[(int)i].UnknownFloats[3] = reader.ReadSingle();
                 Nodes[(int)i].UnknownFloats[4] = reader.ReadSingle();
                 Nodes[(int)i].UnknownFloats[5] = reader.ReadSingle();
@@ -101,6 +113,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             }
         }
 
+        // TODO: Comment this and tidy it up.
         public override void Save(Stream stream)
         {
             // Set up our BINAWriter and write the BINAV2 header.
@@ -123,7 +136,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             writer.FillInOffsetLong($"NodeTableOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
-                writer.Write(Nodes[i].Index);
+                writer.Write(Nodes[i].ParentNodeIndex);
             writer.FixPadding(0x4);
 
             writer.FillInOffsetLong($"StringTableOffset", false, false);
