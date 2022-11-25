@@ -121,7 +121,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             // Wrie this file's data table.
             writer.WriteSignature(Signature);
             writer.Write(0x200);
-            writer.AddOffset("ParentIndexTableOffset", 8);
+            writer.AddOffset("HierarchyTableOffset", 8);
             writer.Write((long)Nodes.Count);
             writer.Write((long)Nodes.Count);
             writer.WriteNulls(0x8);
@@ -135,7 +135,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.WriteNulls(0x8);
 
             // Write this file's parent index table.
-            writer.FillInOffsetLong($"ParentIndexTableOffset", false, false);
+            writer.FillInOffsetLong($"HierarchyTableOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
                 writer.Write(Nodes[i].ParentNodeIndex);
             writer.FixPadding(0x4);
