@@ -12,7 +12,11 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
         public string? ParentNodeName { get; set; } // Not actually a thing, used for easier ID in JSON.
 
-        public float[] UnknownFloats { get; set; } = new float[12];
+        public Vector3 Position { get; set; }
+
+        public Quaternion Rotation { get; set; }
+
+        public Vector3 Scale { get; set; }
     }
 
     internal class BulletSkeleton : FileBase
@@ -43,7 +47,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             reader.JumpAhead(0x10); // Always the same as NodeCount, followed by eight nulls.
             long StringTableOffset = reader.ReadInt64();
             reader.JumpAhead(0x18); // Both values here are the same as NodeCount, followed by eight nulls.
-            long DataOffset = reader.ReadInt64();
+            long TransformTableOffset = reader.ReadInt64();
             reader.JumpAhead(0x18); // Both values here are the same as NodeCount, followed by eight nulls.
 
             // Read this skeleton's node hierarchy.
@@ -91,25 +95,18 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     Nodes[(int)i].ParentNodeName = Nodes[Nodes[(int)i].ParentNodeIndex].Name;
             }
 
-            // Read whatever data is at the UnknownOffset.
-            // Jump to the UnknownOffset (should already be here but just to be safe).
-            reader.JumpTo(DataOffset, false);
+            // Read the transform table.
+            // Jump to the transform table (should already be here but just to be safe).
+            reader.JumpTo(TransformTableOffset, false);
 
-            // TODO: Examine this data.
+            // TODO: Confirm this data.
             for (ulong i = 0; i < NodeCount; i++)
             {
-                Nodes[(int)i].UnknownFloats[0] = reader.ReadSingle(); // Position X?
-                Nodes[(int)i].UnknownFloats[1] = reader.ReadSingle(); // Position Y?
-                Nodes[(int)i].UnknownFloats[2] = reader.ReadSingle(); // Position Z?
-                Nodes[(int)i].UnknownFloats[3] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[4] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[5] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[6] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[7] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[8] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[9] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[10] = reader.ReadSingle();
-                Nodes[(int)i].UnknownFloats[11] = reader.ReadSingle();
+                Nodes[(int)i].Position = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                reader.JumpAhead(0x4);
+                Nodes[(int)i].Rotation = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                Nodes[(int)i].Scale = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                reader.JumpAhead(0x4);
             }
         }
 
@@ -129,7 +126,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.Write((long)Nodes.Count);
             writer.Write((long)Nodes.Count);
             writer.WriteNulls(0x8);
-            writer.AddOffset("UnknownDataOffset", 8);
+            writer.AddOffset("TransformTableOffset", 8);
             writer.Write((long)Nodes.Count);
             writer.Write((long)Nodes.Count);
             writer.WriteNulls(0x8);
@@ -148,22 +145,22 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.WriteNulls(0x8);
             }
 
-            // Write this file's unknown data.
-            writer.FillInOffsetLong($"UnknownDataOffset", false, false);
+            // Write this file's transform data.
+            writer.FillInOffsetLong($"TransformTableOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
             {
-                writer.Write(Nodes[i].UnknownFloats[0]);
-                writer.Write(Nodes[i].UnknownFloats[1]);
-                writer.Write(Nodes[i].UnknownFloats[2]);
-                writer.Write(Nodes[i].UnknownFloats[3]);
-                writer.Write(Nodes[i].UnknownFloats[4]);
-                writer.Write(Nodes[i].UnknownFloats[5]);
-                writer.Write(Nodes[i].UnknownFloats[6]);
-                writer.Write(Nodes[i].UnknownFloats[7]);
-                writer.Write(Nodes[i].UnknownFloats[8]);
-                writer.Write(Nodes[i].UnknownFloats[9]);
-                writer.Write(Nodes[i].UnknownFloats[10]);
-                writer.Write(Nodes[i].UnknownFloats[11]);
+                writer.Write(Nodes[i].Position.X);
+                writer.Write(Nodes[i].Position.Y);
+                writer.Write(Nodes[i].Position.Z);
+                writer.WriteNulls(0x4);
+                writer.Write(Nodes[i].Rotation.X);
+                writer.Write(Nodes[i].Rotation.Y);
+                writer.Write(Nodes[i].Rotation.Z);
+                writer.Write(Nodes[i].Rotation.W);
+                writer.Write(Nodes[i].Scale.X);
+                writer.Write(Nodes[i].Scale.Y);
+                writer.Write(Nodes[i].Scale.Z);
+                writer.WriteNulls(0x4);
             }
 
             // Finish writing the BINA information.
