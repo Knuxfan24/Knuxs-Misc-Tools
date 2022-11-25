@@ -36,7 +36,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             if (signature != Signature)
                 throw new Exception($"Invalid signature, got '{signature}', expected '{Signature}'.");
 
-            // Read this file's header.
+            // Read this file's data table.
             reader.JumpAhead(0x4); // Always 00 02 00 00.
             long HierarchyTableOffset = reader.ReadInt64(); // Always 0x68.
             ulong NodeCount = reader.ReadUInt64();
@@ -113,15 +113,15 @@ namespace Knuxs_Misc_Tools.SonicRangers
             }
         }
 
-        // TODO: Comment this and tidy it up.
         public override void Save(Stream stream)
         {
             // Set up our BINAWriter and write the BINAV2 header.
             HedgeLib.IO.BINAWriter writer = new(stream, Header);
 
+            // Wrie this file's data table.
             writer.WriteSignature(Signature);
-            writer.Write(512);
-            writer.AddOffset("NodeTableOffset", 8);
+            writer.Write(0x200);
+            writer.AddOffset("ParentIndexTableOffset", 8);
             writer.Write((long)Nodes.Count);
             writer.Write((long)Nodes.Count);
             writer.WriteNulls(0x8);
@@ -134,11 +134,13 @@ namespace Knuxs_Misc_Tools.SonicRangers
             writer.Write((long)Nodes.Count);
             writer.WriteNulls(0x8);
 
-            writer.FillInOffsetLong($"NodeTableOffset", false, false);
+            // Write this file's parent index table.
+            writer.FillInOffsetLong($"ParentIndexTableOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
                 writer.Write(Nodes[i].ParentNodeIndex);
             writer.FixPadding(0x4);
 
+            // Write this file's string offset table.
             writer.FillInOffsetLong($"StringTableOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
             {
@@ -146,6 +148,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.WriteNulls(0x8);
             }
 
+            // Write this file's unknown data.
             writer.FillInOffsetLong($"UnknownDataOffset", false, false);
             for (int i = 0; i < Nodes.Count; i++)
             {
@@ -163,7 +166,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 writer.Write(Nodes[i].UnknownFloats[11]);
             }
 
-
+            // Finish writing the BINA information.
             writer.FinishWrite(Header);
         }
     }
