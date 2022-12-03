@@ -83,6 +83,8 @@ ___
 
 - [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading and basic writing.
 
+- Unfinished [Path Spline](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PathSpline.cs) reading.
+
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
 - Basic [Visiblity Block](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Storybook/VisibilityTable.cs) reading and writing.
