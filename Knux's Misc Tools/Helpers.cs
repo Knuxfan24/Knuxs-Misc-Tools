@@ -1,4 +1,6 @@
 ﻿using Google.Cloud.Translation.V2;
+using HedgeLib.Materials;
+using HedgeLib.Textures;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.PixelFormats;
 using System.Web;
@@ -258,6 +260,89 @@ namespace Knuxs_Misc_Tools
         public static string ToBinaryString(uint num)
         {
             return Convert.ToString(num, 2).PadLeft(32, '0');
+        }
+
+        /// <summary>
+        /// Renames the diffuse texture in an '06 material to match my naming scheme, while also adding the specular and emission maps.
+        /// </summary>
+        /// <param name="Reject">The filenames of materials to reject.</param>
+        /// <param name="dir">The directory to process.</param>
+        public static void UpdateS06MaterialNaming(List<string> Reject, string dir)
+        {
+            // Loop through each material.
+            foreach (string materialFile in Directory.GetFiles(dir, "*.material"))
+            {
+                // Only proceed if this material isn't in the reject list.
+                if (!Reject.Contains(Path.GetFileNameWithoutExtension(materialFile)))
+                {
+                    // Back up the material just in case.
+                    File.Copy(materialFile, $"{materialFile}.bak");
+                    
+                    // Print the file path to this material.
+                    Console.WriteLine(materialFile);
+
+                    // Load this material.
+                    GensMaterial mat = new();
+                    mat.Load(materialFile);
+
+                    // Redirect the diffuse texture's name.
+                    mat.Texset.Textures[0].TextureName = $"{Path.GetFileNameWithoutExtension(materialFile)}_dif";
+
+                    // Set up for adding textures.
+                    int textureIndex = 1;
+                    GensTexture texture = new();
+
+                    // Set the base shader to Common_d.
+                    string shader = "Common_d";
+
+                    // Add an emission map for this material if it exists, also change the shader to "Emission_d".
+                    if (File.Exists($@"{dir}\{Path.GetFileNameWithoutExtension(materialFile)}_ems.dds"))
+                    {
+                        shader = "Emission_d";
+                        shader += "p";
+                        texture = new()
+                        {
+                            Name = $"{Path.GetFileNameWithoutExtension(materialFile)}-{textureIndex.ToString().PadLeft(4, '0')}",
+                            TextureName = $"{Path.GetFileNameWithoutExtension(materialFile)}_ems",
+                            Type = "emission"
+                        };
+                        mat.Texset.Textures.Add(texture);
+
+                        textureIndex++;
+                    }
+
+                    // Add a specular map for this material if it exists, also add a p to the shader name.
+                    if (File.Exists($@"{dir}\{Path.GetFileNameWithoutExtension(materialFile)}_spec.dds"))
+                    {
+                        shader += "p";
+                        texture = new()
+                        {
+                            Name = $"{Path.GetFileNameWithoutExtension(materialFile)}-{textureIndex.ToString().PadLeft(4, '0')}",
+                            TextureName = $"{Path.GetFileNameWithoutExtension(materialFile)}_spec",
+                            Type = "specular"
+                        };
+                        mat.Texset.Textures.Add(texture);
+
+                        textureIndex++;
+                    }
+
+                    // Add the E to the shader name if an emission texture exists.
+                    if (File.Exists($@"{dir}\{Path.GetFileNameWithoutExtension(materialFile)}_ems.dds"))
+                        shader += "E";
+
+                    // Set this material's shader name.
+                    mat.ShaderName = mat.SubShaderName = shader;
+
+                    // Save this material.
+                    mat.Save(materialFile, true);
+                }
+
+                // Print the material's file path with a Skipped message if on the reject list.
+                else
+                {
+                    Console.WriteLine($"Skipped {materialFile}.");
+                }
+            }
         }
     }
 }
