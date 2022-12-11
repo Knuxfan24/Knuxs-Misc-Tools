@@ -25,7 +25,14 @@ namespace Knuxs_Misc_Tools.SonicRangers
             public byte[]? PlaceholderBytes { get; set; }
         }
 
-        public List<Node> Nodes = new();
+        public class FormatData
+        {
+            public string RootBone { get; set; } = "";
+
+            public List<Node> Nodes = new();
+        }
+
+        public FormatData Data = new();
 
         // Set up HedgeLib#'s BINAV2Header.
         public HedgeLib.Headers.BINAHeader Header = new BINAv2Header(210);
@@ -45,7 +52,12 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 throw new Exception($"Invalid signature, got '{signature}', expected '{Signature}'.");
 
             reader.JumpAhead(0x4); // Always 1, version?
-            long StringTableOffset = reader.ReadInt64(); // Maybe actually a reference to the root node of the skeleton?
+
+            long RootBoneNameOffset = reader.ReadInt64();
+            long pos = reader.BaseStream.Position;
+            reader.JumpTo(RootBoneNameOffset, false);
+            Data.RootBone = reader.ReadNullTerminatedString();
+            reader.JumpTo(pos);
 
             uint UnknownCount1 = reader.ReadUInt32();
             uint UnknownCount2 = reader.ReadUInt32();
@@ -69,13 +81,13 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 node.UnknownVector3_5 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 node.UnknownVector3_6 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
 
-                long pos = reader.BaseStream.Position;
+                pos = reader.BaseStream.Position;
 
                 reader.JumpTo(BoneNameOffset, false);
 
                 node.Bone = reader.ReadNullTerminatedString();
 
-                Nodes.Add(node);
+                Data.Nodes.Add(node);
 
                 reader.JumpTo(pos);
             }
@@ -84,15 +96,15 @@ namespace Knuxs_Misc_Tools.SonicRangers
             for (int i = 0; i < UnknownCount2; i++)
             {
                 long BoneNameOffset = reader.ReadInt64();
-                Nodes[i].PlaceholderBytes = reader.ReadBytes(0xC8); // TODO: Read these properly.
+                Data.Nodes[i].PlaceholderBytes = reader.ReadBytes(0xC8); // TODO: Read these properly.
 
-                long pos = reader.BaseStream.Position;
+                pos = reader.BaseStream.Position;
 
                 reader.JumpTo(BoneNameOffset, false);
 
                 string bone = reader.ReadNullTerminatedString();
-                if (bone != Nodes[i].Bone)
-                    Nodes[i].OtherBone = bone;
+                if (bone != Data.Nodes[i].Bone)
+                    Data.Nodes[i].OtherBone = bone;
 
                 reader.JumpTo(pos);
             }
@@ -112,6 +124,71 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 long UnknownOffset_5 = reader.ReadInt64();
                 long UnknownOffset_6 = reader.ReadInt64();
             }
+        }
+
+        public override void Save(Stream stream)
+        {
+            // Set up our BINAWriter and write the BINAV2 header.
+            HedgeLib.IO.BINAWriter writer = new(stream, Header);
+            // Wrie this file's data table.
+            writer.WriteSignature(Signature);
+            writer.Write(1u);
+            writer.AddString("RootBoneName", Data.RootBone, 8);
+            writer.Write(Data.Nodes.Count);
+            int count2 = 0;
+
+            foreach (var node in Data.Nodes)
+                if (node.PlaceholderBytes != null)
+                    count2++;
+            writer.Write(count2);
+
+            writer.AddOffset("UnknownOffset_1", 8);
+            writer.AddOffset("UnknownOffset_2", 8);
+
+            // TODO: Write these.
+            writer.Write(0L);
+            writer.Write(0L);
+            writer.WriteNulls(0x8);
+
+            writer.FillInOffset("UnknownOffset_1", false);
+            for (int i = 0; i < Data.Nodes.Count; i++)
+            {
+                writer.AddString($"Node{i}BoneName", Data.Nodes[i].Bone, 8);
+                writer.Write(Data.Nodes[i].UnknownVector3_1.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_1.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_1.Z);
+                writer.Write(Data.Nodes[i].UnknownVector3_2.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_2.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_2.Z);
+                writer.Write(Data.Nodes[i].UnknownVector3_3.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_3.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_3.Z);
+                writer.Write(Data.Nodes[i].UnknownVector3_4.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_4.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_4.Z);
+                writer.Write(Data.Nodes[i].UnknownVector3_5.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_5.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_5.Z);
+                writer.Write(Data.Nodes[i].UnknownVector3_6.X);
+                writer.Write(Data.Nodes[i].UnknownVector3_6.Y);
+                writer.Write(Data.Nodes[i].UnknownVector3_6.Z);
+            }
+
+            writer.FillInOffset("UnknownOffset_2", false);
+            for (int i = 0; i < Data.Nodes.Count; i++)
+            {
+                if (Data.Nodes[i].PlaceholderBytes == null)
+                    continue;
+
+                if (Data.Nodes[i].OtherBone != null)
+                    writer.AddString($"Node{i}OtherBoneName", Data.Nodes[i].OtherBone, 8);
+                else
+                    writer.AddString($"Node{i}OtherBoneName", Data.Nodes[i].Bone, 8);
+
+                writer.Write(Data.Nodes[i].PlaceholderBytes);
+            }
+
+            writer.FinishWrite(Header);
         }
     }
 }

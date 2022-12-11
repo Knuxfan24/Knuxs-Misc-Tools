@@ -85,7 +85,7 @@ ___
 
 - Unfinished [Path Spline](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PathSpline.cs) reading.
 
-- EXTREMELY Unfinished [Physics Based Animation](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PhysicsBasedAnimation.cs) reading.
+- EXTREMELY Unfinished [Physics Based Animation](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PhysicsBasedAnimation.cs) reading and writing.
 
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
