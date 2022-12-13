@@ -132,5 +132,32 @@ namespace Knuxs_Misc_Tools.Storybook
                 }
             }
         }
+
+        /// <summary>
+        /// Exports the data in this spline to a simple OBJ.
+        /// </summary>
+        /// <param name="filepath">The filepath to save to.</param>
+        public void ExportOBJ(string filepath)
+        {
+            // Set up the StreamWriter.
+            StreamWriter sw = new(filepath);
+
+            // Write all the node positions.
+            foreach (var node in Data.Nodes)
+                sw.WriteLine($"v {node.Position.X} {node.Position.Y} {node.Position.Z}");
+
+            // Create the path's object.
+            sw.WriteLine("\no StorybookSpline");
+            sw.WriteLine("g StorybookSpline");
+
+            // Write the Line.
+            sw.Write("l ");
+            for (int i = 0; i < Data.Nodes.Count; i++)
+                sw.Write($"{i + 1} ");
+
+            // Close the StreamWriter.
+            sw.Flush();
+            sw.Dispose();
+        }
     }
 }
