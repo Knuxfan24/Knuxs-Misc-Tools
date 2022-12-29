@@ -23,7 +23,7 @@ ___
 
 ## Adventure2 (Sonic Adventure 2)
 
-- [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Adventure2/SET.cs) reading (was used for potential Sonic '06 mods).
+- Basic [SET file](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/Adventure2/SET.cs) reading (was intended to be used for potential Sonic '06 mods).
 
 ## CarZ (Big Rigs Engine)
 
@@ -75,17 +75,17 @@ ___
 
 - [Bullet Instance](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletInstance.cs) reading and writing.
 
-- Basic [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and OBJ exporting.
+- Unfinished [Bullet Collision Mesh](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletMesh.cs) reading and writing, alongside very basic OBJ exporting.
 
 - Basic [Bullet Skeleton](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/BulletSkeleton.cs) reading and writing.
 
-- [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading and writing, using HedgeEdit styled templates for object parameter information.
+- Broken [gedit SET](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/GEdit.cs) reading and writing, using HedgeEdit styled templates for object parameter information.
 
-- [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading and basic writing.
+- [Gismo](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/Gismo.cs) reading and writing.
 
-- Unfinished [Path Spline](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PathSpline.cs) reading.
+- EXTREMELY unfinished [Path Spline](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PathSpline.cs) reading.
 
-- EXTREMELY Unfinished [Physics Based Animation](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PhysicsBasedAnimation.cs) reading and writing.
+- EXTREMELY unfinished [Physics Based Animation](https://github.com/Knuxfan24/Knuxs-Misc-Tools/blob/main/Knux's%20Misc%20Tools/SonicRangers/PhysicsBasedAnimation.cs) reading and writing.
 
 ## Storybook (Sonic and the Secret Rings/Sonic and the Black Knight)
 
