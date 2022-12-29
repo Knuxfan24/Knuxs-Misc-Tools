@@ -20,9 +20,9 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             public Vector3[]? DoubleSplineKnotsB { get; set; }
 
-            public Vector3 UnknownVector3_1 { get; set; }
+            public Vector3 BoundingBox_Min { get; set; }
 
-            public Vector3 UnknownVector3_2 { get; set; }
+            public Vector3 BoundingBox_Max { get; set; }
 
             public string Type { get; set; } = "";
 
@@ -100,8 +100,8 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 long DoubleKnotOffset = reader.ReadInt64();
 
                 // Skipped by Forces MaxScript.
-                spline.UnknownVector3_1 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                spline.UnknownVector3_2 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                spline.BoundingBox_Min = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                spline.BoundingBox_Max = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
                 reader.JumpAhead(0x8); // Looks to be acount for UnknownOffset_5, but is always 1.
                 long UnknownOffset_5 = reader.ReadInt64(); // Something like the tag system that GEdits use?
                 reader.JumpAhead(0x8); // Always 0.
@@ -180,9 +180,6 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 reader.JumpTo(UnknownOffset_6, false);
                 uint UnknownCount_1 = reader.ReadUInt32();
                 uint UnknownCount_2 = reader.ReadUInt32();
-                Console.WriteLine(UnknownCount_1);
-                Console.WriteLine(UnknownCount_2);
-                Console.WriteLine("===");
                 long UnknownOffset_7 = reader.ReadInt64();
                 ulong UnknownCount_3 = reader.ReadUInt64();
                 long UnknownOffset_8 = reader.ReadInt64();

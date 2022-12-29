@@ -326,6 +326,21 @@ namespace Knuxs_Misc_Tools
                         textureIndex++;
                     }
 
+                    // Add a normal map for this material if it exists, also add an n to the shader name.
+                    if (File.Exists($@"{dir}\{Path.GetFileNameWithoutExtension(materialFile)}_nrm.dds"))
+                    {
+                        shader += "n";
+                        texture = new()
+                        {
+                            Name = $"{Path.GetFileNameWithoutExtension(materialFile)}-{textureIndex.ToString().PadLeft(4, '0')}",
+                            TextureName = $"{Path.GetFileNameWithoutExtension(materialFile)}_nrm",
+                            Type = "normal"
+                        };
+                        mat.Texset.Textures.Add(texture);
+
+                        textureIndex++;
+                    }
+
                     // Add the E to the shader name if an emission texture exists.
                     if (File.Exists($@"{dir}\{Path.GetFileNameWithoutExtension(materialFile)}_ems.dds"))
                         shader += "E";
@@ -342,6 +357,21 @@ namespace Knuxs_Misc_Tools
                 {
                     Console.WriteLine($"Skipped {materialFile}.");
                 }
+            }
+        }
+
+        /// <summary>
+        /// Duplicates a hardcoded pcmodel file to automate creating them for future imports.
+        /// </summary>
+        /// <param name="targetDirectory">The directory to create instances for.</param>
+        public static void CopyInstances(string targetDirectory)
+        {
+            foreach (string terrainModelFile in Directory.GetFiles(targetDirectory, "*.terrain-model"))
+            {
+                SonicRangers.BulletInstance inst = new();
+                inst.Load(@"D:\Steam\steamapps\common\SonicFrontiers\Mods\Stupid Test Mod\raw\stage\w9d04\w9d04_trr_s00\wap_mapA_gate.pcmodel");
+                inst.Instances[0].Name1 = inst.Instances[0].Name2 = Path.GetFileNameWithoutExtension(terrainModelFile);
+                inst.Save($@"{targetDirectory}\{Path.GetFileNameWithoutExtension(terrainModelFile)}.pcmodel");
             }
         }
     }
