@@ -1,7 +1,7 @@
 # Knux's Miscellaneous Tools
-A small repository containing simple C# code that I hack together to either make some of the stuff I do easier or just to test some stuff. I also dump random reverse engineering stuff in various states of unfinished here too because why not?
+A repository containing simple C# code that I hack together to either make some of the stuff I do easier or just to test some stuff. I also dump random reverse engineering stuff in various states of unfinished here too because why not?
 
-I don't officially support any of the stuff in this repo. It's mostly here for my own archival. If you want to use any of this, you're on your own.
+I don't officially support any of the stuff in this repo. It's mostly here for my own archival and a potential reference point for other people's research. If you want to actually use any of this, you're on your own.
 
 ___
 
