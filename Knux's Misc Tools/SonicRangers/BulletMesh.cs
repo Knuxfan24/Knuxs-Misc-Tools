@@ -21,9 +21,20 @@ namespace Knuxs_Misc_Tools.SonicRangers
 
             public List<CollisionFace> Faces { get; set; } = new();
 
-            public byte[]? UnknownData { get; set; }
+            public BoundingVolumeHierarchy? BVH { get; set; }
 
             public uint? UnknownCollisionTag { get; set; }
+        }
+
+        public class BoundingVolumeHierarchy
+        {
+            public Vector3 UnknownVector3_1 { get; set; }
+
+            public Vector3 UnknownVector3_2 { get; set; }
+
+            public Vector3 UnknownVector3_3 { get; set; }
+
+            public uint UnknownUInt32_1 { get; set; }
         }
 
         public class CollisionFace
@@ -79,12 +90,12 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     shape.UnknownUInt32_2 = reader.ReadUInt32();
                     uint ShapeVertexCount = reader.ReadUInt32();
                     uint ShapeFaceCount = reader.ReadUInt32();
-                    int UnknownOffset1Length = reader.ReadInt32();
+                    int BVHLength = reader.ReadInt32();
                     uint CollisionTagCount = reader.ReadUInt32(); // Only ever different from ShapeFaceCount if that is 0.
                     reader.JumpAhead(0x8); // Always 0, Padding?
                     long VertexOffset = reader.ReadInt64();
                     long FaceOffset = reader.ReadInt64();
-                    long UnknownOffset1 = reader.ReadInt64();
+                    long BVHOffset = reader.ReadInt64();
                     long CollisionTagTableOffset = reader.ReadInt64();
 
                     long pos = reader.BaseStream.Position;
@@ -95,7 +106,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     for (int vertices = 0; vertices < ShapeVertexCount; vertices++)
                         shape.Vertices.Add(new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle()));
 
-                    // Faces
+                    // Faces.
                     reader.JumpTo(FaceOffset, false);
 
                     for (int faces = 0; faces < ShapeFaceCount; faces++)
@@ -109,10 +120,32 @@ namespace Knuxs_Misc_Tools.SonicRangers
                         shape.Faces.Add(face);
                     }
 
-                    // Unknown Data.
-                    // TODO: What the hell is this?
-                    reader.JumpTo(UnknownOffset1, false);
-                    shape.UnknownData = reader.ReadBytes(UnknownOffset1Length);
+                    // BoundingVolumeHierarchy.
+                    if (BVHLength != 0)
+                    {
+                        BoundingVolumeHierarchy bvh = new();
+
+                        reader.JumpTo(BVHOffset, false);
+                        reader.JumpAhead(0x10); // Always 0s.
+
+                        // TODO: Are these three Vector3s padded to 0x10 each?
+                        bvh.UnknownVector3_1 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        reader.FixPadding(0x10);
+                        bvh.UnknownVector3_2 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        reader.FixPadding(0x10);
+                        bvh.UnknownVector3_3 = new(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                        reader.FixPadding(0x10);
+
+                        reader.JumpAhead(0x4); // Always 0x120.
+                        bvh.UnknownUInt32_1 = reader.ReadUInt32(); // Some sort of type? Later data seems to be determined by this.
+                        reader.JumpAhead(0xB0); // Always the same pattern of bytes: 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+                        uint UnknownUInt32_2 = reader.ReadUInt32(); // Some sort of count?
+                        reader.JumpAhead(0x4); // Always 0.
+
+                        // TODO: Figure out how the Type(?) value factors in to the remaining data, type 9 seems to read 0xB0 bytes while type 1 reads 0x30.
+
+                        shape.BVH = bvh;
+                    }
 
                     // Collision Tags.
                     reader.JumpTo(CollisionTagTableOffset, false);
@@ -146,7 +179,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
             }
         }
 
-        // TODO: Verify that this works, it wrote the BINA Footer wrong in my files but they did work, but that doesn't confirm the game's actual btmesh files will.
+        // TODO: Finish this once the BVH stuff is reading and try to get the BINA Footer writing correctly.
         public override void Save(Stream stream)
         {
             // Set up our BINAWriter and write the BINAV2 header.
@@ -169,7 +202,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                     writer.Write(Data.Shapes[i].UnknownUInt32_2);
                     writer.Write(Data.Shapes[i].Vertices.Count);
                     writer.Write(Data.Shapes[i].Faces.Count);
-                    writer.Write(Data.Shapes[i].UnknownData.Length);
+                    //writer.Write(Data.Shapes[i].UnknownData.Length);
                     writer.Write(Data.Shapes[i].Faces.Count); // TODO: Handle things that don't have face data.
                     writer.WriteNulls(0x8);
                     writer.AddOffset($"Shape{i}VertexTable", 8);
@@ -205,7 +238,7 @@ namespace Knuxs_Misc_Tools.SonicRangers
                 for (int i = 0; i < Data.Shapes.Count; i++)
                 {
                     writer.FillInOffsetLong($"Shape{i}UnknownDataOffset", false, false);
-                    writer.Write(Data.Shapes[i].UnknownData);
+                    //writer.Write(Data.Shapes[i].UnknownData);
                     writer.FixPadding(0x10);
                 }
 
