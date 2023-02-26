@@ -1,3 +1,7 @@
+# This repository is considered obsolete now and should only be used for formats that aren't yet included in my [KnuxLib](https://github.com/Knuxfan24/KnuxLib) repository!
+
+___
+
 # Knux's Miscellaneous Tools
 A repository containing simple C# code that I hack together to either make some of the stuff I do easier or just to test some stuff. I also dump random reverse engineering stuff in various states of unfinished here too because why not?
 
